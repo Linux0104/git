@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="de" style="display: none; background: transparent !important;">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LunarOS Tablet</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="nui-closed" style="display: none; background: transparent !important;">
+    <div id="app" class="app hidden">
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand__label">LunarOS</div>
+                <div class="brand__sub">Tactical Tablet&nbsp;·&nbsp;v2.6</div>
+            </div>
+
+            <div class="profile">
+                <div id="officerName" class="profile__name">Unbekannt</div>
+                <div id="officerMeta" class="profile__meta">Keine Berechtigung</div>
+            </div>
+
+            <nav id="navTabs" class="nav"></nav>
+
+            <button id="closeButton" class="ghost-button">[ ESC ] Sitzung beenden</button>
+        </aside>
+
+        <main class="content">
+            <header class="topbar">
+                <div>
+                    <h1 id="pageTitle">Dashboard</h1>
+                    <p id="pageDescription">Lagebild, Einsatzlage und aktuelle Einträge.</p>
+                    <div class="topbar__meta">
+                        <span class="topbar__chip"><span class="dot"></span>Link Online</span>
+                        <span class="topbar__chip"><span class="dot ion"></span>Sec&nbsp;Channel&nbsp;AES-256</span>
+                        <span class="topbar__chip"><span class="dot amber"></span>GPS&nbsp;Lock</span>
+                        <span class="topbar__chip" id="topbarClock" style="font-feature-settings:'tnum'">--:--:--</span>
+                    </div>
+                </div>
+                <div id="toast" class="toast"></div>
+            </header>
+
+            <section id="dashboardView" class="view"></section>
+
+            <section id="personsView" class="view hidden">
+                <div class="panel">
+                    <div class="panel__header">
+                        <h2>Personensuche</h2>
+                    </div>
+                    <div class="search-bar">
+                        <input id="personSearchInput" type="text" placeholder="Name oder Teilstring eingeben">
+                        <button id="personSearchButton" class="primary-button">Suchen</button>
+                    </div>
+                    <div id="personSearchResults" class="list"></div>
+                </div>
+
+                <div id="personDetails" class="panel detail-panel">
+                    <div class="panel__header">
+                        <h2>Personendetails</h2>
+                    </div>
+                    <div class="placeholder">Wähle eine Person aus der Suche aus.</div>
+                </div>
+            </section>
+
+            <section id="warrantsView" class="view hidden">
+                <div class="grid-two">
+                    <div class="panel">
+                        <div class="panel__header">
+                            <h2>Aktuelle Fahndungen</h2>
+                        </div>
+                        <div id="warrantsList" class="list"></div>
+                    </div>
+                    <div class="panel">
+                        <div class="panel__header">
+                            <h2>Fahndung erfassen</h2>
+                        </div>
+                        <form id="warrantForm" class="form-grid">
+                            <input type="hidden" name="id">
+                            <select name="targetType">
+                                <option value="person">Person</option>
+                                <option value="vehicle">Fahrzeug</option>
+                            </select>
+                            <input name="targetIdentifier" type="text" placeholder="Identifier oder Kennzeichen">
+                            <input name="title" type="text" placeholder="Titel">
+                            <select name="priority">
+                                <option value="low">Niedrig</option>
+                                <option value="normal">Normal</option>
+                                <option value="high">Hoch</option>
+                            </select>
+                            <select name="status">
+                                <option value="active">Aktiv</option>
+                                <option value="review">Prüfung</option>
+                                <option value="closed">Geschlossen</option>
+                            </select>
+                            <textarea name="reason" placeholder="Grund"></textarea>
+                            <textarea name="notes" placeholder="Interne Notizen"></textarea>
+                            <button type="submit" class="primary-button">Speichern</button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <section id="casesView" class="view hidden">
+                <div class="grid-two">
+                    <div class="panel">
+                        <div class="panel__header">
+                            <h2>Strafakten / Justizakten</h2>
+                        </div>
+                        <div id="casesList" class="list"></div>
+                    </div>
+                    <div class="panel">
+                        <div class="panel__header">
+                            <h2>Akte anlegen</h2>
+                        </div>
+                        <form id="caseForm" class="form-grid">
+                            <input type="hidden" name="id">
+                            <select name="caseType">
+                                <option value="single">Einzelakte</option>
+                                <option value="group">Sammelakte</option>
+                            </select>
+                            <input name="referenceCode" type="text" placeholder="Aktennummer / Referenz">
+                            <input name="assignedOfficer" type="text" placeholder="Sachbearbeiter / Zuständig">
+                            <input name="subjectIdentifier" type="text" placeholder="Interne Kennung">
+                            <input name="subjectName" type="text" placeholder="Name der Person">
+                            <textarea name="subjectIdentifiers" placeholder="Mehrere interne Kennungen für Sammelakte, getrennt mit Zeilenumbruch oder Komma"></textarea>
+                            <textarea name="subjectNames" placeholder="Mehrere Namen für Sammelakte, getrennt mit Zeilenumbruch"></textarea>
+                            <label class="toggle-row">
+                                <input name="appliesToFaction" type="checkbox">
+                                <span>Gilt für die gesamte Fraktion / Gruppe</span>
+                            </label>
+                            <input name="title" type="text" placeholder="Akten-Titel">
+                            <select name="status">
+                                <option value="offen">Offen</option>
+                                <option value="in bearbeitung">In Bearbeitung</option>
+                                <option value="geschlossen">Geschlossen</option>
+                            </select>
+                            <select name="securityLevel">
+                                <option value="oeffentlich">Öffentlich</option>
+                                <option value="intern">Intern</option>
+                                <option value="vertraulich">Vertraulich</option>
+                                <option value="gesperrt">Gesperrt</option>
+                            </select>
+                            <select name="releaseState">
+                                <option value="intern">Nur intern</option>
+                                <option value="justiz">Justizfreigabe</option>
+                                <option value="freigegeben">Voll freigegeben</option>
+                            </select>
+                            <textarea name="summary" placeholder="Kurzbeschreibung"></textarea>
+                            <textarea name="notes" placeholder="Ausführliche Aktennotiz"></textarea>
+                            <textarea name="closureReason" placeholder="Abschlussgrund / richterliche Entscheidung"></textarea>
+                            <button type="submit" class="primary-button">Speichern</button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <section id="ticketsView" class="view hidden">
+                <div class="grid-two">
+                    <div class="panel">
+                        <div class="panel__header">
+                            <h2>Tickets und Bußgelder</h2>
+                        </div>
+                        <div id="ticketsList" class="list"></div>
+                    </div>
+                    <div class="panel">
+                        <div class="panel__header">
+                            <h2>Ticket erstellen</h2>
+                        </div>
+                        <form id="ticketForm" class="form-grid">
+                            <input type="hidden" name="id">
+                            <input name="personIdentifier" type="text" placeholder="Interne Kennung">
+                            <input name="personName" type="text" placeholder="Name der Person">
+                            <input name="amount" type="number" min="0" placeholder="Betrag">
+                            <select name="status">
+                                <option value="offen">Offen</option>
+                                <option value="bezahlt">Bezahlt</option>
+                                <option value="storniert">Storniert</option>
+                            </select>
+                            <textarea name="reason" placeholder="Grund / Verstoß"></textarea>
+                            <button type="submit" class="primary-button">Speichern</button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <section id="medicalView" class="view hidden">
+                <div class="grid-two">
+                    <div class="panel">
+                        <div class="panel__header">
+                            <h2>Patientenverwaltung</h2>
+                        </div>
+                        <div id="medicalList" class="list"></div>
+                    </div>
+                    <div class="panel">
+                        <div class="panel__header">
+                            <h2>Krankenakte anlegen</h2>
+                        </div>
+                        <form id="medicalForm" class="form-grid">
+                            <input type="hidden" name="id">
+                            <input name="patientIdentifier" type="text" placeholder="Interne Kennung">
+                            <input name="patientName" type="text" placeholder="Name des Patienten">
+                            <input name="diagnosis" type="text" placeholder="Diagnose">
+                            <select name="status">
+                                <option value="kritisch">Kritisch</option>
+                                <option value="stabil">Stabil</option>
+                                <option value="entlassen">Entlassen</option>
+                            </select>
+                            <textarea name="allergies" placeholder="Allergien"></textarea>
+                            <textarea name="treatment" placeholder="Behandlungsbericht"></textarea>
+                            <textarea name="notes" placeholder="Zusatznotizen"></textarea>
+                            <button type="submit" class="primary-button">Speichern</button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <section id="dispatchView" class="view hidden">
+                <div class="grid-two">
+                    <div class="panel">
+                        <div class="panel__header">
+                            <h2>Leitstelle / Streifen</h2>
+                        </div>
+                        <div id="dispatchList" class="list"></div>
+                    </div>
+                    <div class="panel">
+                        <div class="panel__header">
+                            <h2>Einsatz anlegen</h2>
+                        </div>
+                        <form id="dispatchForm" class="form-grid">
+                            <input type="hidden" name="id">
+                            <input name="title" type="text" placeholder="Einsatz-Titel">
+                            <input name="location" type="text" placeholder="Ort">
+                            <input name="incidentCode" type="text" placeholder="Einsatzcode / Lagemeldung">
+                            <select name="priority">
+                                <option value="niedrig">Niedrig</option>
+                                <option value="mittel">Mittel</option>
+                                <option value="hoch">Hoch</option>
+                                <option value="sofort">Sofort</option>
+                            </select>
+                            <input name="unitCode" type="text" placeholder="Einheit / Funkrufname">
+                            <input name="unitType" type="text" placeholder="Typ / Streife / RTW / HLF / Zivil">
+                            <input name="primaryUnit" type="text" placeholder="Primäre Einheit / Call Sign">
+                            <input name="assignedOfficer" type="text" placeholder="Zugewiesener Officer / Crew Lead">
+                            <select name="unitStatus">
+                                <option value="frei">Frei</option>
+                                <option value="zugeteilt">Zugewiesen</option>
+                                <option value="auf_anfahrt">Auf Anfahrt</option>
+                                <option value="am_einsatz">Am Einsatz</option>
+                                <option value="rueckfahrt">Rückfahrt</option>
+                                <option value="ausser_dienst">Außer Dienst</option>
+                            </select>
+                            <input name="vehicleLabel" type="text" placeholder="Fahrzeug / Modell">
+                            <input name="vehiclePlate" type="text" placeholder="Kennzeichen">
+                            <textarea name="crewNames" placeholder="Besatzung / Namen / Callsigns"></textarea>
+                            <select name="scope">
+                                <option value="all">Alle Rettungskräfte</option>
+                                <option value="police">Nur Polizei</option>
+                                <option value="ambulance">Nur Rettungsdienst</option>
+                                <option value="fire">Nur Feuerwehr</option>
+                            </select>
+                            <select name="status">
+                                <option value="offen">Offen</option>
+                                <option value="zugewiesen">Zugewiesen</option>
+                                <option value="erledigt">Erledigt</option>
+                            </select>
+                            <textarea name="notes" placeholder="Lage / Zusatzinformationen"></textarea>
+                            <button type="submit" class="primary-button">Speichern</button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <section id="calendarView" class="view hidden">
+                <div class="grid-two">
+                    <div class="panel">
+                        <div class="panel__header">
+                            <h2>Kalender</h2>
+                        </div>
+                        <div id="calendarList" class="list"></div>
+                    </div>
+                    <div class="panel">
+                        <div class="panel__header">
+                            <h2>Termin anlegen</h2>
+                        </div>
+                        <form id="calendarForm" class="form-grid">
+                            <input type="hidden" name="id">
+                            <input name="title" type="text" placeholder="Termin">
+                            <input name="eventDate" type="datetime-local">
+                            <input name="location" type="text" placeholder="Ort">
+                            <select name="scope">
+                                <option value="all">Alle</option>
+                                <option value="police">Polizei</option>
+                                <option value="ambulance">Rettungsdienst</option>
+                                <option value="fire">Feuerwehr</option>
+                                <option value="doj">Justiz</option>
+                            </select>
+                            <textarea name="notes" placeholder="Beschreibung"></textarea>
+                            <button type="submit" class="primary-button">Speichern</button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+      // Decorative clock — purely visual, no functional impact
+      (function () {
+        var el = document.getElementById('topbarClock');
+        if (!el) return;
+        function tick() {
+          var d = new Date();
+          var pad = function (n) { return String(n).padStart(2, '0'); };
+          el.textContent = pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds()) + ' UTC' + (d.getTimezoneOffset() <= 0 ? '+' : '-') + pad(Math.abs(d.getTimezoneOffset()) / 60);
+        }
+        tick();
+        setInterval(tick, 1000);
+      })();
+    </script>
+</body>
+</html>
