@@ -11,8 +11,6 @@ import {
   Rocket,
   Activity,
   Signal,
-  ChevronDown,
-  Radio,
 } from "lucide-react";
 import "@/App.css";
 
@@ -24,46 +22,12 @@ const departmentMeta = {
   bennys: { name: "Bennys", Icon: Wrench, hue: "#0ea5e9" },
 };
 
-const STATUS = {
-  on_duty: { label: "On Duty", color: "#22c55e", short: "ON" },
-  available: { label: "Available", color: "#38bdf8", short: "AV" },
-  off_duty: { label: "Off Duty", color: "#6b7280", short: "OFF" },
-};
-
-// mock members per department (only used in preview / when NUI omits members)
-const mockMembers = {
-  police: [
-    { id: 1, name: "J. Marston", callsign: "P-101", status: "on_duty", rank: "Sgt" },
-    { id: 2, name: "L. Reyes", callsign: "P-102", status: "available", rank: "Off" },
-    { id: 3, name: "K. Holloway", callsign: "P-103", status: "on_duty", rank: "Off" },
-    { id: 4, name: "M. Tanaka", callsign: "P-104", status: "off_duty", rank: "Lt" },
-  ],
-  sheriff: [
-    { id: 1, name: "R. Callahan", callsign: "S-201", status: "on_duty", rank: "Dep" },
-    { id: 2, name: "D. Vega", callsign: "S-202", status: "available", rank: "Dep" },
-    { id: 3, name: "H. Nakamura", callsign: "S-203", status: "off_duty", rank: "Sgt" },
-  ],
-  medics: [
-    { id: 1, name: "S. Carter", callsign: "M-301", status: "on_duty", rank: "EMT" },
-    { id: 2, name: "P. Dahl", callsign: "M-302", status: "on_duty", rank: "Med" },
-  ],
-  gov: [
-    { id: 1, name: "A. Whitlock", callsign: "G-401", status: "available", rank: "Off" },
-    { id: 2, name: "T. Bellamy", callsign: "G-402", status: "off_duty", rank: "Adm" },
-  ],
-  bennys: [
-    { id: 1, name: "B. Sanchez", callsign: "B-501", status: "on_duty", rank: "Mech" },
-    { id: 2, name: "C. Yoon", callsign: "B-502", status: "available", rank: "Mech" },
-    { id: 3, name: "R. Iverson", callsign: "B-503", status: "off_duty", rank: "Lead" },
-  ],
-};
-
 const mockDepartments = [
-  { id: "police", count: 12, members: mockMembers.police },
-  { id: "sheriff", count: 8, members: mockMembers.sheriff },
-  { id: "medics", count: 5, members: mockMembers.medics },
-  { id: "gov", count: 3, members: mockMembers.gov },
-  { id: "bennys", count: 6, members: mockMembers.bennys },
+  { id: "police", count: 12 },
+  { id: "sheriff", count: 8 },
+  { id: "medics", count: 5 },
+  { id: "gov", count: 3 },
+  { id: "bennys", count: 6 },
 ];
 
 // ---------- helpers ----------
@@ -100,45 +64,8 @@ const Clock = () => {
   );
 };
 
-// ---------- member row ----------
-const MemberRow = ({ member, index, hue }) => {
-  const s = STATUS[member.status] || STATUS.off_duty;
-  return (
-    <div
-      className="member-row"
-      style={{ animationDelay: `${index * 40}ms`, "--statusColor": s.color }}
-      data-testid={`lunar-member-${member.id}`}
-    >
-      <div className="member-row__status">
-        <span className="member-row__dot" />
-        <span className="member-row__dot-ring" />
-      </div>
-
-      <div className="member-row__callsign" style={{ borderColor: `${hue}40` }}>
-        {member.callsign}
-      </div>
-
-      <div className="flex-1 min-w-0">
-        <div className="member-row__name">{member.name}</div>
-        <div className="member-row__rank">
-          {member.rank} · <span style={{ color: s.color }}>{s.label}</span>
-        </div>
-      </div>
-
-      <button
-        type="button"
-        className="member-row__radio"
-        data-testid={`lunar-member-${member.id}-radio`}
-        aria-label={`Radio ${member.callsign}`}
-      >
-        <Radio size={12} strokeWidth={2} />
-      </button>
-    </div>
-  );
-};
-
 // ---------- department row ----------
-const DeptRow = ({ dept, index, isOpen, onToggle }) => {
+const DeptRow = ({ dept, index }) => {
   const meta = departmentMeta[dept.id] || {
     name: dept.id,
     Icon: Users,
@@ -146,99 +73,36 @@ const DeptRow = ({ dept, index, isOpen, onToggle }) => {
   };
   const count = useCountUp(dept.count);
   const Icon = meta.Icon;
-  const members = dept.members || mockMembers[dept.id] || [];
-
-  const statusCounts = useMemo(() => {
-    const c = { on_duty: 0, available: 0, off_duty: 0 };
-    members.forEach((m) => {
-      if (c[m.status] !== undefined) c[m.status]++;
-    });
-    return c;
-  }, [members]);
-
   return (
     <div
-      className={`dept-row group ${isOpen ? "dept-row--open" : ""}`}
+      className="dept-row group"
       style={{ animationDelay: `${index * 80}ms`, "--hue": meta.hue }}
       data-testid={`lunar-dept-${dept.id}`}
     >
-      <button
-        type="button"
-        className="dept-row__head"
-        onClick={() => onToggle(dept.id)}
-        aria-expanded={isOpen}
-        data-testid={`lunar-dept-${dept.id}-toggle`}
-      >
-        <div className="dept-row__rail" />
-        <div className="dept-row__icon">
-          <Icon size={20} strokeWidth={1.75} />
-          <div className="dept-row__icon-glow" />
-        </div>
+      <div className="dept-row__rail" />
+      <div className="dept-row__icon">
+        <Icon size={20} strokeWidth={1.75} />
+        <div className="dept-row__icon-glow" />
+      </div>
 
-        <div className="flex-1 min-w-0">
-          <div className="flex items-baseline gap-2">
-            <span className="dept-row__name">{meta.name}</span>
-            <span className="dept-row__id">/ {dept.id.toUpperCase()}</span>
-          </div>
-          <div className="dept-row__bar">
-            <div
-              className="dept-row__bar-fill"
-              style={{ width: `${Math.min(100, dept.count * 6)}%` }}
-            />
-          </div>
+      <div className="flex-1 min-w-0">
+        <div className="flex items-baseline gap-2">
+          <span className="dept-row__name">{meta.name}</span>
+          <span className="dept-row__id">/ {dept.id.toUpperCase()}</span>
         </div>
-
-        <div className="dept-row__meta">
-          <div className="dept-row__count">
-            <Users size={12} className="opacity-50" strokeWidth={2} />
-            <span className="dept-row__count-num" data-testid={`lunar-dept-${dept.id}-count`}>
-              {String(count).padStart(2, "0")}
-            </span>
-          </div>
-          <ChevronDown
-            size={16}
-            strokeWidth={2}
-            className={`dept-row__chev ${isOpen ? "dept-row__chev--open" : ""}`}
+        <div className="dept-row__bar">
+          <div
+            className="dept-row__bar-fill"
+            style={{ width: `${Math.min(100, dept.count * 6)}%` }}
           />
         </div>
-      </button>
+      </div>
 
-      {/* Member panel */}
-      <div
-        className={`dept-row__panel ${isOpen ? "dept-row__panel--open" : ""}`}
-        data-testid={`lunar-dept-${dept.id}-panel`}
-      >
-        <div className="dept-row__panel-inner">
-          {/* status summary */}
-          <div className="dept-row__summary">
-            <div className="dept-row__chip" data-status="on_duty">
-              <span className="dept-row__chip-dot" style={{ background: STATUS.on_duty.color, boxShadow: `0 0 8px ${STATUS.on_duty.color}` }} />
-              On Duty
-              <span className="dept-row__chip-num">{statusCounts.on_duty}</span>
-            </div>
-            <div className="dept-row__chip" data-status="available">
-              <span className="dept-row__chip-dot" style={{ background: STATUS.available.color, boxShadow: `0 0 8px ${STATUS.available.color}` }} />
-              Available
-              <span className="dept-row__chip-num">{statusCounts.available}</span>
-            </div>
-            <div className="dept-row__chip" data-status="off_duty">
-              <span className="dept-row__chip-dot" style={{ background: STATUS.off_duty.color }} />
-              Off Duty
-              <span className="dept-row__chip-num">{statusCounts.off_duty}</span>
-            </div>
-          </div>
-
-          {/* members list */}
-          {members.length > 0 ? (
-            <div className="dept-row__members">
-              {members.map((m, i) => (
-                <MemberRow key={m.id} member={m} index={i} hue={meta.hue} />
-              ))}
-            </div>
-          ) : (
-            <div className="dept-row__empty">No personnel data available</div>
-          )}
-        </div>
+      <div className="dept-row__count">
+        <Users size={12} className="opacity-50" strokeWidth={2} />
+        <span className="dept-row__count-num" data-testid={`lunar-dept-${dept.id}-count`}>
+          {String(count).padStart(2, "0")}
+        </span>
       </div>
     </div>
   );
@@ -248,7 +112,6 @@ const DeptRow = ({ dept, index, isOpen, onToggle }) => {
 export default function App() {
   const [visible, setVisible] = useState(true);
   const [departments, setDepartments] = useState(mockDepartments);
-  const [openId, setOpenId] = useState(null);
 
   useNuiEvent("open", (data) => {
     if (data && data.departments) setDepartments(data.departments);
@@ -260,10 +123,6 @@ export default function App() {
     setVisible(false);
     fetchNui("close", {});
     if (isDebug) setTimeout(() => setVisible(true), 250);
-  }, []);
-
-  const handleToggle = useCallback((id) => {
-    setOpenId((current) => (current === id ? null : id));
   }, []);
 
   useEffect(() => {
@@ -353,13 +212,7 @@ export default function App() {
 
         <div className="lunar-list" data-testid="lunar-list">
           {departments.map((dept, idx) => (
-            <DeptRow
-              dept={dept}
-              index={idx}
-              key={dept.id}
-              isOpen={openId === dept.id}
-              onToggle={handleToggle}
-            />
+            <DeptRow dept={dept} index={idx} key={dept.id} />
           ))}
         </div>
 
