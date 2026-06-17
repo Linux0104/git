@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Rubbellos</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container" style="display: none;">
+        <div class="ambient-bg">
+            <div class="orb orb-1"></div>
+            <div class="orb orb-2"></div>
+            <div class="orb orb-3"></div>
+            <div class="grid-overlay"></div>
+        </div>
+
+        <div class="card-container">
+            <div class="header">
+                <div class="title-row">
+                    <span class="title-icon">◆</span>
+                    <h1>RUBBELLOS</h1>
+                    <span class="title-icon">◆</span>
+                </div>
+                <div class="subtitle">SCRATCH &amp; WIN</div>
+            </div>
+
+            <div class="instructions">
+                <div class="instructions-icon">i</div>
+                <p>Fahre mit der Maus über die Felder und rubbel sie frei! Wenn 3 oder mehr Symbole gleich sind, gewinnst du!</p>
+            </div>
+
+            <div class="cards-grid" id="cardsGrid">
+                <!-- Wird mit JavaScript gefüllt -->
+            </div>
+
+            <div class="progress-bar">
+                <div class="progress-label">
+                    <span>FORTSCHRITT</span>
+                    <span id="progressText">0 / 9</span>
+                </div>
+                <div class="progress-track">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+            </div>
+
+            <div id="result" class="result hidden">
+                <div class="result-content">
+                    <div class="result-glow"></div>
+                    <h2 id="resultTitle"></h2>
+                    <p id="resultMessage"></p>
+                    <button id="resultButton">Fertig</button>
+                </div>
+            </div>
+
+            <button class="close-btn" aria-label="Schließen">
+                <span>✕</span>
+            </button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
