@@ -1,3 +1,10 @@
+/* =====================================================================
+   BLIP.OS — NUI client logic
+   100% kompatibel zur FiveM-Backend-API.
+   Element-IDs und Callback-Endpoints sind identisch zum Original-Script,
+   sodass kein Lua-Code angepasst werden muss.
+   ===================================================================== */
+
 const app = {
   visible: false,
   filter: 'all',
@@ -24,6 +31,12 @@ const app = {
   }
 };
 
+const CATEGORY_ICONS = {
+  personal: 'i-user',
+  shared:   'i-share',
+  global:   'i-globe'
+};
+
 function post(action, data = {}) {
   return fetch(`https://${GetParentResourceName()}/${action}`, {
     method: 'POST',
@@ -35,7 +48,7 @@ function post(action, data = {}) {
 function categoryLabel(category) {
   if (category === 'global') return 'Global';
   if (category === 'shared') return 'Geteilt';
-  return 'Persoenlich';
+  return 'Persönlich';
 }
 
 function typeLabel(type) {
@@ -78,8 +91,8 @@ function refreshCounters() {
   const counts = {
     all: app.data.blips.length,
     personal: app.data.blips.filter((blip) => blip.category === 'personal').length,
-    shared: app.data.blips.filter((blip) => blip.category === 'shared').length,
-    global: app.data.blips.filter((blip) => blip.category === 'global').length
+    shared:   app.data.blips.filter((blip) => blip.category === 'shared').length,
+    global:   app.data.blips.filter((blip) => blip.category === 'global').length
   };
 
   document.getElementById('countAll').textContent = counts.all;
@@ -95,13 +108,19 @@ function refreshCounters() {
 function renderList() {
   const list = document.getElementById('blipList');
   const blips = getFilteredBlips();
-  document.getElementById('visibleCount').textContent = `${blips.length} Eintraege`;
+  document.getElementById('visibleCount').textContent = `${blips.length} ENTRIES`;
   list.innerHTML = '';
 
   if (!blips.length) {
     const empty = document.createElement('div');
-    empty.className = 'blip-item';
-    empty.innerHTML = '<strong>Keine Blips gefunden</strong><p>Erstelle einen neuen Eintrag oder aendere den Filter.</p>';
+    empty.className = 'blip-item empty-state';
+    empty.innerHTML = `
+      <div class="blip-item-head">
+        <strong>// NO SIGNAL</strong>
+        <span class="chip">EMPTY</span>
+      </div>
+      <p>Keine Blips für den aktuellen Filter. Erstelle einen neuen Eintrag oder ändere den Filter.</p>
+    `;
     list.appendChild(empty);
     return;
   }
@@ -111,12 +130,24 @@ function renderList() {
     const item = document.createElement('button');
     item.type = 'button';
     item.className = `blip-item ${Number(blip.id) === Number(app.selectedId) ? 'active' : ''}`;
+    item.dataset.category = blip.category || 'personal';
+    const iconId = CATEGORY_ICONS[blip.category] || 'i-pin';
     item.innerHTML = `
       <div class="blip-item-head">
-        <strong>${escapeHtml(blip.name)}</strong>
+        <strong>
+          <svg class="ic blip-item-icon"><use href="#${iconId}"/></svg>
+          ${escapeHtml(blip.name)}
+        </strong>
         <span class="chip">${categoryLabel(blip.category)}</span>
       </div>
-      <p>${typeLabel(blip.blipType)} | ${displayLabel(blip.display)} | Sprite ${blip.sprite}${hidden ? ' | Ausgeblendet' : ''}</p>
+      <p>
+        <span>${typeLabel(blip.blipType)}</span>
+        <span class="sep">·</span>
+        <span>${displayLabel(blip.display)}</span>
+        <span class="sep">·</span>
+        <span>SPR ${blip.sprite}</span>
+        ${hidden ? '<span class="sep">·</span><span class="muted">HIDDEN</span>' : ''}
+      </p>
     `;
     item.addEventListener('click', () => {
       app.selectedId = blip.id;
@@ -143,18 +174,25 @@ function renderDetail() {
   const hidden = app.data.settings.hiddenBlips && app.data.settings.hiddenBlips[blip.id];
   document.getElementById('detailCategory').textContent = categoryLabel(blip.category);
   document.getElementById('detailName').textContent = blip.name;
-  document.getElementById('detailOwner').textContent = blip.isGlobal ? 'Sichtbar fuer alle Spieler' : `Besitzer: ${blip.ownerName || 'Unbekannt'}`;
+  document.getElementById('detailOwner').textContent = blip.isGlobal
+    ? '// Sichtbar für alle Spieler'
+    : `// Owner · ${blip.ownerName || 'Unbekannt'}`;
   document.getElementById('detailType').textContent = typeLabel(blip.blipType);
   document.getElementById('detailSprite').textContent = blip.sprite;
   document.getElementById('detailColor').textContent = blip.color;
   document.getElementById('detailDisplay').textContent = displayLabel(blip.display);
-  document.getElementById('detailCoords').textContent = `X ${Number(blip.coords.x).toFixed(2)} | Y ${Number(blip.coords.y).toFixed(2)} | Z ${Number(blip.coords.z).toFixed(2)}`;
-  document.getElementById('toggleBlipVisibilityBtn').textContent = hidden ? 'Einblenden' : 'Ausblenden';
+  document.getElementById('detailCoords').textContent =
+    `X ${Number(blip.coords.x).toFixed(2)}   Y ${Number(blip.coords.y).toFixed(2)}   Z ${Number(blip.coords.z).toFixed(2)}`;
+
+  const toggleVisBtn = document.getElementById('toggleBlipVisibilityBtn');
+  toggleVisBtn.innerHTML = hidden
+    ? '<svg class="ic"><use href="#i-eye"/></svg><span>Einblenden</span>'
+    : '<svg class="ic"><use href="#i-eye-off"/></svg><span>Ausblenden</span>';
 
   const extras = [];
-  if (blip.blipType === 'coord') extras.push(`Groesse ${blip.scale}`);
+  if (blip.blipType === 'coord')  extras.push(`Größe ${blip.scale}`);
   if (blip.blipType === 'radius') extras.push(`Radius ${blip.radius}`, `Alpha ${blip.alpha}`);
-  if (blip.blipType === 'area') extras.push(`Breite ${blip.width}`, `Hoehe ${blip.height}`, `Alpha ${blip.alpha}`);
+  if (blip.blipType === 'area')   extras.push(`Breite ${blip.width}`, `Höhe ${blip.height}`, `Alpha ${blip.alpha}`);
   extras.push(blip.shortRange ? 'Nahbereich aktiv' : 'Nahbereich aus');
 
   const extrasNode = document.getElementById('detailExtras');
@@ -169,14 +207,16 @@ function renderDetail() {
   shareTargets.innerHTML = '';
   if (blip.canShare) {
     if (!blip.sharedTargets.length) {
-      shareTargets.innerHTML = '<div class="share-entry"><span>Aktuell mit niemandem geteilt.</span></div>';
+      shareTargets.innerHTML = '<div class="share-entry empty"><span>// keine Freigaben aktiv</span></div>';
     } else {
       blip.sharedTargets.forEach((target) => {
         const entry = document.createElement('div');
         entry.className = 'share-entry';
         entry.innerHTML = `
-          <span>${escapeHtml(target.label)}</span>
-          <button class="ghost-btn small danger" data-target="${escapeHtml(target.identifier)}">Entfernen</button>
+          <span><svg class="ic" style="color:var(--neon)"><use href="#i-user"/></svg> ${escapeHtml(target.label)}</span>
+          <button class="ghost-btn small danger" data-target="${escapeHtml(target.identifier)}">
+            <svg class="ic"><use href="#i-trash"/></svg> Entfernen
+          </button>
         `;
         entry.querySelector('button').addEventListener('click', async () => {
           const result = await post('revokeShare', {
@@ -195,8 +235,8 @@ function renderDetail() {
 
 function renderToggles() {
   document.getElementById('togglePersonal').checked = !app.data.settings.hidePersonal;
-  document.getElementById('toggleShared').checked = !app.data.settings.hideShared;
-  document.getElementById('toggleGlobal').checked = !app.data.settings.hideGlobal;
+  document.getElementById('toggleShared').checked   = !app.data.settings.hideShared;
+  document.getElementById('toggleGlobal').checked   = !app.data.settings.hideGlobal;
 }
 
 function render() {
@@ -218,10 +258,10 @@ function escapeHtml(value) {
 function fillEditorHints() {
   document.getElementById('spriteHint').textContent = app.data.config.spriteSuggestions
     .map((entry) => `${entry.label}=${entry.value}`)
-    .join(' | ');
+    .join('  |  ');
   document.getElementById('colorHint').textContent = app.data.config.colorSuggestions
     .map((entry) => `${entry.label}=${entry.value}`)
-    .join(' | ');
+    .join('  |  ');
 
   const displaySelect = document.getElementById('fieldDisplay');
   displaySelect.innerHTML = '';
@@ -263,8 +303,8 @@ function openEditor(mode, blip = null) {
 
   const defaults = app.data.config.defaults || {};
   const titleMap = {
-    create: 'Blip erstellen',
-    edit: 'Blip bearbeiten',
+    create:    'Blip erstellen',
+    edit:      'Blip bearbeiten',
     duplicate: 'Blip duplizieren'
   };
   document.getElementById('editorTitle').textContent = titleMap[mode] || 'Blip speichern';
@@ -316,7 +356,7 @@ function openShare() {
   if (!players.length) {
     const option = document.createElement('option');
     option.value = '';
-    option.textContent = 'Kein verfuegbarer Spieler';
+    option.textContent = '// kein verfügbarer Spieler';
     select.appendChild(option);
   } else {
     players.forEach((player) => {
@@ -388,9 +428,9 @@ async function handleEditorSubmit(event) {
 async function handleVisibilityChange() {
   const result = await post('updateVisibility', {
     hidePersonal: !document.getElementById('togglePersonal').checked,
-    hideShared: !document.getElementById('toggleShared').checked,
-    hideGlobal: !document.getElementById('toggleGlobal').checked,
-    hiddenBlips: app.data.settings.hiddenBlips || {}
+    hideShared:   !document.getElementById('toggleShared').checked,
+    hideGlobal:   !document.getElementById('toggleGlobal').checked,
+    hiddenBlips:  app.data.settings.hiddenBlips || {}
   });
   if (result && result.ok) {
     syncFromClient(result.payload);
@@ -443,7 +483,7 @@ function bindEvents() {
   document.getElementById('deleteBtn').addEventListener('click', async () => {
     const blip = getSelectedBlip();
     if (!blip) return;
-    const confirmed = window.confirm(`Soll "${blip.name}" wirklich geloescht werden?`);
+    const confirmed = window.confirm(`Soll "${blip.name}" wirklich gelöscht werden?`);
     if (!confirmed) return;
     const result = await post('deleteBlip', { blipId: blip.id });
     if (result && result.ok) syncFromClient(result.payload);
@@ -469,7 +509,13 @@ function bindEvents() {
   document.getElementById('closeEditorBtn').addEventListener('click', closeEditor);
   document.getElementById('cancelEditorBtn').addEventListener('click', closeEditor);
 
+  // Ctrl+K / Cmd+K to focus search
   window.addEventListener('keydown', (event) => {
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
+      event.preventDefault();
+      document.getElementById('searchInput').focus();
+      document.getElementById('searchInput').select();
+    }
     if (event.key === 'Escape') {
       if (!document.getElementById('editorModal').classList.contains('hidden')) {
         closeEditor();
@@ -498,3 +544,11 @@ window.addEventListener('message', (event) => {
 document.addEventListener('DOMContentLoaded', () => {
   bindEvents();
 });
+
+/* Safety: in browsers without GetParentResourceName, define a stub so
+   live preview / standalone testing won't crash. The actual FiveM NUI
+   environment will always provide this function. */
+if (typeof GetParentResourceName !== 'function') {
+  // eslint-disable-next-line no-global-assign, no-implicit-globals
+  GetParentResourceName = () => 'preview';
+}

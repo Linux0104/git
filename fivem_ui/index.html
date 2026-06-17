@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BLIP.OS // Mapnet Terminal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800&family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- ───── ICON SPRITES (inline so no network needed) ───── -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="i-plus" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M12 5v14M5 12h14"/></symbol>
+      <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path stroke="currentColor" stroke-width="2" stroke-linecap="round" d="m20 20-3.5-3.5"/></symbol>
+      <symbol id="i-refresh" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 1 1-3-6.7L21 8M21 3v5h-5"/></symbol>
+      <symbol id="i-x" viewBox="0 0 24 24"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M6 6l12 12M18 6 6 18"/></symbol>
+      <symbol id="i-layers" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="m12 3 9 5-9 5-9-5 9-5Zm-9 9 9 5 9-5m-18 4 9 5 9-5"/></symbol>
+      <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M4 21c0-4 4-7 8-7s8 3 8 7"/></symbol>
+      <symbol id="i-share" viewBox="0 0 24 24"><circle cx="6" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="18" cy="6" r="3" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="18" cy="18" r="3" fill="none" stroke="currentColor" stroke-width="2"/><path stroke="currentColor" stroke-width="2" d="m8.6 10.6 6.8-3.2M8.6 13.4l6.8 3.2"/></symbol>
+      <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path fill="none" stroke="currentColor" stroke-width="2" d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></symbol>
+      <symbol id="i-eye" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+      <symbol id="i-eye-off" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M3 3l18 18M10.6 6.1A11 11 0 0 1 12 6c6.5 0 10 7 10 7a18 18 0 0 1-2.4 3.2M6.6 6.6C3.5 8.6 2 12 2 12s3.5 7 10 7c1.7 0 3.3-.4 4.6-1.1M9.9 9.9a3 3 0 0 0 4.2 4.2"/></symbol>
+      <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path fill="none" stroke="currentColor" stroke-width="2" d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></symbol>
+      <symbol id="i-edit" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 20h4l10-10-4-4L4 16v4ZM14 6l4 4"/></symbol>
+      <symbol id="i-trash" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 7h16M9 7V4h6v3M6 7l1 13a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-13M10 11v6M14 11v6"/></symbol>
+      <symbol id="i-pin" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7Z"/><circle cx="12" cy="9" r="2.5" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+      <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></symbol>
+      <symbol id="i-radio" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2" fill="currentColor"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M8 8a5.6 5.6 0 0 0 0 8M16 8a5.6 5.6 0 0 1 0 8M5 5a10 10 0 0 0 0 14M19 5a10 10 0 0 1 0 14"/></symbol>
+      <symbol id="i-zap" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"/></symbol>
+      <symbol id="i-chev" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m9 6 6 6-6 6"/></symbol>
+      <symbol id="i-grid" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"/></symbol>
+      <symbol id="i-cube" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M12 3 3 8v8l9 5 9-5V8l-9-5Zm0 0v18M3 8l9 5 9-5"/></symbol>
+      <symbol id="i-bolt" viewBox="0 0 24 24"><path fill="currentColor" d="M13 2 3 14h7l-1 8 11-13h-8l1-7Z"/></symbol>
+    </defs>
+  </svg>
+
+  <div id="app" class="hidden">
+    <!-- Animated background layers -->
+    <div class="bg">
+      <div class="bg-grid"></div>
+      <div class="bg-radar">
+        <span class="radar-ring r1"></span>
+        <span class="radar-ring r2"></span>
+        <span class="radar-ring r3"></span>
+        <span class="radar-sweep"></span>
+      </div>
+      <div class="bg-scanlines"></div>
+      <div class="bg-noise"></div>
+      <div class="bg-vignette"></div>
+    </div>
+
+    <!-- HUD top bar -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <div class="brand">
+          <div class="brand-mark">
+            <svg class="ic"><use href="#i-bolt"/></svg>
+          </div>
+          <div class="brand-text">
+            <h1>BLIP<span class="dot">.</span>OS</h1>
+            <p>// MAPNET CONTROL TERMINAL · v2.4</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="topbar-center">
+        <div class="hud-search">
+          <svg class="ic"><use href="#i-search"/></svg>
+          <input id="searchInput" type="text" placeholder="SEARCH BLIPS // FILTER STREAM…" autocomplete="off">
+          <kbd>⌘K</kbd>
+        </div>
+      </div>
+
+      <div class="topbar-right">
+        <button id="reloadBtn" class="hud-btn" title="Daten neu laden">
+          <svg class="ic"><use href="#i-refresh"/></svg>
+          <span>SYNC</span>
+        </button>
+        <button id="closeBtn" class="hud-btn danger" title="Schließen">
+          <svg class="ic"><use href="#i-x"/></svg>
+          <span>EXIT</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Main grid -->
+    <div class="stage">
+      <!-- LEFT: Filters & Stats panel -->
+      <aside class="panel panel-left">
+        <div class="panel-corner tl"></div><div class="panel-corner tr"></div>
+        <div class="panel-corner bl"></div><div class="panel-corner br"></div>
+
+        <div class="panel-head">
+          <span class="pulse-dot"></span>
+          <h2>STREAMS</h2>
+          <span class="panel-tag">FILTER</span>
+        </div>
+
+        <button id="createBlipBtn" class="cta-btn">
+          <svg class="ic"><use href="#i-plus"/></svg>
+          <span>NEW BLIP</span>
+          <span class="cta-shine"></span>
+        </button>
+
+        <div class="stats">
+          <button class="stat-card active" data-filter="all">
+            <svg class="ic stat-ic"><use href="#i-layers"/></svg>
+            <span class="stat-label">ALLE</span>
+            <strong id="countAll">0</strong>
+            <span class="stat-line"></span>
+          </button>
+          <button class="stat-card" data-filter="personal">
+            <svg class="ic stat-ic"><use href="#i-user"/></svg>
+            <span class="stat-label">PRIVAT</span>
+            <strong id="countPersonal">0</strong>
+            <span class="stat-line"></span>
+          </button>
+          <button class="stat-card" data-filter="shared">
+            <svg class="ic stat-ic"><use href="#i-share"/></svg>
+            <span class="stat-label">GETEILT</span>
+            <strong id="countShared">0</strong>
+            <span class="stat-line"></span>
+          </button>
+          <button class="stat-card" data-filter="global">
+            <svg class="ic stat-ic"><use href="#i-globe"/></svg>
+            <span class="stat-label">GLOBAL</span>
+            <strong id="countGlobal">0</strong>
+            <span class="stat-line"></span>
+          </button>
+        </div>
+
+        <div class="section-divider"><span>VISIBILITY MASK</span></div>
+
+        <div class="toggles">
+          <label class="toggle-row">
+            <span class="t-label"><svg class="ic"><use href="#i-user"/></svg> Persönlich</span>
+            <span class="switch"><input type="checkbox" id="togglePersonal"><i></i></span>
+          </label>
+          <label class="toggle-row">
+            <span class="t-label"><svg class="ic"><use href="#i-share"/></svg> Geteilt</span>
+            <span class="switch"><input type="checkbox" id="toggleShared"><i></i></span>
+          </label>
+          <label class="toggle-row">
+            <span class="t-label"><svg class="ic"><use href="#i-globe"/></svg> Global</span>
+            <span class="switch"><input type="checkbox" id="toggleGlobal"><i></i></span>
+          </label>
+        </div>
+
+        <div class="hints">
+          <div class="hint-card">
+            <svg class="ic"><use href="#i-pin"/></svg>
+            <p><b>WAYPOINT</b> setzt sofort ein Navigationsziel.</p>
+          </div>
+          <div class="hint-card">
+            <svg class="ic"><use href="#i-eye-off"/></svg>
+            <p><b>HIDE</b> wirkt nur lokal für dich.</p>
+          </div>
+          <div class="hint-card">
+            <svg class="ic"><use href="#i-zap"/></svg>
+            <p><b>GLOBAL</b> ist Admin-Only.</p>
+          </div>
+        </div>
+      </aside>
+
+      <!-- CENTER: Blip list -->
+      <section class="panel panel-center">
+        <div class="panel-corner tl"></div><div class="panel-corner tr"></div>
+        <div class="panel-corner bl"></div><div class="panel-corner br"></div>
+
+        <div class="panel-head">
+          <span class="pulse-dot ok"></span>
+          <h2>BLIP REGISTRY</h2>
+          <span id="visibleCount" class="panel-tag">0 ENTRIES</span>
+        </div>
+
+        <div id="blipList" class="blip-list"></div>
+      </section>
+
+      <!-- RIGHT: Detail view -->
+      <section class="panel panel-right">
+        <div class="panel-corner tl"></div><div class="panel-corner tr"></div>
+        <div class="panel-corner bl"></div><div class="panel-corner br"></div>
+
+        <div class="panel-head">
+          <span class="pulse-dot warn"></span>
+          <h2>INSPECTOR</h2>
+          <span class="panel-tag">DETAIL</span>
+        </div>
+
+        <div id="detailEmpty" class="detail-empty">
+          <div class="detail-empty-orb">
+            <svg class="ic"><use href="#i-target"/></svg>
+            <span class="orb-ring"></span>
+            <span class="orb-ring r2"></span>
+          </div>
+          <h3>NO SIGNAL</h3>
+          <p>Wähle einen Eintrag links oder erstelle einen neuen Blip, um Telemetrie-Daten zu sehen.</p>
+        </div>
+
+        <div id="detailView" class="detail-view hidden">
+          <div class="detail-header">
+            <div class="detail-id">
+              <div id="detailCategory" class="chip"></div>
+              <h3 id="detailName"></h3>
+              <p id="detailOwner"></p>
+            </div>
+            <div class="detail-actions">
+              <button id="waypointBtn" class="action-btn" title="Wegpunkt">
+                <svg class="ic"><use href="#i-pin"/></svg><span>WP</span>
+              </button>
+              <button id="toggleBlipVisibilityBtn" class="action-btn" title="Sichtbarkeit">
+                <svg class="ic"><use href="#i-eye"/></svg><span>Ausblenden</span>
+              </button>
+              <button id="duplicateBtn" class="action-btn" title="Duplizieren">
+                <svg class="ic"><use href="#i-copy"/></svg><span>Clone</span>
+              </button>
+              <button id="editBtn" class="action-btn" title="Bearbeiten">
+                <svg class="ic"><use href="#i-edit"/></svg><span>Edit</span>
+              </button>
+              <button id="deleteBtn" class="action-btn danger" title="Löschen">
+                <svg class="ic"><use href="#i-trash"/></svg><span>Del</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="detail-metrics">
+            <div class="metric">
+              <span class="metric-key">TYP</span>
+              <strong id="detailType"></strong>
+              <span class="metric-bar"></span>
+            </div>
+            <div class="metric">
+              <span class="metric-key">SPRITE</span>
+              <strong id="detailSprite"></strong>
+              <span class="metric-bar"></span>
+            </div>
+            <div class="metric">
+              <span class="metric-key">FARBE</span>
+              <strong id="detailColor"></strong>
+              <span class="metric-bar"></span>
+            </div>
+            <div class="metric">
+              <span class="metric-key">ANZEIGE</span>
+              <strong id="detailDisplay"></strong>
+              <span class="metric-bar"></span>
+            </div>
+          </div>
+
+          <div class="detail-block">
+            <div class="block-head">
+              <svg class="ic"><use href="#i-cube"/></svg>
+              <span>WORLD COORDINATES</span>
+            </div>
+            <p id="detailCoords" class="mono"></p>
+          </div>
+
+          <div class="detail-block">
+            <div class="block-head">
+              <svg class="ic"><use href="#i-grid"/></svg>
+              <span>EXTRA PARAMETERS</span>
+            </div>
+            <div id="detailExtras" class="detail-extras"></div>
+          </div>
+
+          <div class="detail-block" id="sharePanel">
+            <div class="block-head">
+              <svg class="ic"><use href="#i-share"/></svg>
+              <span>ACCESS GRANTS</span>
+              <button id="openShareBtn" class="block-action">
+                <svg class="ic"><use href="#i-plus"/></svg> Teilen
+              </button>
+            </div>
+            <div id="shareTargets" class="share-targets"></div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ───── EDITOR MODAL ───── -->
+    <div id="editorModal" class="modal hidden">
+      <div class="modal-card large">
+        <div class="modal-corner tl"></div><div class="modal-corner tr"></div>
+        <div class="modal-corner bl"></div><div class="modal-corner br"></div>
+
+        <div class="modal-header">
+          <div>
+            <span class="modal-tag"><svg class="ic"><use href="#i-bolt"/></svg> EDITOR PROTOCOL</span>
+            <h3 id="editorTitle">Blip erstellen</h3>
+            <p>Lege Typ, Position und Darstellung deines Map-Markers fest.</p>
+          </div>
+          <button id="closeEditorBtn" class="icon-btn">
+            <svg class="ic"><use href="#i-x"/></svg>
+          </button>
+        </div>
+
+        <form id="editorForm" class="form-grid">
+          <label class="field full">
+            <span class="field-label">Name</span>
+            <input id="fieldName" type="text" maxlength="60" required placeholder="z.B. Drogenlabor Nord">
+          </label>
+
+          <label class="field">
+            <span class="field-label">Blip-Typ</span>
+            <div class="select-wrap">
+              <select id="fieldType">
+                <option value="coord">Koordinaten Blip</option>
+                <option value="radius">Radius Blip</option>
+                <option value="area">Area Blip</option>
+              </select>
+              <svg class="ic"><use href="#i-chev"/></svg>
+            </div>
+          </label>
+
+          <label class="field">
+            <span class="field-label">Position von</span>
+            <div class="select-wrap">
+              <select id="fieldPositionMode">
+                <option value="current">Aktuelle Position</option>
+                <option value="waypoint">Karten-Wegpunkt</option>
+                <option value="manual">Manuell eingeben</option>
+                <option value="original">Vorhandene Position</option>
+              </select>
+              <svg class="ic"><use href="#i-chev"/></svg>
+            </div>
+          </label>
+
+          <label class="field" id="scopeField">
+            <span class="field-label">Bereich</span>
+            <div class="select-wrap">
+              <select id="fieldScope">
+                <option value="personal">Persönlich</option>
+                <option value="global">Global</option>
+              </select>
+              <svg class="ic"><use href="#i-chev"/></svg>
+            </div>
+          </label>
+
+          <label class="field">
+            <span class="field-label">Sprite ID</span>
+            <input id="fieldSprite" type="number" min="1" max="999" required>
+            <small id="spriteHint" class="hint-text"></small>
+          </label>
+
+          <label class="field">
+            <span class="field-label">Farb-ID</span>
+            <input id="fieldColor" type="number" min="0" max="85" required>
+            <small id="colorHint" class="hint-text"></small>
+          </label>
+
+          <label class="field">
+            <span class="field-label">Anzeige</span>
+            <div class="select-wrap">
+              <select id="fieldDisplay"></select>
+              <svg class="ic"><use href="#i-chev"/></svg>
+            </div>
+          </label>
+
+          <label class="field" id="scaleField">
+            <span class="field-label">Größe</span>
+            <input id="fieldScale" type="number" min="0.1" max="2.0" step="0.1">
+          </label>
+
+          <label class="field" id="alphaField">
+            <span class="field-label">Alpha</span>
+            <input id="fieldAlpha" type="number" min="0" max="255" step="1">
+          </label>
+
+          <label class="field" id="radiusField">
+            <span class="field-label">Radius</span>
+            <input id="fieldRadius" type="number" min="1" max="5000" step="1">
+          </label>
+
+          <label class="field" id="widthField">
+            <span class="field-label">Breite</span>
+            <input id="fieldWidth" type="number" min="1" max="5000" step="1">
+          </label>
+
+          <label class="field" id="heightField">
+            <span class="field-label">Höhe</span>
+            <input id="fieldHeight" type="number" min="1" max="5000" step="1">
+          </label>
+
+          <label class="check-row full">
+            <span class="switch"><input id="fieldShortRange" type="checkbox"><i></i></span>
+            <span class="t-label">Nur im Nahbereich der Minimap sichtbar</span>
+          </label>
+
+          <div id="manualCoordsBox" class="coords-box hidden full">
+            <div class="block-head">
+              <svg class="ic"><use href="#i-cube"/></svg>
+              <span>MANUELLE KOORDINATEN</span>
+            </div>
+            <div class="coords-grid">
+              <label class="field">
+                <span class="field-label">X</span>
+                <input id="fieldCoordX" type="number" step="0.01">
+              </label>
+              <label class="field">
+                <span class="field-label">Y</span>
+                <input id="fieldCoordY" type="number" step="0.01">
+              </label>
+              <label class="field">
+                <span class="field-label">Z</span>
+                <input id="fieldCoordZ" type="number" step="0.01">
+              </label>
+            </div>
+          </div>
+
+          <div class="form-actions full">
+            <button type="button" id="cancelEditorBtn" class="ghost-btn">
+              <svg class="ic"><use href="#i-x"/></svg> Abbrechen
+            </button>
+            <button type="submit" class="cta-btn">
+              <svg class="ic"><use href="#i-bolt"/></svg> Speichern
+              <span class="cta-shine"></span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- ───── SHARE MODAL ───── -->
+    <div id="shareModal" class="modal hidden">
+      <div class="modal-card">
+        <div class="modal-corner tl"></div><div class="modal-corner tr"></div>
+        <div class="modal-corner bl"></div><div class="modal-corner br"></div>
+
+        <div class="modal-header">
+          <div>
+            <span class="modal-tag"><svg class="ic"><use href="#i-share"/></svg> ACCESS PROTOCOL</span>
+            <h3>Blip teilen</h3>
+            <p>Wähle einen Online-Spieler für die Freigabe.</p>
+          </div>
+          <button id="closeShareBtn" class="icon-btn">
+            <svg class="ic"><use href="#i-x"/></svg>
+          </button>
+        </div>
+
+        <div class="share-form">
+          <label class="field full">
+            <span class="field-label">Online-Spieler</span>
+            <div class="select-wrap">
+              <select id="sharePlayerSelect"></select>
+              <svg class="ic"><use href="#i-chev"/></svg>
+            </div>
+          </label>
+          <div class="form-actions full">
+            <button id="cancelShareBtn" class="ghost-btn">
+              <svg class="ic"><use href="#i-x"/></svg> Abbrechen
+            </button>
+            <button id="confirmShareBtn" class="cta-btn">
+              <svg class="ic"><use href="#i-share"/></svg> Teilen
+              <span class="cta-shine"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
