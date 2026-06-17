@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blips Creator</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app" class="hidden">
+    <div class="backdrop"></div>
+
+    <div class="shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-mark">B</div>
+          <div>
+            <h1>Blips Creator</h1>
+            <p>Eigene Kartenverwaltung</p>
+          </div>
+        </div>
+
+        <div class="sidebar-section">
+          <button id="createBlipBtn" class="primary-btn">Neuen Blip erstellen</button>
+        </div>
+
+        <div class="sidebar-section stats">
+          <button class="stat-card active" data-filter="all">
+            <span class="stat-label">Alle Blips</span>
+            <strong id="countAll">0</strong>
+          </button>
+          <button class="stat-card" data-filter="personal">
+            <span class="stat-label">Persoenlich</span>
+            <strong id="countPersonal">0</strong>
+          </button>
+          <button class="stat-card" data-filter="shared">
+            <span class="stat-label">Geteilt</span>
+            <strong id="countShared">0</strong>
+          </button>
+          <button class="stat-card" data-filter="global">
+            <span class="stat-label">Global</span>
+            <strong id="countGlobal">0</strong>
+          </button>
+        </div>
+
+        <div class="sidebar-section toggles">
+          <div class="section-title">Sichtbarkeit</div>
+          <label class="toggle-row">
+            <span>Persoenliche Blips</span>
+            <input type="checkbox" id="togglePersonal">
+          </label>
+          <label class="toggle-row">
+            <span>Geteilte Blips</span>
+            <input type="checkbox" id="toggleShared">
+          </label>
+          <label class="toggle-row">
+            <span>Globale Blips</span>
+            <input type="checkbox" id="toggleGlobal">
+          </label>
+        </div>
+
+        <div class="sidebar-section hints">
+          <div class="section-title">Kurzinfo</div>
+          <p>`Wegpunkt` setzt sofort ein Navi-Ziel.</p>
+          <p>`Ausblenden` betrifft nur dich selbst.</p>
+          <p>`Global` ist nur fuer Admins verfuegbar.</p>
+        </div>
+      </aside>
+
+      <main class="content">
+        <header class="content-header">
+          <div>
+            <h2>Deine Blips</h2>
+            <p>Verwalte persoenliche, geteilte und globale Eintraege.</p>
+          </div>
+
+          <div class="header-actions">
+            <input id="searchInput" type="text" placeholder="Blips durchsuchen...">
+            <button id="reloadBtn" class="ghost-btn">Neu laden</button>
+            <button id="closeBtn" class="ghost-btn danger">Schliessen</button>
+          </div>
+        </header>
+
+        <section class="grid">
+          <div class="panel list-panel">
+            <div class="panel-title-row">
+              <h3>Blip-Liste</h3>
+              <span id="visibleCount" class="badge">0 Eintraege</span>
+            </div>
+            <div id="blipList" class="blip-list"></div>
+          </div>
+
+          <div class="panel detail-panel">
+            <div id="detailEmpty" class="detail-empty">
+              <h3>Kein Blip ausgewaehlt</h3>
+              <p>Waehle links einen Eintrag oder erstelle direkt einen neuen Blip.</p>
+            </div>
+
+            <div id="detailView" class="detail-view hidden">
+              <div class="detail-header">
+                <div>
+                  <div id="detailCategory" class="chip"></div>
+                  <h3 id="detailName"></h3>
+                  <p id="detailOwner"></p>
+                </div>
+                <div class="detail-actions">
+                  <button id="waypointBtn" class="ghost-btn">Wegpunkt</button>
+                  <button id="toggleBlipVisibilityBtn" class="ghost-btn">Ausblenden</button>
+                  <button id="duplicateBtn" class="ghost-btn">Duplizieren</button>
+                  <button id="editBtn" class="ghost-btn">Bearbeiten</button>
+                  <button id="deleteBtn" class="ghost-btn danger">Loeschen</button>
+                </div>
+              </div>
+
+              <div class="detail-metrics">
+                <div class="metric">
+                  <span>Typ</span>
+                  <strong id="detailType"></strong>
+                </div>
+                <div class="metric">
+                  <span>Sprite</span>
+                  <strong id="detailSprite"></strong>
+                </div>
+                <div class="metric">
+                  <span>Farbe</span>
+                  <strong id="detailColor"></strong>
+                </div>
+                <div class="metric">
+                  <span>Anzeige</span>
+                  <strong id="detailDisplay"></strong>
+                </div>
+              </div>
+
+              <div class="detail-block">
+                <div class="section-title">Koordinaten</div>
+                <p id="detailCoords"></p>
+              </div>
+
+              <div class="detail-block">
+                <div class="section-title">Zusatzwerte</div>
+                <div id="detailExtras" class="detail-extras"></div>
+              </div>
+
+              <div class="detail-block" id="sharePanel">
+                <div class="panel-title-row">
+                  <div class="section-title">Freigaben</div>
+                  <button id="openShareBtn" class="ghost-btn small">Teilen</button>
+                </div>
+                <div id="shareTargets" class="share-targets"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div id="editorModal" class="modal hidden">
+      <div class="modal-card large">
+        <div class="modal-header">
+          <div>
+            <h3 id="editorTitle">Blip erstellen</h3>
+            <p>Lege Typ, Position und Darstellung fest.</p>
+          </div>
+          <button id="closeEditorBtn" class="icon-btn">x</button>
+        </div>
+
+        <form id="editorForm" class="form-grid">
+          <label>
+            <span>Name</span>
+            <input id="fieldName" type="text" maxlength="60" required>
+          </label>
+
+          <label>
+            <span>Blip-Typ</span>
+            <select id="fieldType">
+              <option value="coord">Koordinaten Blip</option>
+              <option value="radius">Radius Blip</option>
+              <option value="area">Area Blip</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Position von</span>
+            <select id="fieldPositionMode">
+              <option value="current">Aktuelle Position</option>
+              <option value="waypoint">Karten-Wegpunkt</option>
+              <option value="manual">Manuell eingeben</option>
+              <option value="original">Vorhandene Position</option>
+            </select>
+          </label>
+
+          <label id="scopeField">
+            <span>Bereich</span>
+            <select id="fieldScope">
+              <option value="personal">Persoenlich</option>
+              <option value="global">Global</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Sprite ID</span>
+            <input id="fieldSprite" type="number" min="1" max="999" required>
+            <small id="spriteHint"></small>
+          </label>
+
+          <label>
+            <span>Farb-ID</span>
+            <input id="fieldColor" type="number" min="0" max="85" required>
+            <small id="colorHint"></small>
+          </label>
+
+          <label>
+            <span>Anzeige</span>
+            <select id="fieldDisplay"></select>
+          </label>
+
+          <label id="scaleField">
+            <span>Groesse</span>
+            <input id="fieldScale" type="number" min="0.1" max="2.0" step="0.1">
+          </label>
+
+          <label id="alphaField">
+            <span>Alpha</span>
+            <input id="fieldAlpha" type="number" min="0" max="255" step="1">
+          </label>
+
+          <label id="radiusField">
+            <span>Radius</span>
+            <input id="fieldRadius" type="number" min="1" max="5000" step="1">
+          </label>
+
+          <label id="widthField">
+            <span>Breite</span>
+            <input id="fieldWidth" type="number" min="1" max="5000" step="1">
+          </label>
+
+          <label id="heightField">
+            <span>Hoehe</span>
+            <input id="fieldHeight" type="number" min="1" max="5000" step="1">
+          </label>
+
+          <label class="checkbox-row">
+            <input id="fieldShortRange" type="checkbox">
+            <span>Nur im Nahbereich der Minimap sichtbar</span>
+          </label>
+
+          <div id="manualCoordsBox" class="coords-box hidden">
+            <div class="section-title">Manuelle Koordinaten</div>
+            <div class="coords-grid">
+              <label>
+                <span>X</span>
+                <input id="fieldCoordX" type="number" step="0.01">
+              </label>
+              <label>
+                <span>Y</span>
+                <input id="fieldCoordY" type="number" step="0.01">
+              </label>
+              <label>
+                <span>Z</span>
+                <input id="fieldCoordZ" type="number" step="0.01">
+              </label>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" id="cancelEditorBtn" class="ghost-btn">Abbrechen</button>
+            <button type="submit" class="primary-btn">Speichern</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div id="shareModal" class="modal hidden">
+      <div class="modal-card">
+        <div class="modal-header">
+          <div>
+            <h3>Blip teilen</h3>
+            <p>Waehle einen Online-Spieler fuer die Freigabe.</p>
+          </div>
+          <button id="closeShareBtn" class="icon-btn">x</button>
+        </div>
+
+        <div class="share-form">
+          <select id="sharePlayerSelect"></select>
+          <div class="form-actions">
+            <button id="cancelShareBtn" class="ghost-btn">Abbrechen</button>
+            <button id="confirmShareBtn" class="primary-btn">Teilen</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
