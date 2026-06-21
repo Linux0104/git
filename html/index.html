@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -26,15 +27,15 @@
                 </div>
 
                 <nav class="nav">
-                    <button class="nav-btn active" data-tab="browse">Durchsuchen</button>
-                    <button class="nav-btn" data-tab="create">Erstellen</button>
-                    <button class="nav-btn" data-tab="my">Meine Angebote</button>
-                    <button class="nav-btn" data-tab="wallet">Wallet</button>
+                    <button class="nav-btn active" data-tab="browse"><i class="fa-solid fa-store"></i><span>Durchsuchen</span></button>
+                    <button class="nav-btn" data-tab="create"><i class="fa-solid fa-plus"></i><span>Erstellen</span></button>
+                    <button class="nav-btn" data-tab="my"><i class="fa-solid fa-tags"></i><span>Meine Angebote</span></button>
+                    <button class="nav-btn" data-tab="wallet"><i class="fa-solid fa-wallet"></i><span>Wallet</span></button>
                 </nav>
 
                 <div class="sidebar-footer">
-                    <button class="ghost-btn" id="refreshBtn" type="button">Aktualisieren</button>
-                    <button class="danger-btn" id="closeBtn" type="button">Schliessen</button>
+                    <button class="ghost-btn" id="refreshBtn" type="button"><i class="fa-solid fa-rotate"></i> Aktualisieren</button>
+                    <button class="danger-btn" id="closeBtn" type="button"><i class="fa-solid fa-xmark"></i> Schliessen</button>
                 </div>
             </aside>
 
@@ -59,18 +60,26 @@
                             <p>Suche nach Items, Fahrzeugen und Auktionen.</p>
                         </div>
                         <div class="toolbar">
-                            <input id="searchInput" class="input search" type="text" placeholder="Suche nach Titel oder Verkaeufer">
+                            <div class="search-wrap">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                                <input id="searchInput" class="input search" type="text" placeholder="Suche nach Titel oder Verkaeufer">
+                            </div>
                             <select id="browseFilter" class="input select">
-                                <option value="all">Alles</option>
-                                <option value="item">Items</option>
-                                <option value="vehicle">Fahrzeuge</option>
-                                <option value="auction">Auktionen</option>
-                                <option value="advertised">Werbung</option>
+                                <option value="all" data-base="Alles">Alles</option>
+                                <option value="item" data-base="Items">Items</option>
+                                <option value="vehicle" data-base="Fahrzeuge">Fahrzeuge</option>
+                                <option value="auction" data-base="Auktionen">Auktionen</option>
+                                <option value="advertised" data-base="Werbung">Werbung</option>
                             </select>
                         </div>
                     </div>
                     <div id="browseGrid" class="card-grid"></div>
-                    <div id="browseEmpty" class="empty-state hidden">Keine Angebote gefunden.</div>
+                    <div id="browseEmpty" class="empty-state hidden">
+                        <div class="empty-icon"><i class="fa-solid fa-magnifying-glass-dollar"></i></div>
+                        <div class="empty-title">Keine Angebote gefunden</div>
+                        <div class="empty-sub">Versuche andere Filter oder erstelle dein eigenes Angebot.</div>
+                        <button class="ghost-btn" data-tab-switch="create" type="button"><i class="fa-solid fa-plus"></i> Angebot erstellen</button>
+                    </div>
                 </section>
 
                 <section class="panel hidden" data-panel="create">
@@ -140,7 +149,7 @@
 
                     <div class="form-footer">
                         <div class="helper-text" id="createSummary">Erstelle ein neues Marketplace-Angebot.</div>
-                        <button id="submitCreate" class="primary-btn" type="button">Angebot erstellen</button>
+                        <button id="submitCreate" class="primary-btn" type="button"><i class="fa-solid fa-paper-plane"></i> Angebot erstellen</button>
                     </div>
                 </section>
 
@@ -152,7 +161,12 @@
                         </div>
                     </div>
                     <div id="myGrid" class="card-grid"></div>
-                    <div id="myEmpty" class="empty-state hidden">Du hast aktuell keine Angebote auf diesem Markt.</div>
+                    <div id="myEmpty" class="empty-state hidden">
+                        <div class="empty-icon"><i class="fa-solid fa-cube"></i></div>
+                        <div class="empty-title">Noch keine Angebote</div>
+                        <div class="empty-sub">Du hast aktuell nichts auf diesem Markt. Starte mit deinem ersten Listing.</div>
+                        <button class="primary-btn" data-tab-switch="create" type="button"><i class="fa-solid fa-plus"></i> Jetzt erstes Angebot erstellen</button>
+                    </div>
                 </section>
 
                 <section class="panel hidden" data-panel="wallet">
@@ -167,18 +181,23 @@
                         <div class="stat-card">
                             <span>Verkaufte Angebote</span>
                             <strong id="statSales">0</strong>
+                            <div class="stat-icon"><i class="fa-solid fa-receipt"></i></div>
                         </div>
-                        <div class="stat-card">
+                        <div class="stat-card stat-card-earned">
                             <span>Gesamt verdient</span>
                             <strong id="statEarned">$0</strong>
+                            <svg id="earnedSpark" class="sparkline" viewBox="0 0 120 40" preserveAspectRatio="none"></svg>
+                            <div class="stat-icon"><i class="fa-solid fa-chart-line"></i></div>
                         </div>
                         <div class="stat-card">
                             <span>Auszahlbar</span>
                             <strong id="statPayout">$0</strong>
+                            <div class="stat-icon"><i class="fa-solid fa-hand-holding-dollar"></i></div>
                         </div>
                         <div class="stat-card">
                             <span>Refunds</span>
                             <strong id="statRefund">$0</strong>
+                            <div class="stat-icon"><i class="fa-solid fa-rotate-left"></i></div>
                         </div>
                     </div>
 
@@ -187,7 +206,7 @@
                             <div class="wallet-total-label">Abholbare Wallet</div>
                             <div class="wallet-total" id="walletTotal">$0</div>
                         </div>
-                        <button id="claimWalletBtn" class="primary-btn" type="button">Wallet abholen</button>
+                        <button id="claimWalletBtn" class="primary-btn" type="button"><i class="fa-solid fa-sack-dollar"></i> Wallet abholen</button>
                     </div>
                 </section>
             </main>
@@ -200,11 +219,13 @@
                         <div class="eyebrow" id="modalEyebrow">Details</div>
                         <h3 id="modalTitle">Angebot</h3>
                     </div>
-                    <button id="modalClose" class="icon-btn" type="button">X</button>
+                    <button id="modalClose" class="icon-btn" type="button"><i class="fa-solid fa-xmark"></i></button>
                 </div>
                 <div id="modalBody" class="modal-body"></div>
             </div>
         </div>
+
+        <div id="toastContainer" class="toast-container"></div>
     </div>
 
     <script src="app.js"></script>

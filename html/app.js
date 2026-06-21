@@ -6,6 +6,7 @@ const state = {
     tab: 'browse',
     search: '',
     filter: 'all',
+    statsHistory: [],
     create: {
         category: 'item',
         listingType: 'sale',
@@ -34,13 +35,134 @@ const modalEl = document.getElementById('modal');
 const modalTitleEl = document.getElementById('modalTitle');
 const modalEyebrowEl = document.getElementById('modalEyebrow');
 const modalBodyEl = document.getElementById('modalBody');
+const toastContainerEl = document.getElementById('toastContainer');
+const browseFilterEl = document.getElementById('browseFilter');
+const earnedSparkEl = document.getElementById('earnedSpark');
 
+/* ============================================================
+   SOUND SYSTEM (Web Audio — generated tones, no files needed)
+   ============================================================ */
+let audioCtx = null;
+function ensureAudio() {
+    if (!audioCtx) {
+        try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+        catch (e) { audioCtx = null; }
+    }
+    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume().catch(()=>{});
+}
+function beep(freq, duration, type = 'sine', vol = 0.04) {
+    ensureAudio();
+    if (!audioCtx) return;
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.type = type;
+    o.frequency.setValueAtTime(freq, audioCtx.currentTime);
+    g.gain.setValueAtTime(vol, audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start(); o.stop(audioCtx.currentTime + duration);
+}
+const sfx = {
+    hover: () => beep(1200, 0.025, 'square', 0.012),
+    click: () => beep(880, 0.05, 'square', 0.025),
+    swoosh: () => { beep(520, 0.06, 'sine', 0.03); setTimeout(() => beep(880, 0.08, 'sine', 0.03), 40); },
+    confirm: () => { beep(660, 0.07, 'sine', 0.04); setTimeout(() => beep(990, 0.12, 'sine', 0.04), 80); },
+    alert: () => { beep(220, 0.18, 'sawtooth', 0.05); setTimeout(() => beep(180, 0.18, 'sawtooth', 0.05), 100); },
+    error: () => beep(160, 0.25, 'sawtooth', 0.05)
+};
+
+/* ============================================================
+   TOAST NOTIFICATIONS
+   ============================================================ */
+function showToast(message, type = 'info') {
+    const icons = {
+        success: 'fa-circle-check',
+        error: 'fa-circle-exclamation',
+        info: 'fa-circle-info',
+        warning: 'fa-triangle-exclamation'
+    };
+    const el = document.createElement('div');
+    el.className = `toast toast-${type}`;
+    el.innerHTML = `<i class="fa-solid ${icons[type] || icons.info}"></i><span>${esc(message)}</span>`;
+    toastContainerEl.appendChild(el);
+    requestAnimationFrame(() => el.classList.add('show'));
+    setTimeout(() => {
+        el.classList.remove('show');
+        setTimeout(() => el.remove(), 300);
+    }, 3200);
+}
+
+/* ============================================================
+   COUNTDOWN TIMER (auctions)
+   ============================================================ */
+const countdownTargets = new Map(); // listingId -> targetTimestampMs
+
+function parseExpiresToMs(text) {
+    if (!text) return 0;
+    const t = String(text).toLowerCase();
+    let total = 0;
+    const h = t.match(/(\d+)\s*h/);
+    const m = t.match(/(\d+)\s*m(?!s)/);
+    const s = t.match(/(\d+)\s*s/);
+    if (h) total += Number(h[1]) * 3600000;
+    if (m) total += Number(m[1]) * 60000;
+    if (s) total += Number(s[1]) * 1000;
+    return total;
+}
+
+function formatRemaining(ms) {
+    if (ms <= 0) return '00:00';
+    const h = Math.floor(ms / 3600000);
+    const m = Math.floor((ms % 3600000) / 60000);
+    const s = Math.floor((ms % 60000) / 1000);
+    if (h > 0) return `${h}h ${String(m).padStart(2, '0')}m ${String(s).padStart(2, '0')}s`;
+    return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+}
+
+function setCountdownTarget(id, expiresText) {
+    if (!id || !expiresText) return;
+    const key = String(id);
+    const ms = parseExpiresToMs(expiresText);
+    if (ms <= 0) return;
+    // Only refresh target if difference is significant (>= 30s) or unset
+    const existing = countdownTargets.get(key);
+    const newTarget = Date.now() + ms;
+    if (!existing || Math.abs(existing - newTarget) > 30000) {
+        countdownTargets.set(key, newTarget);
+    }
+}
+
+function tickCountdowns() {
+    const now = Date.now();
+    document.querySelectorAll('[data-countdown]').forEach((el) => {
+        const id = el.dataset.countdown;
+        const target = countdownTargets.get(id);
+        if (!target) return;
+        const remaining = target - now;
+        el.textContent = formatRemaining(remaining);
+        el.classList.toggle('urgent', remaining > 0 && remaining < 5 * 60 * 1000);
+        el.classList.toggle('critical', remaining > 0 && remaining < 60 * 1000);
+        el.classList.toggle('expired', remaining <= 0);
+    });
+}
+setInterval(tickCountdowns, 1000);
+
+/* ============================================================
+   ICONS
+   ============================================================ */
+function iconForListing(listing) {
+    if (listing.is_auction === 1) return 'fa-gavel';
+    if (listing.category === 'vehicle') return 'fa-car';
+    return 'fa-cube';
+}
+
+/* ============================================================
+   FETCH WRAPPER + Helpers
+   ============================================================ */
 function post(action, data = {}) {
     return fetch(`https://${resourceName}/${action}`, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json; charset=UTF-8'
-        },
+        headers: { 'Content-Type': 'application/json; charset=UTF-8' },
         body: JSON.stringify(data)
     });
 }
@@ -61,9 +183,11 @@ function fmtMoney(value) {
 function setVisible(visible) {
     state.visible = visible;
     appEl.classList.toggle('hidden', !visible);
-    if (!visible) {
-        closeModal();
+    if (visible) {
+        ensureAudio();
+        sfx.swoosh();
     }
+    if (!visible) closeModal();
 }
 
 function currentMarket() {
@@ -72,17 +196,10 @@ function currentMarket() {
 
 function ensureCreateDefaults() {
     const market = currentMarket();
-    if (!market) {
-        return;
-    }
+    if (!market) return;
 
-    if (!market.allowVehicles) {
-        state.create.category = 'item';
-    }
-
-    if (!market.allowAuctions) {
-        state.create.listingType = 'sale';
-    }
+    if (!market.allowVehicles) state.create.category = 'item';
+    if (!market.allowAuctions) state.create.listingType = 'sale';
 
     const items = state.payload?.items || [];
     const vehicles = state.payload?.vehicles || [];
@@ -104,19 +221,41 @@ function applyPayload(payload, resetTab = false) {
         state.filter = 'all';
     }
 
+    // Track stats history for sparkline
+    const earned = Number(payload?.stats?.total_earned || 0);
+    const last = state.statsHistory[state.statsHistory.length - 1];
+    if (last !== earned) {
+        state.statsHistory.push(earned);
+        if (state.statsHistory.length > 24) state.statsHistory.shift();
+    }
+
+    // Reset countdown targets so they get re-initialised from fresh expires_text
+    // (only clear ones not present in new payload)
+    const allIds = new Set([
+        ...((payload?.listings) || []).map(l => String(l.id)),
+        ...((payload?.myListings) || []).map(l => String(l.id))
+    ]);
+    for (const k of Array.from(countdownTargets.keys())) {
+        if (!allIds.has(k)) countdownTargets.delete(k);
+    }
+
     ensureCreateDefaults();
     render();
 }
 
 function setTab(tab) {
+    if (state.tab === tab) return;
     state.tab = tab;
+    sfx.swoosh();
     renderPanels();
     renderNav();
 }
 
 function closeModal() {
-    modalEl.classList.add('hidden');
-    modalBodyEl.innerHTML = '';
+    if (!modalEl.classList.contains('hidden')) {
+        modalEl.classList.add('hidden');
+        modalBodyEl.innerHTML = '';
+    }
 }
 
 function openModal(eyebrow, title, content) {
@@ -124,6 +263,7 @@ function openModal(eyebrow, title, content) {
     modalTitleEl.textContent = title;
     modalBodyEl.innerHTML = content;
     modalEl.classList.remove('hidden');
+    sfx.click();
 }
 
 function findListing(id, ownOnly = false) {
@@ -157,36 +297,46 @@ function getBrowseListings() {
 }
 
 function listingCard(listing, ownOnly = false) {
+    const isAuction = listing.is_auction === 1;
+    const isAdvertised = listing.advertised === 1;
+    const kindClass = isAuction ? 'auction' : (listing.category === 'vehicle' ? 'vehicle' : 'item');
+    const cardClasses = ['listing-card'];
+    if (isAdvertised) cardClasses.push('advertised');
+    if (isAuction) cardClasses.push('is-auction');
+
     const badges = [];
-    const kindClass = listing.is_auction === 1 ? 'auction' : (listing.category === 'vehicle' ? 'vehicle' : 'item');
     badges.push(`<span class="badge ${kindClass}">${esc(listing.kind)}</span>`);
+    if (ownOnly) badges.push(`<span class="badge status">${esc(listing.status_label)}</span>`);
+    if (isAdvertised) badges.push('<span class="badge ad"><i class="fa-solid fa-bolt"></i> Werbung</span>');
 
-    if (ownOnly) {
-        badges.push(`<span class="badge status">${esc(listing.status_label)}</span>`);
-    }
-
-    if (listing.advertised === 1) {
-        badges.push('<span class="badge auction">Werbung</span>');
+    // Auction countdown setup
+    let timeMarkup = `<span><i class="fa-regular fa-clock"></i> ${esc(listing.expires_text || 'unbekannt')}</span>`;
+    if (isAuction && listing.status === 'active') {
+        setCountdownTarget(listing.id, listing.expires_text);
+        const initialMs = (countdownTargets.get(String(listing.id)) || 0) - Date.now();
+        const initialText = initialMs > 0 ? formatRemaining(initialMs) : (listing.expires_text || '00:00');
+        timeMarkup = `<span class="countdown-wrap"><i class="fa-solid fa-stopwatch"></i> <span class="countdown" data-countdown="${listing.id}">${esc(initialText)}</span></span>`;
     }
 
     const buttonLabel = ownOnly ? 'Verwalten' : 'Details';
     const action = ownOnly ? 'open-my' : 'open-browse';
+    const icon = iconForListing(listing);
 
     return `
-        <article class="listing-card">
+        <article class="${cardClasses.join(' ')}">
             <div class="listing-head">
                 <div class="listing-badges">${badges.join('')}</div>
                 <div class="listing-price">${esc(listing.price_text)}</div>
             </div>
-            <h3>${esc(listing.title)}</h3>
+            <h3><i class="fa-solid ${icon} listing-icon"></i> ${esc(listing.title)}</h3>
             <div class="listing-copy">${esc(listing.action_hint || '')}</div>
             <p class="listing-description">${esc(listing.description || 'Keine Beschreibung hinterlegt.')}</p>
             <div class="listing-meta">
-                <span>Verkaeufer: ${esc(listing.seller_name || 'Unbekannt')}</span>
-                <span>Laufzeit: ${esc(listing.expires_text || 'unbekannt')}</span>
+                <span><i class="fa-solid fa-user"></i> ${esc(listing.seller_name || 'Unbekannt')}</span>
+                ${timeMarkup}
             </div>
             <div class="listing-actions">
-                <button class="mini-btn primary" data-action="${action}" data-id="${listing.id}">${buttonLabel}</button>
+                <button class="mini-btn primary" data-action="${action}" data-id="${listing.id}">${buttonLabel} <i class="fa-solid fa-arrow-right"></i></button>
             </div>
         </article>
     `;
@@ -196,6 +346,22 @@ function renderBrowse() {
     const listings = getBrowseListings();
     browseGridEl.innerHTML = listings.map((listing) => listingCard(listing, false)).join('');
     browseEmptyEl.classList.toggle('hidden', listings.length > 0);
+    updateFilterCounts();
+}
+
+function updateFilterCounts() {
+    const listings = state.payload?.listings || [];
+    const counts = {
+        all: listings.length,
+        item: listings.filter(l => l.category === 'item' && l.is_auction !== 1).length,
+        vehicle: listings.filter(l => l.category === 'vehicle' && l.is_auction !== 1).length,
+        auction: listings.filter(l => l.is_auction === 1).length,
+        advertised: listings.filter(l => l.advertised === 1).length
+    };
+    Array.from(browseFilterEl.options).forEach((opt) => {
+        const base = opt.dataset.base || opt.value;
+        opt.textContent = `${base} (${counts[opt.value] || 0})`;
+    });
 }
 
 function renderMyListings() {
@@ -205,31 +371,20 @@ function renderMyListings() {
 }
 
 function selectedInventoryEntry() {
-    if (!state.payload) {
-        return null;
-    }
-
+    if (!state.payload) return null;
     if (state.create.category === 'item') {
         return (state.payload.items || []).find((item) => item.name === state.create.selectedItem) || null;
     }
-
     return (state.payload.vehicles || []).find((vehicle) => vehicle.plate === state.create.selectedPlate) || null;
 }
 
 function updateCreateDefaultsFromSelection(forceTitle = false) {
     const selected = selectedInventoryEntry();
-    if (!selected) {
-        return;
-    }
+    if (!selected) return;
 
     if (state.create.category === 'item') {
-        if (forceTitle || !state.create.title) {
-            state.create.title = selected.label || selected.name;
-        }
-
-        if (!state.create.quantity || state.create.quantity < 1) {
-            state.create.quantity = 1;
-        }
+        if (forceTitle || !state.create.title) state.create.title = selected.label || selected.name;
+        if (!state.create.quantity || state.create.quantity < 1) state.create.quantity = 1;
     } else if (forceTitle || !state.create.title) {
         state.create.title = selected.display || selected.plate;
     }
@@ -312,6 +467,40 @@ function renderCreate() {
         : 'Festpreisangebote koennen direkt gekauft werden.';
 }
 
+/* ============================================================
+   SPARKLINE (SVG) — Verlauf "Gesamt verdient"
+   ============================================================ */
+function renderSparkline() {
+    if (!earnedSparkEl) return;
+    const data = state.statsHistory.slice();
+    if (data.length < 2) {
+        earnedSparkEl.innerHTML = '';
+        return;
+    }
+    const w = 120, h = 40, pad = 2;
+    const min = Math.min(...data);
+    const max = Math.max(...data);
+    const range = (max - min) || 1;
+    const step = (w - pad * 2) / (data.length - 1);
+    const points = data.map((v, i) => {
+        const x = pad + i * step;
+        const y = h - pad - ((v - min) / range) * (h - pad * 2);
+        return `${x.toFixed(1)},${y.toFixed(1)}`;
+    });
+    const path = `M ${points.join(' L ')}`;
+    const areaPath = `${path} L ${pad + (data.length - 1) * step},${h} L ${pad},${h} Z`;
+    earnedSparkEl.innerHTML = `
+        <defs>
+            <linearGradient id="sparkGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#00fff0" stop-opacity="0.45"/>
+                <stop offset="100%" stop-color="#00fff0" stop-opacity="0"/>
+            </linearGradient>
+        </defs>
+        <path d="${areaPath}" fill="url(#sparkGrad)"/>
+        <path d="${path}" fill="none" stroke="#00fff0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 0 4px rgba(0,255,240,0.6));"/>
+    `;
+}
+
 function renderWallet() {
     const stats = state.payload?.stats || {};
     const total = Number(stats.pending_payout || 0) + Number(stats.pending_refund || 0);
@@ -323,6 +512,7 @@ function renderWallet() {
     document.getElementById('walletTotal').textContent = fmtMoney(total);
     walletMiniEl.textContent = fmtMoney(total);
     document.getElementById('claimWalletBtn').disabled = total <= 0;
+    renderSparkline();
 }
 
 function renderNav() {
@@ -339,20 +529,14 @@ function renderPanels() {
 
 function renderHeader() {
     const market = currentMarket();
-    if (!market) {
-        return;
-    }
-
+    if (!market) return;
     marketBadgeEl.textContent = market.label;
     marketModeEl.textContent = 'Marketplace';
     viewTitleEl.textContent = market.label;
 }
 
 function render() {
-    if (!state.payload) {
-        return;
-    }
-
+    if (!state.payload) return;
     renderHeader();
     renderNav();
     renderPanels();
@@ -363,41 +547,27 @@ function render() {
 }
 
 function openListingModal(listing, ownOnly = false) {
-    if (!listing) {
-        return;
-    }
+    if (!listing) return;
 
     const details = [
-        { label: 'Kategorie', value: listing.kind },
-        { label: 'Verkaeufer', value: listing.seller_name || 'Unbekannt' },
-        { label: 'Laufzeit', value: listing.expires_text || 'unbekannt' },
-        { label: 'Preis', value: listing.price_text || '-' }
+        { label: 'Kategorie', value: listing.kind, icon: 'fa-tag' },
+        { label: 'Verkaeufer', value: listing.seller_name || 'Unbekannt', icon: 'fa-user' },
+        { label: 'Laufzeit', value: listing.expires_text || 'unbekannt', icon: 'fa-clock' },
+        { label: 'Preis', value: listing.price_text || '-', icon: 'fa-dollar-sign' }
     ];
-
-    if (ownOnly) {
-        details.push({ label: 'Status', value: listing.status_label || listing.status || 'Unbekannt' });
-    }
+    if (ownOnly) details.push({ label: 'Status', value: listing.status_label || listing.status || 'Unbekannt', icon: 'fa-circle-info' });
 
     let actionHtml = '';
 
     if (listing.status === 'expired' && ownOnly) {
-        actionHtml = `
-            <div class="modal-actions">
-                <button class="primary-btn" data-modal-action="claim" data-id="${listing.id}">Zurueckholen</button>
-            </div>
-        `;
+        actionHtml = `<div class="modal-actions"><button class="primary-btn" data-modal-action="claim" data-id="${listing.id}"><i class="fa-solid fa-rotate-left"></i> Zurueckholen</button></div>`;
     } else if (listing.status === 'active' && ownOnly) {
-        actionHtml = `
-            <div class="modal-actions">
-                <button class="ghost-btn" data-modal-action="edit" data-id="${listing.id}">Bearbeiten</button>
-                <button class="danger-btn" data-modal-action="delete" data-id="${listing.id}">Loeschen</button>
-            </div>
-        `;
+        actionHtml = `<div class="modal-actions"><button class="ghost-btn" data-modal-action="edit" data-id="${listing.id}"><i class="fa-solid fa-pen"></i> Bearbeiten</button><button class="danger-btn" data-modal-action="delete" data-id="${listing.id}"><i class="fa-solid fa-trash"></i> Loeschen</button></div>`;
     } else if (listing.status === 'active' && listing.is_auction === 1 && !ownOnly) {
         actionHtml = `
             <div class="modal-input-row">
                 <input id="modalBidInput" class="input" type="number" min="${listing.next_bid || listing.minimum_bid || 1}" value="${listing.next_bid || listing.minimum_bid || 100}">
-                <button class="primary-btn" data-modal-action="bid" data-id="${listing.id}">Gebot senden</button>
+                <button class="primary-btn" data-modal-action="bid" data-id="${listing.id}"><i class="fa-solid fa-gavel"></i> Gebot senden</button>
             </div>
             <p class="modal-subtext">Gebote werden sofort reserviert und bei Ueberbietung automatisch erstattet.</p>
         `;
@@ -406,15 +576,11 @@ function openListingModal(listing, ownOnly = false) {
             actionHtml = `
                 <div class="modal-input-row">
                     <input id="modalBuyAmount" class="input" type="number" min="1" max="${listing.quantity || 1}" value="1">
-                    <button class="primary-btn" data-modal-action="buy" data-id="${listing.id}">Kaufen</button>
+                    <button class="primary-btn" data-modal-action="buy" data-id="${listing.id}"><i class="fa-solid fa-cart-shopping"></i> Kaufen</button>
                 </div>
             `;
         } else {
-            actionHtml = `
-                <div class="modal-actions">
-                    <button class="primary-btn" data-modal-action="buy" data-id="${listing.id}">Fahrzeug kaufen</button>
-                </div>
-            `;
+            actionHtml = `<div class="modal-actions"><button class="primary-btn" data-modal-action="buy" data-id="${listing.id}"><i class="fa-solid fa-key"></i> Fahrzeug kaufen</button></div>`;
         }
     }
 
@@ -423,10 +589,10 @@ function openListingModal(listing, ownOnly = false) {
         listing.title,
         `
             <div class="detail-grid">
-                ${details.map((detail) => `
+                ${details.map((d) => `
                     <div class="detail-card">
-                        <span>${esc(detail.label)}</span>
-                        <strong>${esc(detail.value)}</strong>
+                        <span><i class="fa-solid ${d.icon}"></i> ${esc(d.label)}</span>
+                        <strong>${esc(d.value)}</strong>
                     </div>
                 `).join('')}
             </div>
@@ -437,36 +603,19 @@ function openListingModal(listing, ownOnly = false) {
 }
 
 function openEditModal(listing) {
-    if (!listing) {
-        return;
-    }
-
+    if (!listing) return;
     openModal(
         'Bearbeiten',
         listing.title,
         `
             <div class="form-grid">
-                <div class="field wide">
-                    <label>Titel</label>
-                    <input id="editTitle" class="input" type="text" maxlength="48" value="${esc(listing.title || '')}">
-                </div>
-                <div class="field wide">
-                    <label>Beschreibung</label>
-                    <textarea id="editDescription" class="input textarea" maxlength="180">${esc(listing.description || '')}</textarea>
-                </div>
-                <div class="field">
-                    <label>${listing.is_auction === 1 ? 'Mindestgebot' : 'Preis'}</label>
-                    <input id="editPrice" class="input" type="number" min="1" value="${listing.is_auction === 1 ? (listing.minimum_bid || 0) : (listing.price_per_unit || listing.price || 0)}">
-                </div>
-                <div class="field checkbox-field">
-                    <label class="checkbox">
-                        <input id="editAdvertised" type="checkbox" ${listing.advertised === 1 ? 'checked' : ''}>
-                        <span>Werbung aktivieren</span>
-                    </label>
-                </div>
+                <div class="field wide"><label>Titel</label><input id="editTitle" class="input" type="text" maxlength="48" value="${esc(listing.title || '')}"></div>
+                <div class="field wide"><label>Beschreibung</label><textarea id="editDescription" class="input textarea" maxlength="180">${esc(listing.description || '')}</textarea></div>
+                <div class="field"><label>${listing.is_auction === 1 ? 'Mindestgebot' : 'Preis'}</label><input id="editPrice" class="input" type="number" min="1" value="${listing.is_auction === 1 ? (listing.minimum_bid || 0) : (listing.price_per_unit || listing.price || 0)}"></div>
+                <div class="field checkbox-field"><label class="checkbox"><input id="editAdvertised" type="checkbox" ${listing.advertised === 1 ? 'checked' : ''}><span>Werbung aktivieren</span></label></div>
             </div>
             <div class="modal-actions">
-                <button class="primary-btn" data-modal-action="save-edit" data-id="${listing.id}" data-auction="${listing.is_auction === 1 ? '1' : '0'}">Speichern</button>
+                <button class="primary-btn" data-modal-action="save-edit" data-id="${listing.id}" data-auction="${listing.is_auction === 1 ? '1' : '0'}"><i class="fa-solid fa-floppy-disk"></i> Speichern</button>
             </div>
         `
     );
@@ -474,14 +623,10 @@ function openEditModal(listing) {
 
 async function submitCreate() {
     const market = currentMarket();
-    if (!market) {
-        return;
-    }
-
+    if (!market) return;
     const selected = selectedInventoryEntry();
-    if (!selected) {
-        return;
-    }
+    if (!selected) { sfx.error(); showToast('Keine Inventar-Auswahl verfügbar.', 'error'); return; }
+    if (!state.create.title.trim()) { sfx.error(); showToast('Bitte einen Titel eingeben.', 'warning'); return; }
 
     const payload = {
         category: state.create.category,
@@ -506,15 +651,19 @@ async function submitCreate() {
     payload.durationMinutes = Number(state.create.durationMinutes || 0);
 
     await post('createListing', payload);
+    sfx.confirm();
+    showToast(state.create.listingType === 'auction' ? 'Auktion erstellt!' : 'Angebot erstellt!', 'success');
 
     state.create.description = '';
     state.create.advertised = false;
     closeModal();
 }
 
+/* ============================================================
+   EVENTS
+   ============================================================ */
 window.addEventListener('message', (event) => {
     const data = event.data || {};
-
     if (data.action === 'open') {
         setVisible(true);
         applyPayload(data.payload, true);
@@ -522,41 +671,45 @@ window.addEventListener('message', (event) => {
         applyPayload(data.payload, false);
     } else if (data.action === 'close') {
         setVisible(false);
+    } else if (data.action === 'notify' && data.message) {
+        // optional: server can push notifications
+        showToast(data.message, data.type || 'info');
+        if (data.type === 'error') sfx.error();
+        else if (data.type === 'warning') sfx.alert();
+        else sfx.confirm();
     }
 });
 
 document.addEventListener('keydown', async (event) => {
-    if (event.key !== 'Escape') {
-        return;
-    }
-
-    if (!modalEl.classList.contains('hidden')) {
-        closeModal();
-        return;
-    }
-
+    if (event.key !== 'Escape') return;
+    if (!modalEl.classList.contains('hidden')) { closeModal(); return; }
     await post('close');
     setVisible(false);
 });
 
 document.getElementById('closeBtn').addEventListener('click', async () => {
+    sfx.click();
     await post('close');
     setVisible(false);
 });
 
-document.getElementById('modalClose').addEventListener('click', closeModal);
-modalEl.addEventListener('click', (event) => {
-    if (event.target === modalEl) {
-        closeModal();
-    }
-});
+document.getElementById('modalClose').addEventListener('click', () => { sfx.click(); closeModal(); });
+modalEl.addEventListener('click', (event) => { if (event.target === modalEl) closeModal(); });
 
 document.getElementById('refreshBtn').addEventListener('click', async () => {
+    sfx.click();
     await post('refresh');
+    showToast('Aktualisiert', 'info');
 });
 
 document.querySelectorAll('.nav-btn').forEach((button) => {
-    button.addEventListener('click', () => setTab(button.dataset.tab));
+    button.addEventListener('click', () => { sfx.click(); setTab(button.dataset.tab); });
+});
+
+// Empty state CTA tab-switch buttons
+document.body.addEventListener('click', (event) => {
+    const tabSwitch = event.target.closest('[data-tab-switch]');
+    if (tabSwitch) { sfx.click(); setTab(tabSwitch.dataset.tabSwitch); }
 });
 
 document.getElementById('searchInput').addEventListener('input', (event) => {
@@ -566,15 +719,14 @@ document.getElementById('searchInput').addEventListener('input', (event) => {
 
 document.getElementById('browseFilter').addEventListener('change', (event) => {
     state.filter = event.target.value || 'all';
+    sfx.click();
     renderBrowse();
 });
 
 document.getElementById('categorySwitch').addEventListener('click', (event) => {
     const button = event.target.closest('.segment');
-    if (!button || button.classList.contains('disabled')) {
-        return;
-    }
-
+    if (!button || button.classList.contains('disabled')) return;
+    sfx.click();
     state.create.category = button.dataset.category;
     updateCreateDefaultsFromSelection(true);
     renderCreate();
@@ -582,10 +734,8 @@ document.getElementById('categorySwitch').addEventListener('click', (event) => {
 
 document.getElementById('typeSwitch').addEventListener('click', (event) => {
     const button = event.target.closest('.segment');
-    if (!button || button.classList.contains('disabled')) {
-        return;
-    }
-
+    if (!button || button.classList.contains('disabled')) return;
+    sfx.click();
     state.create.listingType = button.dataset.type;
     if (state.create.listingType === 'auction') {
         state.create.minimumBid = state.create.minimumBid || Math.max(100, Number(state.create.price || 0));
@@ -594,97 +744,89 @@ document.getElementById('typeSwitch').addEventListener('click', (event) => {
 });
 
 document.getElementById('inventorySelect').addEventListener('change', (event) => {
-    if (state.create.category === 'item') {
-        state.create.selectedItem = event.target.value;
-    } else {
-        state.create.selectedPlate = event.target.value;
-    }
-
+    if (state.create.category === 'item') state.create.selectedItem = event.target.value;
+    else state.create.selectedPlate = event.target.value;
     updateCreateDefaultsFromSelection(true);
     renderCreate();
 });
 
-document.getElementById('quantityInput').addEventListener('input', (event) => {
-    state.create.quantity = Number(event.target.value || 1);
-});
-
-document.getElementById('durationInput').addEventListener('input', (event) => {
-    state.create.durationMinutes = Number(event.target.value || 60);
-});
-
-document.getElementById('titleInput').addEventListener('input', (event) => {
-    state.create.title = event.target.value || '';
-});
-
-document.getElementById('descriptionInput').addEventListener('input', (event) => {
-    state.create.description = event.target.value || '';
-});
-
+document.getElementById('quantityInput').addEventListener('input', (event) => { state.create.quantity = Number(event.target.value || 1); });
+document.getElementById('durationInput').addEventListener('input', (event) => { state.create.durationMinutes = Number(event.target.value || 60); });
+document.getElementById('titleInput').addEventListener('input', (event) => { state.create.title = event.target.value || ''; });
+document.getElementById('descriptionInput').addEventListener('input', (event) => { state.create.description = event.target.value || ''; });
 document.getElementById('priceInput').addEventListener('input', (event) => {
     const value = Number(event.target.value || 0);
-    if (state.create.listingType === 'auction') {
-        state.create.minimumBid = value;
-    } else {
-        state.create.price = value;
-    }
+    if (state.create.listingType === 'auction') state.create.minimumBid = value;
+    else state.create.price = value;
 });
-
-document.getElementById('advertisedInput').addEventListener('change', (event) => {
-    state.create.advertised = event.target.checked;
-});
-
+document.getElementById('advertisedInput').addEventListener('change', (event) => { state.create.advertised = event.target.checked; });
 document.getElementById('submitCreate').addEventListener('click', submitCreate);
-
 document.getElementById('claimWalletBtn').addEventListener('click', async () => {
+    sfx.confirm();
     await post('claimWallet');
+    showToast('Wallet abgeholt!', 'success');
 });
 
+// Card hover sound (delegated, throttled)
+let lastHoverSfx = 0;
+document.body.addEventListener('mouseover', (event) => {
+    const card = event.target.closest('.listing-card');
+    if (!card || card._sfxFired) return;
+    const now = performance.now();
+    if (now - lastHoverSfx < 60) return;
+    lastHoverSfx = now;
+    sfx.hover();
+});
+
+// Card / modal action handler
 document.body.addEventListener('click', async (event) => {
     const actionButton = event.target.closest('[data-action], [data-modal-action]');
-    if (!actionButton) {
-        return;
-    }
+    if (!actionButton) return;
 
     if (actionButton.dataset.action) {
         const action = actionButton.dataset.action;
         const id = Number(actionButton.dataset.id);
-
-        if (action === 'open-browse') {
-            openListingModal(findListing(id, false), false);
-        } else if (action === 'open-my') {
-            openListingModal(findListing(id, true), true);
-        }
-
+        sfx.click();
+        if (action === 'open-browse') openListingModal(findListing(id, false), false);
+        else if (action === 'open-my') openListingModal(findListing(id, true), true);
         return;
     }
 
     const modalAction = actionButton.dataset.modalAction;
     const id = Number(actionButton.dataset.id);
     const listing = findListing(id, true) || findListing(id, false);
-    if (!listing) {
-        return;
-    }
+    if (!listing) return;
 
     if (modalAction === 'edit') {
+        sfx.click();
         openEditModal(listing);
     } else if (modalAction === 'delete') {
+        sfx.alert();
         await post('deleteListing', { id });
+        showToast('Angebot gelöscht', 'warning');
         closeModal();
     } else if (modalAction === 'claim') {
+        sfx.confirm();
         await post('claimExpired', { id });
+        showToast('Angebot zurückgeholt', 'success');
         closeModal();
     } else if (modalAction === 'buy') {
         const amountInput = document.getElementById('modalBuyAmount');
         const amount = amountInput ? Number(amountInput.value || 1) : 1;
+        sfx.confirm();
         await post('buyListing', { listingId: id, amount });
+        showToast('Kauf abgeschlossen!', 'success');
         closeModal();
     } else if (modalAction === 'bid') {
         const bidInput = document.getElementById('modalBidInput');
         const amount = bidInput ? Number(bidInput.value || 0) : 0;
+        sfx.confirm();
         await post('bidListing', { listingId: id, amount });
+        showToast('Gebot platziert!', 'success');
         closeModal();
     } else if (modalAction === 'save-edit') {
         const isAuction = actionButton.dataset.auction === '1';
+        sfx.confirm();
         await post('updateListing', {
             id,
             title: document.getElementById('editTitle')?.value || '',
@@ -693,6 +835,7 @@ document.body.addEventListener('click', async (event) => {
             minimumBid: isAuction ? Number(document.getElementById('editPrice')?.value || 0) : 0,
             pricePerUnit: isAuction ? 0 : Number(document.getElementById('editPrice')?.value || 0)
         });
+        showToast('Änderungen gespeichert', 'success');
         closeModal();
     }
 });
