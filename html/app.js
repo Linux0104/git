@@ -28,7 +28,6 @@ const myGridEl = document.getElementById('myGrid');
 const myEmptyEl = document.getElementById('myEmpty');
 const marketBadgeEl = document.getElementById('marketBadge');
 const marketModeEl = document.getElementById('marketMode');
-const marketDescriptionEl = document.getElementById('marketDescription');
 const walletMiniEl = document.getElementById('walletMini');
 const viewTitleEl = document.getElementById('viewTitle');
 const modalEl = document.getElementById('modal');
@@ -346,7 +345,6 @@ function renderHeader() {
 
     marketBadgeEl.textContent = market.label;
     marketModeEl.textContent = 'Marketplace';
-    marketDescriptionEl.textContent = 'Spieler handeln Items, Fahrzeuge und Auktionen in Echtzeit.';
     viewTitleEl.textContent = market.label;
 }
 
