@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lunar Marketplace</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app" class="app hidden">
+        <div class="shell">
+            <aside class="sidebar">
+                <div class="brand">
+                    <div class="brand-mark">LM</div>
+                    <div>
+                        <div class="brand-title">Lunar Marketplace</div>
+                        <div class="brand-subtitle" id="marketBadge">Marketplace</div>
+                    </div>
+                </div>
+
+                <div class="market-info">
+                    <div class="pill" id="marketMode">Legal Market</div>
+                    <div class="market-copy" id="marketDescription">Spieler handeln Items, Fahrzeuge und Auktionen in Echtzeit.</div>
+                </div>
+
+                <nav class="nav">
+                    <button class="nav-btn active" data-tab="browse">Durchsuchen</button>
+                    <button class="nav-btn" data-tab="create">Erstellen</button>
+                    <button class="nav-btn" data-tab="my">Meine Angebote</button>
+                    <button class="nav-btn" data-tab="wallet">Wallet</button>
+                </nav>
+
+                <div class="sidebar-footer">
+                    <button class="ghost-btn" id="refreshBtn" type="button">Aktualisieren</button>
+                    <button class="danger-btn" id="closeBtn" type="button">Schliessen</button>
+                </div>
+            </aside>
+
+            <main class="content">
+                <header class="topbar">
+                    <div>
+                        <div class="eyebrow">Player Driven Economy</div>
+                        <h1 id="viewTitle">Marketplace</h1>
+                    </div>
+                    <div class="topbar-actions">
+                        <div class="wallet-mini">
+                            <span>Wallet</span>
+                            <strong id="walletMini">$0</strong>
+                        </div>
+                    </div>
+                </header>
+
+                <section class="panel" data-panel="browse">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Angebote</h2>
+                            <p>Suche nach Items, Fahrzeugen und Auktionen.</p>
+                        </div>
+                        <div class="toolbar">
+                            <input id="searchInput" class="input search" type="text" placeholder="Suche nach Titel oder Verkaeufer">
+                            <select id="browseFilter" class="input select">
+                                <option value="all">Alles</option>
+                                <option value="item">Items</option>
+                                <option value="vehicle">Fahrzeuge</option>
+                                <option value="auction">Auktionen</option>
+                                <option value="advertised">Werbung</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="browseGrid" class="card-grid"></div>
+                    <div id="browseEmpty" class="empty-state hidden">Keine Angebote gefunden.</div>
+                </section>
+
+                <section class="panel hidden" data-panel="create">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Neues Angebot</h2>
+                            <p>Erstelle Verkaufsangebote oder Auktionen direkt aus Inventar und Garage.</p>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="field wide">
+                            <label>Kategorie</label>
+                            <div class="segmented" id="categorySwitch">
+                                <button type="button" class="segment active" data-category="item">Item</button>
+                                <button type="button" class="segment" data-category="vehicle">Fahrzeug</button>
+                            </div>
+                        </div>
+
+                        <div class="field wide">
+                            <label>Listing Typ</label>
+                            <div class="segmented" id="typeSwitch">
+                                <button type="button" class="segment active" data-type="sale">Verkauf</button>
+                                <button type="button" class="segment" data-type="auction">Auktion</button>
+                            </div>
+                        </div>
+
+                        <div class="field wide">
+                            <label id="inventoryLabel">Inventar Auswahl</label>
+                            <select id="inventorySelect" class="input select"></select>
+                            <small id="inventoryHint" class="helper-text"></small>
+                        </div>
+
+                        <div class="field" id="quantityField">
+                            <label>Menge</label>
+                            <input id="quantityInput" class="input" type="number" min="1" value="1">
+                        </div>
+
+                        <div class="field" id="durationField">
+                            <label>Auktionsdauer in Minuten</label>
+                            <input id="durationInput" class="input" type="number" min="10" value="60">
+                        </div>
+
+                        <div class="field wide">
+                            <label>Titel</label>
+                            <input id="titleInput" class="input" type="text" maxlength="48" placeholder="Titel fuer dein Angebot">
+                        </div>
+
+                        <div class="field wide">
+                            <label>Beschreibung</label>
+                            <textarea id="descriptionInput" class="input textarea" maxlength="180" placeholder="Kurzbeschreibung, Zustand, Besonderheiten"></textarea>
+                        </div>
+
+                        <div class="field">
+                            <label id="priceLabel">Preis pro Stueck</label>
+                            <input id="priceInput" class="input" type="number" min="1" value="100">
+                        </div>
+
+                        <div class="field checkbox-field">
+                            <label>Promotion</label>
+                            <label class="checkbox">
+                                <input id="advertisedInput" type="checkbox">
+                                <span id="advertisedLabel">Als Werbung hervorheben</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-footer">
+                        <div class="helper-text" id="createSummary">Erstelle ein neues Marketplace-Angebot.</div>
+                        <button id="submitCreate" class="primary-btn" type="button">Angebot erstellen</button>
+                    </div>
+                </section>
+
+                <section class="panel hidden" data-panel="my">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Meine Angebote</h2>
+                            <p>Verwalte aktive Angebote, Rueckholungen und abgeschlossene Listings.</p>
+                        </div>
+                    </div>
+                    <div id="myGrid" class="card-grid"></div>
+                    <div id="myEmpty" class="empty-state hidden">Du hast aktuell keine Angebote auf diesem Markt.</div>
+                </section>
+
+                <section class="panel hidden" data-panel="wallet">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Wallet und Statistik</h2>
+                            <p>Behalte Umsatz, offene Auszahlungen und Refunds im Blick.</p>
+                        </div>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <span>Verkaufte Angebote</span>
+                            <strong id="statSales">0</strong>
+                        </div>
+                        <div class="stat-card">
+                            <span>Gesamt verdient</span>
+                            <strong id="statEarned">$0</strong>
+                        </div>
+                        <div class="stat-card">
+                            <span>Auszahlbar</span>
+                            <strong id="statPayout">$0</strong>
+                        </div>
+                        <div class="stat-card">
+                            <span>Refunds</span>
+                            <strong id="statRefund">$0</strong>
+                        </div>
+                    </div>
+
+                    <div class="wallet-panel">
+                        <div>
+                            <div class="wallet-total-label">Abholbare Wallet</div>
+                            <div class="wallet-total" id="walletTotal">$0</div>
+                        </div>
+                        <button id="claimWalletBtn" class="primary-btn" type="button">Wallet abholen</button>
+                    </div>
+                </section>
+            </main>
+        </div>
+
+        <div id="modal" class="modal hidden">
+            <div class="modal-card">
+                <div class="modal-header">
+                    <div>
+                        <div class="eyebrow" id="modalEyebrow">Details</div>
+                        <h3 id="modalTitle">Angebot</h3>
+                    </div>
+                    <button id="modalClose" class="icon-btn" type="button">X</button>
+                </div>
+                <div id="modalBody" class="modal-body"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
