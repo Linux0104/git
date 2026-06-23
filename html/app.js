@@ -148,12 +148,41 @@ function tickCountdowns() {
 setInterval(tickCountdowns, 1000);
 
 /* ============================================================
-   ICONS
+   ICONS / IMAGES
    ============================================================ */
 function iconForListing(listing) {
     if (listing.is_auction === 1) return 'fa-gavel';
     if (listing.category === 'vehicle') return 'fa-car';
     return 'fa-cube';
+}
+
+// Build an image URL for item listings — points to the inventory resource icons folder.
+// Supports several backend field names; falls back to a normalised title slug.
+function getItemImageUrl(listing) {
+    if (!listing || listing.category !== 'item') return null;
+    if (listing.image) return String(listing.image);
+    if (listing.image_url) return String(listing.image_url);
+    const raw = listing.item_name || listing.itemName || listing.name || listing.title || '';
+    if (!raw) return null;
+    const slug = String(raw)
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, '_')
+        .replace(/[^a-z0-9_\-]/g, '');
+    if (!slug) return null;
+    return `nui://inventory/web/assets/icons/${slug}.png`;
+}
+
+function listingThumbHtml(listing, sizeClass = '') {
+    const url = getItemImageUrl(listing);
+    const icon = iconForListing(listing);
+    if (!url) {
+        return `<div class="listing-thumb ${sizeClass} no-image"><i class="fa-solid ${icon}"></i></div>`;
+    }
+    return `<div class="listing-thumb ${sizeClass}">
+        <img src="${esc(url)}" alt="" loading="lazy" onerror="this.parentElement.classList.add('failed'); this.remove();" />
+        <i class="fa-solid ${icon} thumb-fallback"></i>
+    </div>`;
 }
 
 /* ============================================================
@@ -320,7 +349,7 @@ function listingCard(listing, ownOnly = false) {
 
     const buttonLabel = ownOnly ? 'Verwalten' : 'Details';
     const action = ownOnly ? 'open-my' : 'open-browse';
-    const icon = iconForListing(listing);
+    const thumbHtml = listingThumbHtml(listing, 'thumb-card');
 
     return `
         <article class="${cardClasses.join(' ')}">
@@ -328,7 +357,10 @@ function listingCard(listing, ownOnly = false) {
                 <div class="listing-badges">${badges.join('')}</div>
                 <div class="listing-price">${esc(listing.price_text)}</div>
             </div>
-            <h3><i class="fa-solid ${icon} listing-icon"></i> ${esc(listing.title)}</h3>
+            <div class="listing-title-row">
+                ${thumbHtml}
+                <h3>${esc(listing.title)}</h3>
+            </div>
             <div class="listing-copy">${esc(listing.action_hint || '')}</div>
             <p class="listing-description">${esc(listing.description || 'Keine Beschreibung hinterlegt.')}</p>
             <div class="listing-meta">
@@ -588,6 +620,13 @@ function openListingModal(listing, ownOnly = false) {
         ownOnly ? 'Mein Angebot' : 'Angebotsdetails',
         listing.title,
         `
+            <div class="modal-hero">
+                ${listingThumbHtml(listing, 'thumb-modal')}
+                <div class="modal-hero-text">
+                    <div class="modal-hero-kind">${esc(listing.kind || '')}</div>
+                    <div class="modal-hero-price">${esc(listing.price_text || '-')}</div>
+                </div>
+            </div>
             <div class="detail-grid">
                 ${details.map((d) => `
                     <div class="detail-card">

@@ -582,14 +582,127 @@ select.input, .select {
     font-weight: 600;
     letter-spacing: 0.5px;
     text-transform: uppercase;
+}
+
+.listing-title-row {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 14px;
 }
-.listing-icon { color: var(--neon); font-size: 16px; text-shadow: 0 0 8px var(--neon-glow); flex-shrink: 0; }
 
-.listing-card.is-auction .listing-icon { color: var(--warning); text-shadow: 0 0 8px var(--gold-glow); }
+/* ============================================================
+   ITEM THUMBNAIL (Inventory icon)
+   ============================================================ */
+.listing-thumb {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba(0, 255, 240, 0.05), rgba(0, 255, 240, 0.01));
+    border: 1px solid var(--border-strong);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.22s ease;
+}
+
+.listing-thumb::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(135deg, transparent 50%, rgba(0, 255, 240, 0.06) 100%),
+        radial-gradient(circle at 30% 30%, rgba(0, 255, 240, 0.08), transparent 60%);
+    pointer-events: none;
+}
+
+.listing-thumb img {
+    width: 75%;
+    height: 75%;
+    object-fit: contain;
+    object-position: center;
+    image-rendering: -webkit-optimize-contrast;
+    position: relative;
+    z-index: 2;
+    filter: drop-shadow(0 0 6px rgba(0, 255, 240, 0.25));
+    transition: transform 0.3s ease;
+}
+
+.listing-thumb .thumb-fallback {
+    position: absolute;
+    color: var(--neon);
+    z-index: 1;
+    opacity: 0;
+    text-shadow: 0 0 10px var(--neon-glow);
+    transition: opacity 0.18s ease;
+}
+
+/* When img fails (removed by onerror), show fallback icon */
+.listing-thumb.no-image .thumb-fallback,
+.listing-thumb.failed .thumb-fallback {
+    opacity: 1;
+}
+
+.listing-thumb.thumb-card {
+    width: 64px;
+    height: 64px;
+}
+.listing-thumb.thumb-card .thumb-fallback { font-size: 24px; }
+
+.listing-card:hover .listing-thumb {
+    border-color: var(--neon);
+    box-shadow: 0 0 14px var(--neon-glow-soft);
+}
+.listing-card:hover .listing-thumb img { transform: scale(1.06); }
+
+.listing-card.is-auction .listing-thumb {
+    border-color: rgba(255, 204, 51, 0.4);
+    background: linear-gradient(135deg, rgba(255, 204, 51, 0.06), transparent);
+}
+.listing-card.is-auction .listing-thumb .thumb-fallback {
+    color: var(--warning);
+    text-shadow: 0 0 10px var(--gold-glow);
+}
+.listing-card.advertised .listing-thumb {
+    border-color: var(--gold);
+    box-shadow: inset 0 0 10px rgba(255, 204, 51, 0.1);
+}
 .listing-card.advertised h3 { text-shadow: 0 0 8px rgba(255, 204, 51, 0.3); }
+
+/* Modal hero (large thumb + price) */
+.modal-hero {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 18px;
+    background: var(--panel-soft);
+    border: 1px solid var(--border);
+    border-left: 2px solid var(--neon);
+}
+.listing-thumb.thumb-modal {
+    width: 110px;
+    height: 110px;
+}
+.listing-thumb.thumb-modal .thumb-fallback { font-size: 44px; }
+.modal-hero-text {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.modal-hero-kind {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--neon-dim);
+    font-weight: 600;
+}
+.modal-hero-price {
+    font-family: var(--font-mono);
+    color: var(--neon);
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-shadow: 0 0 12px var(--neon-glow);
+}
 
 .listing-copy, .listing-meta span, .helper-text, .wallet-total-label, .empty-state, .modal-subtext {
     color: var(--text-dim);
