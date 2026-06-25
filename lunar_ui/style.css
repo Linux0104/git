@@ -457,8 +457,8 @@ html, body {
    Main Content / Grid
    ========================= */
 .main-content {
-    padding: 28px 40px 32px;
-    max-height: calc(100vh - 280px);
+    padding: 32px 40px 32px;
+    max-height: calc(100vh - 220px);
     overflow-y: auto;
     overflow-x: hidden;
 }
@@ -792,8 +792,7 @@ html, body {
     }
     .header-controls { width: 100%; }
     #searchInput { width: 100%; flex: 1; }
-    .tabs { padding: 14px 24px 0; }
-    .main-content { padding: 22px 24px 24px; max-height: calc(100vh - 320px); }
+    .main-content { padding: 22px 24px 24px; max-height: calc(100vh - 260px); }
     .footer-bar { padding: 12px 24px; flex-direction: column; gap: 10px; }
     .brand-text h1 { font-size: 1.3rem; }
 }

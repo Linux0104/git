@@ -5,7 +5,6 @@
 
 var app = document.getElementById('app');
 var grid = document.getElementById('grid');
-var tabs = document.getElementById('tabs');
 var searchInput = document.getElementById('searchInput');
 var closeBtn = document.getElementById('closeBtn');
 var emptyState = document.getElementById('emptyState');
@@ -14,8 +13,6 @@ var vehicleCount = document.getElementById('vehicleCount');
 var resourceName = typeof GetParentResourceName === 'function' ? GetParentResourceName() : 'lunar_carretail';
 
 var vehicles = [];
-var categories = [];
-var activeCat = 'all';
 var searchTerm = '';
 var isOpen = false;
 
@@ -39,46 +36,54 @@ function post(action, payload) {
     }).catch(function () {});
 }
 
-function capitalize(s) {
-    if (!s) return '';
-    return s.charAt(0).toUpperCase() + s.slice(1);
-}
-
-function renderTabs() {
-    tabs.innerHTML = '';
-    var ordered = ['all', 'economy', 'premium', 'luxury', 'commercial', 'sport', 'suv'];
-    var rest = categories.filter(function (c) { return ordered.indexOf(c) === -1; });
-    var finalCats = ordered.filter(function (c) { return c === 'all' || categories.indexOf(c) !== -1; }).concat(rest);
-    // ensure 'all' is always present
-    if (finalCats.indexOf('all') === -1) finalCats.unshift('all');
-
-    finalCats.forEach(function (cat) {
-        var btn = document.createElement('div');
-        btn.className = 'tab' + (cat === activeCat ? ' active' : '');
-        btn.textContent = cat === 'all' ? 'Alle Fahrzeuge' : capitalize(cat);
-        btn.addEventListener('click', function () {
-            activeCat = cat;
-            renderTabs();
-            renderCards();
-        });
-        tabs.appendChild(btn);
-    });
-}
-
 function filtered() {
     var term = (searchTerm || '').toLowerCase();
+    if (term === '') return vehicles;
     return vehicles.filter(function (v) {
-        var catOk = activeCat === 'all' || v.category === activeCat;
         var label = v.label ? v.label.toLowerCase() : '';
         var model = v.model ? v.model.toLowerCase() : '';
-        var searchOk = term === '' || label.indexOf(term) !== -1 || model.indexOf(term) !== -1;
-        return catOk && searchOk;
+        return label.indexOf(term) !== -1 || model.indexOf(term) !== -1;
     });
 }
 
 function formatPrice(n) {
     var num = Math.round(n || 0);
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}
+
+/**
+ * Resolve vehicle image with auto-fallback chain:
+ *   1. v.image (if explicitly set by server)
+ *   2. images/{model}.png  (standard FiveM convention)
+ *   3. images/{model}.jpg
+ *   4. images/placeholder.png
+ */
+function applyVehicleImage(imgEl, v) {
+    var model = (v.model || '').toLowerCase();
+    var explicit = v.image ? String(v.image) : '';
+
+    var chain = [];
+    if (explicit) chain.push(explicit);
+    if (model) {
+        chain.push('images/' + model + '.png');
+        chain.push('images/' + model + '.jpg');
+        chain.push('images/' + model + '.webp');
+    }
+    chain.push('images/placeholder.png');
+
+    var idx = 0;
+    function tryNext() {
+        if (idx >= chain.length) return;
+        imgEl.src = chain[idx++];
+    }
+    imgEl.onerror = function () {
+        if (idx < chain.length) {
+            tryNext();
+        } else {
+            imgEl.onerror = null;
+        }
+    };
+    tryNext();
 }
 
 function renderCards() {
@@ -108,11 +113,6 @@ function renderCards() {
         var imgWrap = document.createElement('div');
         imgWrap.className = 'card-img-wrap';
 
-        var catBadge = document.createElement('div');
-        catBadge.className = 'card-cat-badge';
-        catBadge.textContent = v.category ? capitalize(v.category) : 'Sonstiges';
-        imgWrap.appendChild(catBadge);
-
         var idBadge = document.createElement('div');
         idBadge.className = 'card-id-badge';
         idBadge.textContent = '#' + String(idx + 1).padStart(3, '0');
@@ -121,15 +121,7 @@ function renderCards() {
         var img = document.createElement('img');
         img.className = 'img';
         img.alt = v.label || v.model || 'Fahrzeug';
-        if (v.image) {
-            img.src = v.image;
-            img.onerror = function () {
-                this.onerror = null;
-                this.src = 'images/placeholder.png';
-            };
-        } else {
-            img.src = 'images/placeholder.png';
-        }
+        applyVehicleImage(img, v);
         imgWrap.appendChild(img);
 
         // Body
@@ -181,11 +173,8 @@ function renderCards() {
 
 function openUI(data) {
     vehicles = (data && Array.isArray(data.vehicles)) ? data.vehicles : [];
-    categories = (data && Array.isArray(data.categories)) ? data.categories : [];
-    activeCat = 'all';
     searchTerm = '';
     if (searchInput) { searchInput.value = ''; }
-    renderTabs();
     renderCards();
     showUI();
 }
@@ -232,21 +221,18 @@ window.addEventListener('keydown', function (e) {
     if (isFiveM && !forceDemo) return;
 
     var demoVehicles = [
-        { label: 'Adder GT',        model: 'adder',      category: 'luxury',     price: 950000, duration: 1800000, image: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=600&auto=format&fit=crop&q=70' },
-        { label: 'Zentorno Sport',  model: 'zentorno',   category: 'sport',      price: 725000, duration: 1500000, image: 'https://images.unsplash.com/photo-1542362567-b07e54358753?w=600&auto=format&fit=crop&q=70' },
-        { label: 'Sultan Classic',  model: 'sultan',     category: 'economy',    price: 12000,  duration: 600000,  image: 'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=600&auto=format&fit=crop&q=70' },
-        { label: 'Felon Coupe',     model: 'felon',      category: 'premium',    price: 85000,  duration: 1200000, image: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=600&auto=format&fit=crop&q=70' },
-        { label: 'Burrito Cargo',   model: 'burrito',    category: 'commercial', price: 18000,  duration: 900000,  image: 'https://images.unsplash.com/photo-1601362840469-51e4d8d58785?w=600&auto=format&fit=crop&q=70' },
-        { label: 'Cavalcade SUV',   model: 'cavalcade',  category: 'suv',        price: 64000,  duration: 1200000, image: 'https://images.unsplash.com/photo-1568844293986-8d0400bd4745?w=600&auto=format&fit=crop&q=70' },
-        { label: 'Banshee Turbo',   model: 'banshee',    category: 'sport',      price: 184000, duration: 1500000, image: 'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?w=600&auto=format&fit=crop&q=70' },
-        { label: 'Tailgater Pro',   model: 'tailgater',  category: 'premium',    price: 42000,  duration: 1200000, image: 'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=600&auto=format&fit=crop&q=70' }
+        { label: 'Adder GT',        model: 'adder',      price: 950000, duration: 1800000, image: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=600&auto=format&fit=crop&q=70' },
+        { label: 'Zentorno Sport',  model: 'zentorno',   price: 725000, duration: 1500000, image: 'https://images.unsplash.com/photo-1542362567-b07e54358753?w=600&auto=format&fit=crop&q=70' },
+        { label: 'Sultan Classic',  model: 'sultan',     price: 12000,  duration: 600000,  image: 'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=600&auto=format&fit=crop&q=70' },
+        { label: 'Felon Coupe',     model: 'felon',      price: 85000,  duration: 1200000, image: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=600&auto=format&fit=crop&q=70' },
+        { label: 'Burrito Cargo',   model: 'burrito',    price: 18000,  duration: 900000,  image: 'https://images.unsplash.com/photo-1601362840469-51e4d8d58785?w=600&auto=format&fit=crop&q=70' },
+        { label: 'Cavalcade SUV',   model: 'cavalcade',  price: 64000,  duration: 1200000, image: 'https://images.unsplash.com/photo-1568844293986-8d0400bd4745?w=600&auto=format&fit=crop&q=70' },
+        { label: 'Banshee Turbo',   model: 'banshee',    price: 184000, duration: 1500000, image: 'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?w=600&auto=format&fit=crop&q=70' },
+        { label: 'Tailgater Pro',   model: 'tailgater',  price: 42000,  duration: 1200000, image: 'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=600&auto=format&fit=crop&q=70' }
     ];
 
     setTimeout(function () {
-        openUI({
-            vehicles: demoVehicles,
-            categories: ['economy', 'premium', 'luxury', 'sport', 'suv', 'commercial']
-        });
+        openUI({ vehicles: demoVehicles });
     }, 80);
 })();
 
