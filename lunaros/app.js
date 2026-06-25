@@ -1940,6 +1940,7 @@ function buildNav() {
 
         const button = document.createElement("button");
         button.textContent = tab.label;
+        button.dataset.tab = tab.key;
         button.classList.toggle("active", state.activeTab === tab.key);
         button.addEventListener("click", () => setActiveTab(tab.key));
         navTabs.appendChild(button);

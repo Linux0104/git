@@ -1,86 +1,91 @@
 /* ============================================================
-   LunarOS Tablet — Modern Redesign (Apple / iOS aesthetic)
-   - Clean, generous whitespace, soft radii, system blue accent
-   - FiveM NUI compatible: transparent background, .nui-open/closed
-   - All structural class names preserved for app.js compatibility
+   LunarOS Tablet — Pure iOS Redesign
+   Aim: near-indistinguishable from native iPadOS/iOS UI
+   FiveM NUI compatible (transparent body, .nui-open/closed)
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+/* SF Pro Display / SF Pro Text — Apple system fonts.
+   On macOS/iOS browsers, -apple-system & BlinkMacSystemFont map to SF Pro natively.
+   For Windows (FiveM/CEF), we load Inter as the closest, geometrically identical fallback. */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap');
 
 :root {
     color-scheme: dark;
 
-    /* iOS-style layered surfaces (dark mode) */
-    --bg-base:        #000000;
-    --bg-window:      rgba(22, 22, 24, 0.78);
-    --bg-surface:     rgba(28, 28, 30, 0.85);   /* systemGray6 dark */
-    --bg-elevated:    rgba(44, 44, 46, 0.85);   /* systemGray5 dark */
-    --bg-input:       rgba(58, 58, 60, 0.40);   /* systemGray4 dark, alpha */
-    --bg-hover:       rgba(255, 255, 255, 0.045);
-    --bg-active:      rgba(10, 132, 255, 0.14);
+    /* ===== iOS dark system colors ===== */
+    --ios-window-bg:      rgba(28, 28, 30, 0.78);   /* sheet/material chrome */
+    --ios-sidebar-bg:     rgba(36, 36, 38, 0.65);
+    --ios-grouped-bg:     rgba(28, 28, 30, 0.92);   /* iOS grouped table bg */
+    --ios-card:           rgba(44, 44, 46, 0.78);   /* systemGray5 */
+    --ios-card-hover:     rgba(58, 58, 60, 0.85);   /* systemGray4 */
+    --ios-fill:           rgba(118, 118, 128, 0.24); /* iOS Fill quaternary */
+    --ios-fill-soft:      rgba(118, 118, 128, 0.12);
+    --ios-input-bg:       rgba(118, 118, 128, 0.18);
 
-    /* Hairlines */
-    --line:           rgba(255, 255, 255, 0.08);
-    --line-strong:    rgba(255, 255, 255, 0.14);
-    --line-faint:     rgba(255, 255, 255, 0.05);
+    /* iOS separator */
+    --ios-separator:        rgba(84, 84, 88, 0.45);
+    --ios-separator-opaque: rgba(56, 56, 58, 1);
+    --ios-hairline:         rgba(255, 255, 255, 0.04);
 
-    /* Apple system semantic colors (dark) */
-    --accent:         #0a84ff;
-    --accent-soft:    rgba(10, 132, 255, 0.18);
-    --accent-hover:   #3a9dff;
-    --accent-press:   #0070e0;
+    /* iOS semantic colors (dark) */
+    --ios-blue:    #0a84ff;
+    --ios-blue-2:  #409cff;
+    --ios-green:   #30d158;
+    --ios-orange:  #ff9f0a;
+    --ios-red:     #ff453a;
+    --ios-pink:    #ff375f;
+    --ios-purple:  #bf5af2;
+    --ios-teal:    #5ac8fa;
+    --ios-yellow:  #ffd60a;
+    --ios-indigo:  #5e5ce6;
 
-    --success:        #30d158;
-    --warn:           #ff9f0a;
-    --danger:         #ff453a;
-    --purple:         #bf5af2;
-    --teal:           #5ac8fa;
+    /* iOS label colors */
+    --label-1: rgba(255, 255, 255, 0.96);   /* primary */
+    --label-2: rgba(235, 235, 245, 0.62);   /* secondary */
+    --label-3: rgba(235, 235, 245, 0.42);   /* tertiary */
+    --label-4: rgba(235, 235, 245, 0.24);   /* quaternary */
 
-    /* Type — Apple-style hierarchy */
-    --text-primary:   #f5f5f7;
-    --text-secondary: rgba(235, 235, 245, 0.62);
-    --text-tertiary:  rgba(235, 235, 245, 0.36);
-    --text-quaternary:rgba(235, 235, 245, 0.20);
+    /* Typography — SF Pro stack with Inter fallback */
+    --font-display: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro', 'Inter', system-ui, sans-serif;
+    --font-text:    -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro', 'Inter', system-ui, sans-serif;
+    --font-mono:    ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace;
 
-    --font-ui:        'Manrope', -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
-    --font-mono:      'JetBrains Mono', 'SF Mono', ui-monospace, Menlo, Consolas, monospace;
-
-    /* Radii (iOS feel) */
-    --r-xs: 6px;
-    --r-sm: 10px;
-    --r-md: 14px;
-    --r-lg: 18px;
-    --r-xl: 22px;
+    /* iOS radii */
+    --r-xs:  6px;
+    --r-sm:  10px;
+    --r-md:  13px;   /* iOS settings cell */
+    --r-lg:  16px;
+    --r-xl:  20px;
     --r-2xl: 28px;
 
-    /* Transitions */
-    --ease-out:  cubic-bezier(0.22, 1, 0.36, 1);
-    --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
-    --t-fast: 0.18s var(--ease-out);
-    --t-med:  0.32s var(--ease-out);
+    /* Motion */
+    --ease-ios: cubic-bezier(0.4, 0, 0.2, 1);
+    --t-fast:   0.18s var(--ease-ios);
+    --t-med:    0.28s var(--ease-ios);
 
     /* Shadows */
-    --shadow-card:  0 1px 0 rgba(255,255,255,0.04) inset, 0 8px 28px rgba(0,0,0,0.32);
-    --shadow-pop:   0 20px 60px rgba(0,0,0,0.55), 0 1px 0 rgba(255,255,255,0.05) inset;
-    --focus-ring:   0 0 0 4px rgba(10, 132, 255, 0.30);
+    --shadow-sheet: 0 30px 80px rgba(0,0,0,0.55), 0 0 0 0.5px rgba(255,255,255,0.06);
+    --focus-ring:   0 0 0 4px rgba(10,132,255,0.28);
 }
 
 * { box-sizing: border-box; }
+*::before, *::after { box-sizing: border-box; }
 
 html, body {
     margin: 0;
     min-height: 100vh;
     background: transparent !important;
-    font-family: var(--font-ui);
+    font-family: var(--font-text);
+    font-feature-settings: "cv11", "ss03", "cv02", "tnum";
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
 }
 
 body {
-    color: var(--text-primary);
+    color: var(--label-1);
     overflow: hidden;
-    letter-spacing: -0.005em;
+    letter-spacing: -0.01em;
 }
 
 body.nui-closed { display: none !important; visibility: hidden; opacity: 0; pointer-events: none; }
@@ -90,7 +95,7 @@ body.nui-closed #app { display: none !important; }
 .hidden { display: none !important; }
 
 /* ============================================================
-   App shell — large, soft, glassy window
+   App shell — iPadOS window
    ============================================================ */
 .app {
     position: relative;
@@ -100,16 +105,14 @@ body.nui-closed #app { display: none !important; }
     margin: 12px auto;
     display: grid;
     grid-template-columns: 280px minmax(0, 1fr);
-    gap: 0;
-    padding: 0;
-    background: var(--bg-window);
-    border: 1px solid var(--line);
+    background: var(--ios-window-bg);
+    border: 0.5px solid rgba(255, 255, 255, 0.10);
     border-radius: var(--r-2xl);
-    box-shadow: var(--shadow-pop);
-    backdrop-filter: blur(40px) saturate(180%);
-    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    box-shadow: var(--shadow-sheet);
+    backdrop-filter: blur(60px) saturate(180%);
+    -webkit-backdrop-filter: blur(60px) saturate(180%);
     overflow: hidden;
-    animation: app-boot 0.55s var(--ease-out);
+    animation: app-boot 0.55s var(--ease-ios);
 }
 
 @keyframes app-boot {
@@ -118,53 +121,75 @@ body.nui-closed #app { display: none !important; }
 }
 
 /* ============================================================
-   Sidebar — iOS-style source list
+   Sidebar — iPadOS source list
    ============================================================ */
 .sidebar {
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: 18px;
-    padding: 22px 16px;
+    gap: 20px;
+    padding: 18px 12px;
     min-height: 0;
     overflow-y: auto;
-    background: rgba(0, 0, 0, 0.22);
-    border-right: 1px solid var(--line);
+    background: var(--ios-sidebar-bg);
+    border-right: 0.5px solid rgba(255, 255, 255, 0.08);
 }
 
-/* Brand block */
+/* Brand block — iOS app icon style */
 .brand {
-    padding: 4px 10px 10px;
-    border-bottom: 1px solid var(--line-faint);
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr);
+    column-gap: 12px;
+    align-items: center;
+    padding: 6px 8px 14px;
+    border-bottom: 0.5px solid var(--ios-separator);
+}
+.brand::before {
+    content: "";
+    width: 44px; height: 44px;
+    border-radius: 11px;
+    background:
+        linear-gradient(135deg, #0a84ff 0%, #5e5ce6 100%);
+    box-shadow: 0 6px 14px rgba(10, 132, 255, 0.35), inset 0 1px 0 rgba(255,255,255,0.22);
+    position: relative;
+}
+/* Crescent moon decoration inside brand icon */
+.brand::after {
+    content: "";
+    position: absolute;
+    width: 16px; height: 16px;
+    margin-left: 14px;
+    margin-top: 14px;
+    border-radius: 50%;
+    box-shadow: 5px -3px 0 0 #ffffff;
+    background: transparent;
+    pointer-events: none;
 }
 .brand__label {
-    font-family: var(--font-ui);
-    font-size: 1.45rem;
+    font-family: var(--font-display);
+    font-size: 1.15rem;
     font-weight: 700;
-    letter-spacing: -0.028em;
+    letter-spacing: -0.025em;
     line-height: 1.1;
-    color: var(--text-primary);
+    color: var(--label-1);
 }
 .brand__sub {
-    font-family: var(--font-ui);
+    margin-top: 2px;
+    font-family: var(--font-text);
     font-size: 0.78rem;
-    font-weight: 500;
-    color: var(--text-tertiary);
-    letter-spacing: 0;
-    text-transform: none;
+    font-weight: 400;
+    color: var(--label-2);
+    letter-spacing: -0.01em;
 }
 
-/* Officer profile card */
+/* Profile card — like iOS Settings user row */
 .profile {
-    padding: 14px 14px;
+    padding: 12px;
     border-radius: var(--r-md);
-    background: var(--bg-surface);
-    border: 1px solid var(--line-faint);
+    background: var(--ios-fill-soft);
+    border: 0.5px solid var(--ios-hairline);
     display: grid;
-    grid-template-columns: 36px minmax(0, 1fr);
+    grid-template-columns: 38px minmax(0, 1fr);
     grid-template-rows: auto auto;
     column-gap: 12px;
     row-gap: 2px;
@@ -174,76 +199,126 @@ body.nui-closed #app { display: none !important; }
     content: "";
     grid-column: 1;
     grid-row: 1 / span 2;
-    width: 36px; height: 36px;
+    width: 38px; height: 38px;
     border-radius: 50%;
     background:
-        radial-gradient(circle at 30% 30%, var(--accent-hover), var(--accent) 65%);
-    box-shadow: 0 4px 12px rgba(10,132,255,0.35), inset 0 1px 0 rgba(255,255,255,0.25);
+        radial-gradient(circle at 30% 28%, #5ac8fa, #0a84ff 60%);
+    box-shadow: 0 4px 10px rgba(10,132,255,0.32), inset 0 1px 0 rgba(255,255,255,0.3);
 }
 .profile__name {
-    grid-column: 2;
-    grid-row: 1;
+    grid-column: 2; grid-row: 1;
+    font-family: var(--font-display);
     font-weight: 600;
-    font-size: 0.93rem;
-    color: var(--text-primary);
-    letter-spacing: -0.01em;
+    font-size: 0.95rem;
+    color: var(--label-1);
+    letter-spacing: -0.015em;
     line-height: 1.2;
     overflow-wrap: break-word;
 }
 .profile__meta {
-    grid-column: 2;
-    grid-row: 2;
-    font-size: 0.76rem;
-    color: var(--text-secondary);
+    grid-column: 2; grid-row: 2;
+    font-size: 0.78rem;
+    font-weight: 400;
+    color: var(--label-2);
     line-height: 1.35;
     overflow-wrap: break-word;
 }
 
-/* Nav rail */
+/* ============================================================
+   Nav — iPadOS sidebar list with SF Symbol-style icons
+   ============================================================ */
 .nav {
     display: flex;
     flex-direction: column;
-    gap: 2px;
-    padding: 0;
+    gap: 1px;
+    padding: 0 2px;
 }
 .nav::before {
     content: "Module";
-    padding: 4px 12px 6px;
+    padding: 4px 14px 6px;
+    font-family: var(--font-text);
     font-size: 0.72rem;
     font-weight: 600;
-    color: var(--text-tertiary);
-    letter-spacing: 0.04em;
+    color: var(--label-3);
+    letter-spacing: 0.02em;
     text-transform: uppercase;
 }
 
 .nav button {
     appearance: none;
     background: transparent;
-    color: var(--text-secondary);
+    color: var(--label-1);
     border: none;
     border-radius: var(--r-sm);
-    padding: 10px 12px;
+    padding: 8px 12px 8px 38px;
     text-align: left;
-    font-family: var(--font-ui);
-    font-size: 0.92rem;
+    font-family: var(--font-text);
+    font-size: 0.93rem;
     font-weight: 500;
-    letter-spacing: -0.005em;
+    letter-spacing: -0.015em;
     cursor: pointer;
-    transition: background var(--t-fast), color var(--t-fast), transform var(--t-fast);
+    position: relative;
+    transition: background var(--t-fast), color var(--t-fast), transform 0.08s ease-out;
+    min-height: 34px;
 }
+
+/* iOS-style icon container */
+.nav button::before {
+    content: "";
+    position: absolute;
+    left: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 22px; height: 22px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 19px 19px;
+    opacity: 0.85;
+    transition: filter var(--t-fast), opacity var(--t-fast);
+}
+
+/* SF Symbols inspired line icons (white) */
+.nav button[data-tab="dashboard"]::before {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><rect x='3' y='3' width='7' height='9' rx='1.5'/><rect x='14' y='3' width='7' height='5' rx='1.5'/><rect x='14' y='12' width='7' height='9' rx='1.5'/><rect x='3' y='16' width='7' height='5' rx='1.5'/></svg>");
+}
+.nav button[data-tab="persons"]::before {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='8' r='4'/><path d='M4 21c0-4 4-7 8-7s8 3 8 7'/></svg>");
+}
+.nav button[data-tab="warrants"]::before {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><circle cx='11' cy='11' r='7'/><path d='M21 21l-4.5-4.5'/></svg>");
+}
+.nav button[data-tab="cases"]::before {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M4 7a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7z'/></svg>");
+}
+.nav button[data-tab="tickets"]::before {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4V8z'/><path d='M9 6v12'/></svg>");
+}
+.nav button[data-tab="medical"]::before {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M19 14c-2.7 4-5 6-7 6s-4.3-2-7-6c-2.5-3.7-2.7-7.3 1-9 2-1 4 0 6 2.5C14 5 16 4 18 5c3.7 1.7 3.5 5.3 1 9z'/></svg>");
+}
+.nav button[data-tab="dispatch"]::before {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M4 11l16-7-7 16-2.5-6.5L4 11z'/></svg>");
+}
+.nav button[data-tab="management"]::before {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M12 2l2.4 4.9 5.4.8-3.9 3.8.9 5.4L12 14.3l-4.8 2.6.9-5.4L4.2 7.7l5.4-.8L12 2z'/></svg>");
+}
+.nav button[data-tab="calendar"]::before {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><rect x='3' y='5' width='18' height='16' rx='2'/><path d='M3 9h18M8 3v4M16 3v4'/></svg>");
+}
+
 .nav button:hover {
-    color: var(--text-primary);
-    background: var(--bg-hover);
+    background: var(--ios-fill-soft);
 }
 .nav button:active { transform: scale(0.98); }
 .nav button.active {
     color: #ffffff;
-    background: var(--accent);
-    box-shadow: 0 2px 10px rgba(10,132,255,0.35);
+    background: var(--ios-blue);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.14) inset, 0 4px 10px rgba(10,132,255,0.3);
 }
 .nav button.active:hover {
-    background: var(--accent-hover);
+    background: var(--ios-blue-2);
 }
+.nav button.active::before { opacity: 1; }
 
 /* Close button at sidebar bottom */
 .sidebar > .ghost-button {
@@ -257,53 +332,56 @@ body.nui-closed #app { display: none !important; }
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: 0;
     min-width: 0;
     min-height: 0;
     overflow: hidden;
 }
 
-/* Topbar */
+/* iOS Large Title topbar */
 .topbar {
     position: relative;
     display: grid;
     grid-template-columns: 1fr auto;
-    align-items: center;
-    gap: 24px;
-    padding: 22px 32px 18px;
+    align-items: start;
+    column-gap: 24px;
+    padding: 24px 32px 18px;
     background: transparent;
-    border-bottom: 1px solid var(--line);
+    border-bottom: 0.5px solid var(--ios-separator);
     flex: 0 0 auto;
 }
+.topbar > div:first-child { min-width: 0; }
 .topbar h1 {
     margin: 0;
-    font-family: var(--font-ui);
+    font-family: var(--font-display);
     font-weight: 700;
-    font-size: 1.75rem;
-    letter-spacing: -0.03em;
-    color: var(--text-primary);
-    line-height: 1.15;
+    font-size: 2rem;
+    letter-spacing: -0.035em;
+    color: var(--label-1);
+    line-height: 1.1;
 }
 
 #pageDescription {
     margin: 4px 0 0;
-    font-family: var(--font-ui);
-    font-size: 0.92rem;
-    color: var(--text-secondary);
-    letter-spacing: -0.005em;
+    font-family: var(--font-text);
+    font-size: 0.94rem;
+    font-weight: 400;
+    color: var(--label-2);
+    letter-spacing: -0.01em;
     text-transform: none;
 }
 
 .toast {
-    font-family: var(--font-ui);
+    font-family: var(--font-text);
     font-size: 0.82rem;
-    color: var(--text-secondary);
+    font-weight: 500;
+    color: var(--label-2);
     text-align: right;
     max-width: 320px;
     line-height: 1.4;
+    letter-spacing: -0.005em;
 }
 
-/* Top chips — iOS pill style */
+/* iOS status pills */
 .topbar__meta {
     display: flex;
     flex-wrap: wrap;
@@ -313,30 +391,30 @@ body.nui-closed #app { display: none !important; }
 .topbar__chip {
     display: inline-flex;
     align-items: center;
-    gap: 7px;
-    padding: 5px 11px;
-    border: 1px solid var(--line);
+    gap: 6px;
+    padding: 4px 10px;
+    border: none;
     border-radius: 999px;
-    font-family: var(--font-ui);
-    font-size: 0.72rem;
+    font-family: var(--font-text);
+    font-size: 0.74rem;
     font-weight: 500;
-    letter-spacing: 0;
+    letter-spacing: -0.005em;
     text-transform: none;
-    color: var(--text-secondary);
-    background: var(--bg-surface);
+    color: var(--label-1);
+    background: var(--ios-fill);
 }
 .topbar__chip .dot {
     width: 6px; height: 6px; border-radius: 50%;
-    background: var(--success);
-    box-shadow: 0 0 8px rgba(48, 209, 88, 0.45);
+    background: var(--ios-green);
+    box-shadow: 0 0 6px rgba(48, 209, 88, 0.55);
 }
-.topbar__chip .dot.amber { background: var(--warn); box-shadow: 0 0 8px rgba(255,159,10,0.5); }
-.topbar__chip .dot.ion   { background: var(--teal); box-shadow: 0 0 8px rgba(90,200,250,0.5); }
+.topbar__chip .dot.amber { background: var(--ios-orange); box-shadow: 0 0 6px rgba(255,159,10,0.55); }
+.topbar__chip .dot.ion   { background: var(--ios-teal);   box-shadow: 0 0 6px rgba(90,200,250,0.55); }
 
 #topbarClock {
     font-family: var(--font-mono);
-    letter-spacing: 0.02em;
-    color: var(--text-secondary);
+    letter-spacing: 0.01em;
+    color: var(--label-2);
 }
 
 /* View scroll area */
@@ -347,12 +425,12 @@ body.nui-closed #app { display: none !important; }
     overflow-x: hidden;
     display: flex;
     flex-direction: column;
-    gap: 18px;
+    gap: 20px;
     padding: 22px 32px 28px;
     overscroll-behavior: contain;
 }
 
-/* Scrollbars — iOS thin */
+/* Scrollbars — iOS thin overlay */
 .view::-webkit-scrollbar,
 .sidebar::-webkit-scrollbar,
 .dispatch-table-wrap::-webkit-scrollbar { width: 8px; height: 8px; }
@@ -362,14 +440,17 @@ body.nui-closed #app { display: none !important; }
 .view::-webkit-scrollbar-thumb,
 .sidebar::-webkit-scrollbar-thumb,
 .dispatch-table-wrap::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.14);
     border-radius: 10px;
     border: 2px solid transparent;
     background-clip: padding-box;
 }
 .view::-webkit-scrollbar-thumb:hover,
 .sidebar::-webkit-scrollbar-thumb:hover,
-.dispatch-table-wrap::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.22); background-clip: padding-box; }
+.dispatch-table-wrap::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.28);
+    background-clip: padding-box;
+}
 
 /* ============================================================
    Grids
@@ -384,7 +465,7 @@ body.nui-closed #app { display: none !important; }
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(6, minmax(0, 1fr));
-    gap: 14px;
+    gap: 12px;
 }
 
 .actions-grid {
@@ -394,207 +475,179 @@ body.nui-closed #app { display: none !important; }
 }
 
 /* ============================================================
-   Stat cards — iOS widget feel
+   Stat cards — iOS widget style
    ============================================================ */
 .stat-card {
     position: relative;
-    padding: 18px 18px 16px;
+    padding: 16px 16px 14px;
     border-radius: var(--r-md);
-    background: var(--bg-surface);
-    border: 1px solid var(--line-faint);
+    background: var(--ios-card);
+    border: 0.5px solid var(--ios-hairline);
     overflow: hidden;
-    transition: transform var(--t-fast), border-color var(--t-fast), background var(--t-fast);
+    transition: transform var(--t-fast), background var(--t-fast);
 }
 .stat-card:hover {
     transform: translateY(-1px);
-    border-color: var(--line-strong);
-    background: var(--bg-elevated);
+    background: var(--ios-card-hover);
 }
 .stat-card > div:first-child {
-    font-family: var(--font-ui);
-    font-size: 0.78rem;
+    font-family: var(--font-text);
+    font-size: 0.8rem;
     font-weight: 500;
-    letter-spacing: 0;
+    letter-spacing: -0.005em;
     text-transform: none;
-    color: var(--text-secondary);
+    color: var(--label-2);
 }
 .stat-card__value {
-    font-family: var(--font-ui);
-    font-size: 2.1rem;
+    font-family: var(--font-display);
+    font-size: 2.25rem;
     font-weight: 700;
-    margin-top: 8px;
-    color: var(--text-primary);
-    letter-spacing: -0.035em;
+    margin-top: 4px;
+    color: var(--label-1);
+    letter-spacing: -0.04em;
     line-height: 1.05;
     font-feature-settings: "tnum", "lnum";
 }
 
 /* ============================================================
-   Panels
+   Panels — iOS grouped table style
    ============================================================ */
 .panel {
     position: relative;
-    padding: 22px;
+    padding: 20px 22px;
     min-height: 120px;
-    background: var(--bg-surface);
-    border: 1px solid var(--line-faint);
+    background: var(--ios-card);
+    border: 0.5px solid var(--ios-hairline);
     border-radius: var(--r-lg);
-    box-shadow: var(--shadow-card);
-    transition: border-color var(--t-fast);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.03) inset, 0 6px 18px rgba(0,0,0,0.18);
 }
-.panel:hover { border-color: var(--line); }
 
 .panel__header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 12px;
-    margin: -4px 0 18px;
+    margin: 0 0 14px;
     padding-bottom: 0;
     border-bottom: none;
 }
 .panel__header h2 {
     margin: 0;
-    font-family: var(--font-ui);
-    font-size: 1.05rem;
+    font-family: var(--font-display);
+    font-size: 1.1rem;
     font-weight: 700;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.022em;
     text-transform: none;
-    color: var(--text-primary);
+    color: var(--label-1);
 }
 
-/* Smaller subsection title used inside panels (h3) */
 .panel h3 {
-    margin: 0 0 10px 0;
-    font-family: var(--font-ui);
-    font-size: 0.82rem;
+    margin: 0 0 8px 0;
+    font-family: var(--font-display);
+    font-size: 0.86rem;
     font-weight: 600;
-    letter-spacing: 0;
+    letter-spacing: -0.012em;
     text-transform: none;
-    color: var(--text-secondary);
+    color: var(--label-2);
 }
 
 /* ============================================================
-   Buttons — iOS / SwiftUI
+   Buttons — iOS filled/tinted/gray
    ============================================================ */
 .primary-button {
     appearance: none;
     border: none;
     border-radius: var(--r-sm);
-    background: var(--accent);
+    background: var(--ios-blue);
     color: #ffffff;
-    font-family: var(--font-ui);
+    font-family: var(--font-text);
     font-weight: 600;
-    font-size: 0.92rem;
-    letter-spacing: -0.005em;
+    font-size: 0.94rem;
+    letter-spacing: -0.012em;
     text-transform: none;
-    padding: 11px 18px;
+    padding: 10px 18px;
     cursor: pointer;
-    box-shadow: 0 1px 0 rgba(255,255,255,0.12) inset, 0 2px 8px rgba(10,132,255,0.28);
-    transition: background var(--t-fast), transform var(--t-fast), box-shadow var(--t-fast);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.14) inset;
+    transition: background var(--t-fast), transform 0.08s ease-out, opacity var(--t-fast);
 }
-.primary-button:hover {
-    background: var(--accent-hover);
-    box-shadow: 0 1px 0 rgba(255,255,255,0.16) inset, 0 6px 18px rgba(10,132,255,0.38);
-}
-.primary-button:active {
-    background: var(--accent-press);
-    transform: scale(0.97);
-}
+.primary-button:hover { background: var(--ios-blue-2); }
+.primary-button:active { transform: scale(0.97); opacity: 0.85; }
 
 .ghost-button {
     appearance: none;
-    border: 1px solid var(--line-strong);
-    background: var(--bg-surface);
-    color: var(--text-primary);
+    border: none;
+    background: var(--ios-fill);
+    color: var(--ios-blue);
     border-radius: var(--r-sm);
     padding: 10px 16px;
-    font-family: var(--font-ui);
+    font-family: var(--font-text);
     font-weight: 600;
-    font-size: 0.9rem;
-    letter-spacing: -0.005em;
+    font-size: 0.92rem;
+    letter-spacing: -0.012em;
     text-transform: none;
     cursor: pointer;
-    transition: background var(--t-fast), border-color var(--t-fast), color var(--t-fast), transform var(--t-fast);
+    transition: background var(--t-fast), transform 0.08s ease-out;
 }
-.ghost-button:hover {
-    background: var(--bg-elevated);
-    border-color: var(--line-strong);
-    color: var(--text-primary);
-}
+.ghost-button:hover { background: rgba(118, 118, 128, 0.36); }
 .ghost-button:active { transform: scale(0.97); }
 
-/* Make close button visually destructive subtle */
+/* iOS destructive button (close) */
 #closeButton.ghost-button {
-    color: var(--danger);
-    border-color: rgba(255, 69, 58, 0.22);
-    background: rgba(255, 69, 58, 0.06);
+    color: var(--ios-red);
+    background: rgba(255, 69, 58, 0.12);
 }
 #closeButton.ghost-button:hover {
-    background: rgba(255, 69, 58, 0.14);
-    border-color: rgba(255, 69, 58, 0.4);
-    color: var(--danger);
+    background: rgba(255, 69, 58, 0.2);
 }
 
 .action-button {
     appearance: none;
-    border: 1px solid var(--line);
-    background: var(--bg-surface);
-    color: var(--text-primary);
+    border: 0.5px solid var(--ios-hairline);
+    background: var(--ios-card);
+    color: var(--label-1);
     border-radius: var(--r-md);
-    padding: 14px 16px 14px 40px;
-    font-family: var(--font-ui);
-    font-size: 0.9rem;
+    padding: 14px 16px 14px 44px;
+    font-family: var(--font-text);
+    font-size: 0.94rem;
     font-weight: 500;
-    letter-spacing: -0.005em;
+    letter-spacing: -0.012em;
     cursor: pointer;
     text-align: left;
-    transition: background var(--t-fast), border-color var(--t-fast), transform var(--t-fast);
+    transition: background var(--t-fast), transform 0.08s ease-out;
     position: relative;
 }
 .action-button::before {
-    content: "+";
+    content: "";
     position: absolute;
     left: 14px;
     top: 50%;
     transform: translateY(-50%);
-    width: 18px; height: 18px;
+    width: 22px; height: 22px;
     border-radius: 50%;
-    background: var(--accent);
-    color: #fff;
-    font-family: var(--font-ui);
-    font-size: 0.9rem;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    line-height: 1;
+    background: var(--ios-blue) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='3' stroke-linecap='round'><path d='M12 5v14M5 12h14'/></svg>") center/13px no-repeat;
 }
 .action-button:hover {
-    background: var(--bg-elevated);
-    border-color: var(--line-strong);
-    transform: translateY(-1px);
+    background: var(--ios-card-hover);
 }
+.action-button:active { transform: scale(0.985); }
 
 .record__actions button {
     appearance: none;
-    border: 1px solid var(--line);
-    background: var(--bg-elevated);
-    color: var(--text-primary);
+    border: none;
+    background: var(--ios-fill);
+    color: var(--ios-blue);
     border-radius: var(--r-xs);
     padding: 6px 12px;
-    font-family: var(--font-ui);
-    font-size: 0.78rem;
-    font-weight: 500;
-    letter-spacing: 0;
+    font-family: var(--font-text);
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: -0.005em;
     text-transform: none;
     cursor: pointer;
-    transition: background var(--t-fast), border-color var(--t-fast), color var(--t-fast);
+    transition: background var(--t-fast);
 }
 .record__actions button:hover {
-    border-color: var(--accent);
-    color: var(--accent);
-    background: var(--accent-soft);
+    background: rgba(118, 118, 128, 0.36);
 }
 
 /* ============================================================
@@ -602,53 +655,80 @@ body.nui-closed #app { display: none !important; }
    ============================================================ */
 input, textarea, select {
     width: 100%;
-    font-family: var(--font-ui);
-    font-size: 0.92rem;
-    color: var(--text-primary);
-    background: var(--bg-input);
-    border: 1px solid transparent;
+    font-family: var(--font-text);
+    font-size: 0.95rem;
+    font-weight: 400;
+    color: var(--label-1);
+    background: var(--ios-input-bg);
+    border: 0.5px solid transparent;
     border-radius: var(--r-sm);
     padding: 11px 14px;
     outline: none;
-    transition: border-color var(--t-fast), background var(--t-fast), box-shadow var(--t-fast);
-    letter-spacing: -0.005em;
+    transition: background var(--t-fast), box-shadow var(--t-fast);
+    letter-spacing: -0.012em;
+    line-height: 1.35;
 }
 input::placeholder, textarea::placeholder {
-    color: var(--text-tertiary);
-    font-family: var(--font-ui);
-    letter-spacing: -0.005em;
+    color: var(--label-3);
+    font-weight: 400;
 }
 input:focus, textarea:focus, select:focus {
-    border-color: var(--accent);
-    background: rgba(58, 58, 60, 0.55);
+    background: rgba(118, 118, 128, 0.30);
     box-shadow: var(--focus-ring);
 }
 input:hover:not(:focus), textarea:hover:not(:focus), select:hover:not(:focus) {
-    background: rgba(58, 58, 60, 0.55);
+    background: rgba(118, 118, 128, 0.26);
 }
 input[readonly], textarea[readonly] {
-    color: var(--text-secondary);
-    background: rgba(58, 58, 60, 0.22);
+    color: var(--label-2);
+    background: var(--ios-fill-soft);
     cursor: default;
 }
-input[readonly]:focus, textarea[readonly]:focus {
-    border-color: transparent;
-    box-shadow: none;
+input[readonly]:focus, textarea[readonly]:focus { box-shadow: none; }
+
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    opacity: 0.5;
+    cursor: pointer;
 }
 
 select {
     appearance: none;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23a0a0a8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>");
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23999999' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
     background-repeat: no-repeat;
-    background-position: right 14px center;
-    padding-right: 38px;
+    background-position: right 12px center;
+    background-size: 14px;
+    padding-right: 36px;
     cursor: pointer;
 }
-select option { background: #1c1c1e; color: var(--text-primary); }
+select option { background: #1c1c1e; color: var(--label-1); }
 textarea {
     min-height: 96px;
     resize: vertical;
-    line-height: 1.55;
+    line-height: 1.5;
+}
+
+/* iOS search bar — pill with magnifier icon */
+.search-bar {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    margin-bottom: 16px;
+    align-items: center;
+}
+.search-bar > input[type="text"],
+.picker-block__search > input[type="text"],
+#personSearchInput,
+#lawCatalogSearch,
+#dispatchSearch,
+#dispatchOfficerAdminSearch,
+#managementOfficerSearch {
+    padding-left: 36px;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23999999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='11' cy='11' r='7'/><path d='M21 21l-4.5-4.5'/></svg>");
+    background-repeat: no-repeat;
+    background-position: 12px center;
+    background-size: 15px;
+    border-radius: 999px;
 }
 
 .form-grid {
@@ -663,58 +743,83 @@ textarea {
 .form-grid > .placeholder {
     grid-column: 1 / -1;
 }
-.form-grid__full {
-    grid-column: 1 / -1;
-}
+.form-grid__full { grid-column: 1 / -1; }
 
+/* iOS Toggle Switch for checkboxes inside toggle-row */
 .toggle-row {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 12px;
-    padding: 11px 14px;
-    border: 1px solid var(--line-faint);
-    border-radius: var(--r-sm);
-    background: var(--bg-input);
-    color: var(--text-primary);
-    font-size: 0.92rem;
+    padding: 12px 14px;
+    border: 0.5px solid var(--ios-hairline);
+    border-radius: var(--r-md);
+    background: var(--ios-fill-soft);
+    color: var(--label-1);
+    font-family: var(--font-text);
+    font-size: 0.94rem;
+    font-weight: 500;
+    letter-spacing: -0.012em;
     cursor: pointer;
-    transition: background var(--t-fast), border-color var(--t-fast);
+    transition: background var(--t-fast);
 }
-.toggle-row:hover { background: rgba(58,58,60,0.55); }
-.toggle-row input {
-    width: 18px; height: 18px;
-    accent-color: var(--accent);
+.toggle-row:hover { background: var(--ios-fill); }
+.toggle-row > span {
+    flex: 1;
+    text-align: left;
+}
+
+.toggle-row input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 51px;
+    height: 31px;
+    background: rgba(120, 120, 128, 0.36);
+    border-radius: 999px;
+    position: relative;
     cursor: pointer;
-    margin: 0;
+    transition: background 0.25s var(--ease-ios);
+    border: none;
     padding: 0;
+    margin: 0;
+    flex: 0 0 51px;
+    box-shadow: none;
 }
-
-/* Search bar */
-.search-bar {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 10px;
-    margin-bottom: 16px;
-    align-items: center;
+.toggle-row input[type="checkbox"]::before {
+    content: "";
+    position: absolute;
+    width: 27px; height: 27px;
+    top: 2px; left: 2px;
+    background: #ffffff;
+    border-radius: 50%;
+    transition: transform 0.25s var(--ease-ios), box-shadow 0.25s var(--ease-ios);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.18), 0 1px 1px rgba(0,0,0,0.1);
 }
+.toggle-row input[type="checkbox"]:checked {
+    background: var(--ios-green);
+}
+.toggle-row input[type="checkbox"]:checked::before {
+    transform: translateX(20px);
+}
+.toggle-row input[type="checkbox"]:focus { box-shadow: none; }
 
-/* Picker block (search + selection) */
+/* Picker block — iOS inset grouped table */
 .picker-block {
     grid-column: 1 / -1;
     display: grid;
     gap: 10px;
     padding: 14px;
-    border: 1px solid var(--line-faint);
+    border: 0.5px solid var(--ios-hairline);
     border-radius: var(--r-md);
-    background: rgba(0, 0, 0, 0.18);
+    background: var(--ios-fill-soft);
 }
 .picker-block__header {
-    font-family: var(--font-ui);
-    font-size: 0.78rem;
+    font-family: var(--font-display);
+    font-size: 0.82rem;
     font-weight: 600;
-    letter-spacing: 0;
+    letter-spacing: -0.012em;
     text-transform: none;
-    color: var(--text-secondary);
+    color: var(--label-2);
 }
 .picker-block__search {
     display: grid;
@@ -733,15 +838,14 @@ textarea {
     gap: 12px;
     justify-content: space-between;
     padding: 10px 12px;
-    border: 1px solid var(--line-faint);
+    border: 0.5px solid var(--ios-hairline);
     border-radius: var(--r-sm);
-    background: var(--bg-surface);
-    transition: background var(--t-fast), border-color var(--t-fast);
+    background: var(--ios-card);
+    transition: background var(--t-fast);
 }
 .picker-pill:hover,
 .picker-result:hover {
-    background: var(--bg-elevated);
-    border-color: var(--line);
+    background: var(--ios-card-hover);
 }
 .picker-pill > span,
 .picker-result__info {
@@ -749,20 +853,18 @@ textarea {
     align-items: center;
     gap: 10px;
     min-width: 0;
+    color: var(--label-1);
 }
-.picker-result__info {
-    flex-direction: column;
-    align-items: flex-start;
-}
+.picker-result__info { flex-direction: column; align-items: flex-start; }
 .picker-pill .ghost-button,
 .picker-result .primary-button {
     padding: 7px 12px;
-    font-size: 0.82rem;
+    font-size: 0.84rem;
     white-space: nowrap;
 }
 
 /* ============================================================
-   Records & lists
+   Records & lists — iOS grouped cells
    ============================================================ */
 .list {
     display: flex;
@@ -774,23 +876,22 @@ textarea {
     position: relative;
     padding: 14px 16px;
     border-radius: var(--r-md);
-    background: var(--bg-surface);
-    border: 1px solid var(--line-faint);
-    transition: background var(--t-fast), border-color var(--t-fast), transform var(--t-fast);
+    background: var(--ios-fill-soft);
+    border: 0.5px solid var(--ios-hairline);
+    transition: background var(--t-fast), transform var(--t-fast);
 }
 .record:hover {
-    background: var(--bg-elevated);
-    border-color: var(--line);
-    transform: translateX(2px);
+    background: var(--ios-fill);
+    transform: translateY(-1px);
 }
 
 .record__title {
-    font-family: var(--font-ui);
+    font-family: var(--font-display);
     font-weight: 600;
     font-size: 1rem;
-    color: var(--text-primary);
+    color: var(--label-1);
     margin-bottom: 6px;
-    letter-spacing: -0.015em;
+    letter-spacing: -0.02em;
 }
 .record__title--with-avatar {
     display: flex;
@@ -798,17 +899,20 @@ textarea {
     gap: 12px;
 }
 .record__meta {
-    font-family: var(--font-ui);
-    font-size: 0.84rem;
-    line-height: 1.6;
-    color: var(--text-secondary);
+    font-family: var(--font-text);
+    font-size: 0.86rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--label-2);
     display: grid;
     gap: 2px;
+    letter-spacing: -0.005em;
 }
 .record__actions {
     display: flex;
     gap: 8px;
     margin-top: 12px;
+    flex-wrap: wrap;
 }
 
 /* ============================================================
@@ -816,9 +920,9 @@ textarea {
    ============================================================ */
 .dispatch-table-wrap {
     overflow: auto;
-    border: 1px solid var(--line-faint);
+    border: 0.5px solid var(--ios-hairline);
     border-radius: var(--r-md);
-    background: rgba(0, 0, 0, 0.22);
+    background: rgba(0, 0, 0, 0.18);
     margin-bottom: 14px;
 }
 
@@ -826,14 +930,14 @@ textarea {
     width: 100%;
     min-width: 1320px;
     border-collapse: collapse;
-    font-family: var(--font-ui);
-    font-size: 0.82rem;
+    font-family: var(--font-text);
+    font-size: 0.84rem;
 }
 
 .dispatch-table th,
 .dispatch-table td {
     padding: 10px 12px;
-    border-bottom: 1px solid var(--line-faint);
+    border-bottom: 0.5px solid var(--ios-separator);
     white-space: nowrap;
     text-align: left;
 }
@@ -844,16 +948,16 @@ textarea {
     z-index: 1;
     background: rgba(28, 28, 30, 0.96);
     backdrop-filter: blur(20px);
-    color: var(--text-secondary);
+    color: var(--label-2);
     font-weight: 600;
-    letter-spacing: 0;
+    letter-spacing: -0.005em;
     text-transform: none;
-    font-size: 0.75rem;
-    border-bottom: 1px solid var(--line);
+    font-size: 0.76rem;
+    border-bottom: 0.5px solid var(--ios-separator);
 }
 
 .dispatch-table td {
-    color: var(--text-primary);
+    color: var(--label-1);
     background: transparent;
     font-feature-settings: "tnum";
 }
@@ -862,19 +966,14 @@ textarea {
     cursor: pointer;
     transition: background var(--t-fast);
 }
-
-.dispatch-table__row:hover td {
-    background: var(--bg-hover);
-}
-
+.dispatch-table__row:hover td { background: var(--ios-fill-soft); }
 .dispatch-table__row.is-active td {
-    background: var(--bg-active);
-    box-shadow: inset 2px 0 0 var(--accent);
+    background: rgba(10, 132, 255, 0.16);
+    box-shadow: inset 3px 0 0 var(--ios-blue);
 }
-
 .dispatch-table__empty {
     text-align: center;
-    color: var(--text-tertiary);
+    color: var(--label-3);
     padding: 24px !important;
     font-size: 0.88rem;
 }
@@ -892,18 +991,18 @@ textarea {
 .detail-grid > .case-detail__person-view { grid-column: 1 / -1; }
 
 .detail-box {
-    background: var(--bg-surface);
+    background: var(--ios-fill-soft);
     line-height: 1.65;
 }
 .detail-box strong {
     display: inline-block;
     min-width: 130px;
-    font-family: var(--font-ui);
-    font-size: 0.78rem;
-    font-weight: 600;
-    letter-spacing: 0;
+    font-family: var(--font-text);
+    font-size: 0.82rem;
+    font-weight: 500;
+    letter-spacing: -0.005em;
     text-transform: none;
-    color: var(--text-secondary);
+    color: var(--label-2);
 }
 
 .person-card {
@@ -912,19 +1011,16 @@ textarea {
     gap: 18px;
     align-items: center;
 }
-.person-card__meta { display: grid; gap: 6px; font-size: 0.94rem; color: var(--text-primary); }
-.person-card__meta strong {
-    color: var(--text-secondary);
-    font-weight: 500;
-}
+.person-card__meta { display: grid; gap: 6px; font-size: 0.94rem; color: var(--label-1); }
+.person-card__meta strong { color: var(--label-2); font-weight: 500; }
 
 .person-avatar {
     width: 112px; height: 112px;
-    border-radius: var(--r-lg);
+    border-radius: 22px;
     object-fit: cover;
-    border: 1px solid var(--line);
-    background: var(--bg-elevated);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    border: 0.5px solid var(--ios-hairline);
+    background: var(--ios-card);
+    box-shadow: 0 10px 26px rgba(0,0,0,0.4);
 }
 .person-avatar--sm {
     width: 38px; height: 38px;
@@ -934,38 +1030,35 @@ textarea {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: var(--font-ui);
+    font-family: var(--font-display);
     font-weight: 700;
     font-size: 2rem;
     color: #ffffff;
     background:
-        radial-gradient(circle at 30% 30%, var(--accent-hover), var(--accent) 70%);
-    letter-spacing: -0.02em;
+        radial-gradient(circle at 30% 28%, #5ac8fa, #0a84ff 60%);
+    letter-spacing: -0.03em;
 }
-.person-avatar--sm.person-avatar--fallback { font-size: 0.9rem; }
+.person-avatar--sm.person-avatar--fallback { font-size: 0.92rem; }
 
-/* Tags */
+/* Tags — iOS blue tinted pill */
 .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
 .tag {
     padding: 4px 10px;
     border-radius: 999px;
-    background: var(--accent-soft);
-    border: 1px solid rgba(10,132,255,0.28);
-    font-family: var(--font-ui);
-    font-size: 0.74rem;
+    background: rgba(10, 132, 255, 0.16);
+    border: none;
+    font-family: var(--font-text);
+    font-size: 0.76rem;
     font-weight: 600;
-    letter-spacing: 0;
+    letter-spacing: -0.005em;
     text-transform: none;
-    color: var(--accent-hover);
+    color: var(--ios-blue-2);
 }
 
 /* ============================================================
    Case detail blocks
    ============================================================ */
-.case-detail {
-    display: grid;
-    gap: 16px;
-}
+.case-detail { display: grid; gap: 16px; }
 .case-detail__header {
     display: flex;
     align-items: start;
@@ -974,10 +1067,11 @@ textarea {
 }
 .case-detail__header h3 {
     margin: 4px 0 0;
+    font-family: var(--font-display);
     font-size: 1.1rem;
     font-weight: 700;
-    color: var(--text-primary);
-    letter-spacing: -0.02em;
+    color: var(--label-1);
+    letter-spacing: -0.025em;
 }
 .case-detail__meta-grid {
     display: grid;
@@ -988,67 +1082,52 @@ textarea {
 .case-detail__block,
 .case-detail__entry {
     padding: 14px;
-    border: 1px solid var(--line-faint);
+    border: 0.5px solid var(--ios-hairline);
     border-radius: var(--r-md);
-    background: var(--bg-surface);
+    background: var(--ios-fill-soft);
 }
-.case-detail__meta-item {
-    display: grid;
-    gap: 4px;
-}
+.case-detail__meta-item { display: grid; gap: 4px; }
 .case-detail__meta-item strong {
-    font-size: 0.74rem;
+    font-size: 0.76rem;
     font-weight: 600;
-    color: var(--text-secondary);
-    letter-spacing: 0;
+    color: var(--label-2);
+    letter-spacing: -0.005em;
     text-transform: none;
 }
-.case-detail__meta-item span {
-    color: var(--text-primary);
-    font-size: 0.92rem;
-}
+.case-detail__meta-item span { color: var(--label-1); font-size: 0.94rem; }
 .case-detail__blocks {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
 }
-.case-detail__block--full {
-    grid-column: 1 / -1;
-}
-.case-detail__entries {
-    display: grid;
-    gap: 10px;
-}
+.case-detail__block--full { grid-column: 1 / -1; }
+.case-detail__entries { display: grid; gap: 10px; }
 .case-detail__content {
     margin-top: 8px;
-    color: var(--text-secondary);
+    color: var(--label-2);
     line-height: 1.65;
-    white-space: normal;
     word-break: break-word;
-    font-size: 0.92rem;
+    font-size: 0.93rem;
+    letter-spacing: -0.005em;
 }
-.case-detail__muted {
-    color: var(--text-tertiary);
-    font-style: italic;
-}
+.case-detail__muted { color: var(--label-3); font-style: italic; }
 
 /* Empty / placeholder */
 .placeholder, .empty {
-    padding: 16px 16px;
-    font-family: var(--font-ui);
-    font-size: 0.86rem;
-    letter-spacing: 0;
+    padding: 14px 16px;
+    font-family: var(--font-text);
+    font-size: 0.88rem;
+    font-weight: 500;
+    letter-spacing: -0.005em;
     text-transform: none;
-    color: var(--text-tertiary);
+    color: var(--label-3);
     text-align: center;
-    border: 1px dashed var(--line);
+    border: 0.5px dashed var(--ios-separator);
     border-radius: var(--r-sm);
-    background: rgba(255, 255, 255, 0.015);
+    background: rgba(255, 255, 255, 0.02);
 }
 
-/* ============================================================
-   HUD strip (decorative — kept for backwards compatibility)
-   ============================================================ */
+/* Decorative HUD strip (kept for compat) */
 .hud-strip {
     position: relative;
     display: flex;
@@ -1056,56 +1135,48 @@ textarea {
     gap: 14px;
     padding: 10px 14px;
     margin: -6px -6px 12px;
-    background: var(--bg-input);
-    border-bottom: 1px solid var(--line-faint);
-    font-family: var(--font-ui);
-    font-size: 0.78rem;
+    background: var(--ios-fill-soft);
+    border-bottom: 0.5px solid var(--ios-hairline);
+    font-family: var(--font-text);
+    font-size: 0.8rem;
     font-weight: 500;
-    letter-spacing: 0;
-    text-transform: none;
-    color: var(--text-secondary);
+    color: var(--label-2);
     border-radius: var(--r-md) var(--r-md) 0 0;
 }
 .hud-strip__dot {
     width: 7px; height: 7px;
     border-radius: 50%;
-    background: var(--success);
-    box-shadow: 0 0 8px rgba(48, 209, 88, 0.5);
+    background: var(--ios-green);
+    box-shadow: 0 0 6px rgba(48, 209, 88, 0.55);
 }
-.hud-strip__sep { color: var(--text-tertiary); }
-.hud-strip__id  { color: var(--accent-hover); font-weight: 600; }
-.hud-strip__time { margin-left: auto; color: var(--text-primary); font-feature-settings: "tnum"; }
+.hud-strip__sep { color: var(--label-3); }
+.hud-strip__id  { color: var(--ios-blue-2); font-weight: 600; }
+.hud-strip__time { margin-left: auto; color: var(--label-1); font-feature-settings: "tnum"; }
 
-/* ============================================================
-   Misc helpers
-   ============================================================ */
-::selection { background: var(--accent-soft); color: var(--text-primary); }
-
-/* Focus visible accessibility */
-button:focus-visible,
-input:focus-visible,
-textarea:focus-visible,
-select:focus-visible {
-    outline: none;
-    box-shadow: var(--focus-ring);
-}
-
-/* Allow buttons inside .record__actions to wrap nicely */
-.record__actions { flex-wrap: wrap; }
-
-/* Dispatch summary placeholder full-width */
+/* iOS dispatch summary placeholder */
 #dispatchAutoSummary {
     text-align: left;
-    padding: 14px 16px;
+    padding: 12px 14px;
     font-size: 0.88rem;
-    color: var(--text-secondary);
-    background: var(--bg-input);
-    border: 1px solid var(--line-faint);
+    color: var(--label-2);
+    background: var(--ios-fill-soft);
+    border: 0.5px solid var(--ios-hairline);
     border-radius: var(--r-md);
     border-style: solid;
-    font-family: var(--font-ui);
+    font-family: var(--font-text);
+    font-weight: 400;
     letter-spacing: -0.005em;
     text-transform: none;
+}
+
+/* ============================================================
+   Selection & focus
+   ============================================================ */
+::selection { background: rgba(10, 132, 255, 0.36); color: var(--label-1); }
+
+button:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
 }
 
 /* ============================================================
@@ -1118,10 +1189,11 @@ select:focus-visible {
 }
 @media (max-width: 1000px) {
     .app { grid-template-columns: 1fr; height: auto; min-height: calc(100vh - 24px); }
-    .sidebar { border-right: none; border-bottom: 1px solid var(--line); }
+    .sidebar { border-right: none; border-bottom: 0.5px solid var(--ios-separator); }
     .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .dashboard-grid, .grid-two, .detail-grid, .form-grid { grid-template-columns: 1fr; }
     .person-card { grid-template-columns: 1fr; }
     .actions-grid { grid-template-columns: 1fr; }
     .view, .topbar { padding-left: 20px; padding-right: 20px; }
+    .topbar h1 { font-size: 1.7rem; }
 }
