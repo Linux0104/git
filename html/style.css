@@ -1163,3 +1163,364 @@ select.input, .select {
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
 input[type="number"] { -moz-appearance: textfield; }
+
+/* ============================================================
+   v3 LAYOUT — Sidebar Collapse, Featured, Quick-Stat, Live Preview
+   ============================================================ */
+
+/* --- Sidebar Toggle Button --- */
+.sidebar { transition: width 0.28s ease, padding 0.28s ease; }
+
+.sidebar-toggle {
+    position: absolute;
+    top: 22px;
+    right: -14px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid var(--border-strong);
+    background: var(--panel);
+    color: var(--neon);
+    cursor: pointer;
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    transition: all 0.2s ease;
+    box-shadow: 0 0 12px var(--neon-glow-soft);
+}
+.sidebar-toggle:hover {
+    background: rgba(0, 255, 240, 0.12);
+    border-color: var(--neon);
+    box-shadow: 0 0 16px var(--neon-glow);
+    transform: scale(1.08);
+}
+
+/* --- Sidebar Collapsed State --- */
+.sidebar.collapsed {
+    padding: 28px 12px;
+    align-items: center;
+}
+.sidebar.collapsed .brand-title,
+.sidebar.collapsed .brand-subtitle,
+.sidebar.collapsed .market-info,
+.sidebar.collapsed .nav-btn span,
+.sidebar.collapsed .ghost-btn,
+.sidebar.collapsed .danger-btn {
+    display: none;
+}
+.sidebar.collapsed .brand { gap: 0; justify-content: center; }
+.sidebar.collapsed .nav-btn {
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    justify-content: center;
+}
+.sidebar.collapsed .nav-btn i { margin: 0; width: auto; font-size: 16px; }
+.sidebar.collapsed .nav { align-items: center; }
+.sidebar.collapsed .sidebar-footer {
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+}
+.sidebar.collapsed .sidebar-footer::after {
+    content: '\f021';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--border-strong);
+    color: var(--text-dim);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+/* Shell adjusts grid columns when sidebar is collapsed */
+.shell:has(.sidebar.collapsed) { grid-template-columns: 72px 1fr; }
+
+/* Tooltip on collapsed nav icons */
+.sidebar.collapsed .nav-btn { position: relative; }
+.sidebar.collapsed .nav-btn::after {
+    content: attr(data-tab);
+    position: absolute;
+    left: calc(100% + 14px);
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 6px 10px;
+    background: var(--panel);
+    border: 1px solid var(--border-strong);
+    color: var(--text);
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.18s ease;
+    z-index: 20;
+    box-shadow: 0 0 12px var(--neon-glow-soft);
+}
+.sidebar.collapsed .nav-btn:hover::after { opacity: 1; }
+
+/* --- Quick Stat Chip in Topbar --- */
+.topbar-actions {
+    display: flex;
+    align-items: stretch;
+    gap: 12px;
+}
+
+.quick-stat {
+    padding: 12px 18px;
+    background: var(--panel-soft);
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+    position: relative;
+    transition: all 0.2s ease;
+}
+.quick-stat::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--neon), transparent);
+    opacity: 0.6;
+}
+.quick-stat:hover {
+    border-color: var(--border-strong);
+    background: var(--panel-raised);
+    box-shadow: 0 0 14px var(--neon-glow-soft);
+}
+.quick-stat span {
+    color: var(--muted);
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 500;
+}
+.quick-stat strong {
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-shadow: 0 0 10px rgba(0, 255, 240, 0.18);
+}
+
+/* --- Featured Row (advertised listings carousel) --- */
+.featured-row {
+    margin-bottom: 24px;
+    padding: 18px;
+    background:
+        linear-gradient(135deg, rgba(255, 204, 51, 0.06), transparent 60%),
+        var(--panel-soft);
+    border: 1px solid rgba(255, 204, 51, 0.25);
+    border-left: 2px solid var(--gold);
+    position: relative;
+    overflow: hidden;
+}
+.featured-row::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    box-shadow: 0 0 12px var(--gold-glow);
+}
+
+.featured-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+    padding: 4px 10px;
+    color: var(--gold);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    text-shadow: 0 0 8px var(--gold-glow);
+    border: 1px solid rgba(255, 204, 51, 0.4);
+    background: rgba(255, 204, 51, 0.08);
+}
+.featured-label i { animation: featuredBolt 1.8s ease-in-out infinite; }
+@keyframes featuredBolt {
+    0%, 100% { opacity: 0.5; }
+    50%      { opacity: 1; }
+}
+
+.featured-scroll {
+    display: flex;
+    gap: 14px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 6px;
+    scroll-behavior: smooth;
+}
+.featured-scroll::-webkit-scrollbar { height: 6px; }
+.featured-scroll::-webkit-scrollbar-track { background: transparent; }
+.featured-scroll::-webkit-scrollbar-thumb { background: rgba(255, 204, 51, 0.3); }
+.featured-scroll::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+
+.featured-card {
+    flex: 0 0 320px;
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    padding: 14px;
+    background: var(--panel-raised);
+    border: 1px solid rgba(255, 204, 51, 0.35);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.22s ease;
+}
+.featured-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 1px solid var(--gold);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s;
+    box-shadow: 0 0 14px var(--gold-glow);
+}
+.featured-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--gold);
+    background: linear-gradient(135deg, rgba(255, 204, 51, 0.08), var(--panel-raised));
+}
+.featured-card:hover::after { opacity: 0.45; }
+
+.featured-card .listing-thumb.thumb-featured {
+    width: 64px;
+    height: 64px;
+    flex-shrink: 0;
+    border-color: rgba(255, 204, 51, 0.4);
+}
+.featured-card .thumb-featured .thumb-fallback {
+    color: var(--gold);
+    text-shadow: 0 0 10px var(--gold-glow);
+    font-size: 24px;
+}
+
+.featured-card-body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.featured-card-kind {
+    color: var(--gold);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-shadow: 0 0 6px var(--gold-glow);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.featured-card h4 {
+    color: var(--text);
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.featured-card-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-top: 2px;
+}
+.featured-card-price {
+    font-family: var(--font-mono);
+    color: var(--gold);
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-shadow: 0 0 8px var(--gold-glow);
+}
+.featured-card-time {
+    color: var(--muted);
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+.featured-card-time i { margin-right: 4px; }
+
+/* --- Create panel: 2-column with sticky Live Preview --- */
+.create-layout {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 28px;
+    align-items: flex-start;
+}
+
+.create-form-col {
+    min-width: 0;
+}
+
+.create-preview-col {
+    position: sticky;
+    top: 0;
+    padding: 18px;
+    background: linear-gradient(180deg, rgba(0, 255, 240, 0.04), var(--panel-soft));
+    border: 1px solid var(--border);
+    border-left: 2px solid var(--neon);
+}
+
+.preview-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+    padding: 4px 10px;
+    color: var(--neon);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    text-shadow: 0 0 8px var(--neon-glow);
+    border: 1px solid var(--border-strong);
+    background: rgba(0, 255, 240, 0.06);
+}
+
+.preview-stage {
+    /* Make the embedded listing-card scale nicely inside the stage */
+}
+.preview-stage .listing-card {
+    transform: scale(1);
+    transition: none;
+    cursor: default;
+}
+.preview-stage .listing-card:hover {
+    transform: none;
+    box-shadow: none;
+    background: var(--panel-soft);
+    border-color: var(--border);
+}
+.preview-stage .listing-card:hover::before { width: 0; }
+.preview-stage .listing-actions { display: none; }
+
+.preview-hint {
+    margin-top: 12px;
+    color: var(--muted);
+    font-size: 11px;
+    line-height: 1.5;
+    letter-spacing: 0.4px;
+    font-style: italic;
+}
+

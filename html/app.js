@@ -7,6 +7,7 @@ const state = {
     search: '',
     filter: 'all',
     statsHistory: [],
+    sidebarCollapsed: false,
     create: {
         category: 'item',
         listingType: 'sale',
@@ -38,6 +39,12 @@ const modalBodyEl = document.getElementById('modalBody');
 const toastContainerEl = document.getElementById('toastContainer');
 const browseFilterEl = document.getElementById('browseFilter');
 const earnedSparkEl = document.getElementById('earnedSpark');
+const featuredRowEl = document.getElementById('featuredRow');
+const featuredGridEl = document.getElementById('featuredGrid');
+const activeCountEl = document.getElementById('activeCount');
+const sidebarEl = document.querySelector('.sidebar');
+const sidebarToggleEl = document.getElementById('sidebarToggle');
+const createPreviewEl = document.getElementById('createPreview');
 
 /* ============================================================
    SOUND SYSTEM (Web Audio — generated tones, no files needed)
@@ -379,6 +386,51 @@ function renderBrowse() {
     browseGridEl.innerHTML = listings.map((listing) => listingCard(listing, false)).join('');
     browseEmptyEl.classList.toggle('hidden', listings.length > 0);
     updateFilterCounts();
+    renderFeaturedRow();
+}
+
+function renderFeaturedRow() {
+    if (!featuredRowEl || !featuredGridEl) return;
+    const search = state.search.trim().toLowerCase();
+    const featured = (state.payload?.listings || [])
+        .filter((l) => l.advertised === 1 && l.status === 'active')
+        .filter((l) => {
+            if (!search) return true;
+            return String(l.title || '').toLowerCase().includes(search) ||
+                   String(l.seller_name || '').toLowerCase().includes(search);
+        });
+
+    if (featured.length === 0) {
+        featuredRowEl.classList.add('hidden');
+        featuredGridEl.innerHTML = '';
+        return;
+    }
+    featuredRowEl.classList.remove('hidden');
+    featuredGridEl.innerHTML = featured.map((listing) => featuredCard(listing)).join('');
+}
+
+function featuredCard(listing) {
+    const isAuction = listing.is_auction === 1;
+    setCountdownTarget(listing.id, listing.expires_text);
+    const initialMs = (countdownTargets.get(String(listing.id)) || 0) - Date.now();
+    const initialText = initialMs > 0 ? formatRemaining(initialMs) : (listing.expires_text || '');
+    const timeMarkup = isAuction
+        ? `<span class="countdown" data-countdown="${listing.id}">${esc(initialText)}</span>`
+        : esc(listing.expires_text || '');
+
+    return `
+        <article class="featured-card" data-action="open-browse" data-id="${listing.id}">
+            ${listingThumbHtml(listing, 'thumb-featured')}
+            <div class="featured-card-body">
+                <div class="featured-card-kind"><i class="fa-solid fa-bolt"></i> ${esc(listing.kind)}</div>
+                <h4>${esc(listing.title)}</h4>
+                <div class="featured-card-meta">
+                    <span class="featured-card-price">${esc(listing.price_text)}</span>
+                    <span class="featured-card-time"><i class="fa-regular fa-clock"></i> ${timeMarkup}</span>
+                </div>
+            </div>
+        </article>
+    `;
 }
 
 function updateFilterCounts() {
@@ -497,6 +549,8 @@ function renderCreate() {
     createSummary.textContent = state.create.listingType === 'auction'
         ? 'Auktionen reservieren Gebote sofort und erstatten ueberbotene Spieler automatisch.'
         : 'Festpreisangebote koennen direkt gekauft werden.';
+
+    renderCreatePreview();
 }
 
 /* ============================================================
@@ -565,6 +619,53 @@ function renderHeader() {
     marketBadgeEl.textContent = market.label;
     marketModeEl.textContent = 'Marketplace';
     viewTitleEl.textContent = market.label;
+
+    // Active listings count chip
+    const activeCount = (state.payload?.myListings || []).filter((l) => l.status === 'active').length;
+    if (activeCountEl) activeCountEl.textContent = String(activeCount);
+}
+
+function renderCreatePreview() {
+    if (!createPreviewEl) return;
+    const market = currentMarket();
+    if (!market) { createPreviewEl.innerHTML = ''; return; }
+
+    const selected = selectedInventoryEntry();
+    const isItem = state.create.category === 'item';
+    const isAuction = state.create.listingType === 'auction';
+
+    let priceText;
+    if (isAuction) {
+        priceText = `ab ${fmtMoney(state.create.minimumBid || 0)}`;
+    } else if (isItem) {
+        const total = Number(state.create.price || 0) * Number(state.create.quantity || 1);
+        priceText = state.create.quantity > 1
+            ? `${fmtMoney(state.create.price || 0)} / Stk`
+            : fmtMoney(state.create.price || 0);
+    } else {
+        priceText = fmtMoney(state.create.price || 0);
+    }
+
+    const fallbackTitle = selected ? (isItem ? selected.label : selected.display) : 'Dein Titel';
+    const fallbackItem = selected && isItem ? selected.name : '';
+
+    const mockListing = {
+        id: 'preview',
+        title: state.create.title || fallbackTitle,
+        kind: isAuction ? 'Auktion' : (isItem ? 'Item' : 'Fahrzeug'),
+        category: state.create.category,
+        is_auction: isAuction ? 1 : 0,
+        status: 'active',
+        price_text: priceText,
+        description: state.create.description || 'Beschreibung erscheint hier...',
+        seller_name: 'Du',
+        expires_text: isAuction ? `${state.create.durationMinutes || 60}m` : (isItem ? `${state.create.quantity || 1}x verfuegbar` : 'Sofortkauf'),
+        advertised: state.create.advertised ? 1 : 0,
+        action_hint: isAuction ? 'Bieten' : 'Sofortkauf',
+        item_name: fallbackItem
+    };
+
+    createPreviewEl.innerHTML = listingCard(mockListing, false);
 }
 
 function render() {
@@ -741,6 +842,18 @@ document.getElementById('refreshBtn').addEventListener('click', async () => {
     showToast('Aktualisiert', 'info');
 });
 
+// Sidebar collapse toggle
+if (sidebarToggleEl) {
+    sidebarToggleEl.addEventListener('click', () => {
+        sfx.click();
+        state.sidebarCollapsed = !state.sidebarCollapsed;
+        sidebarEl.classList.toggle('collapsed', state.sidebarCollapsed);
+        sidebarToggleEl.querySelector('i').className = state.sidebarCollapsed
+            ? 'fa-solid fa-chevron-right'
+            : 'fa-solid fa-chevron-left';
+    });
+}
+
 document.querySelectorAll('.nav-btn').forEach((button) => {
     button.addEventListener('click', () => { sfx.click(); setTab(button.dataset.tab); });
 });
@@ -789,16 +902,17 @@ document.getElementById('inventorySelect').addEventListener('change', (event) =>
     renderCreate();
 });
 
-document.getElementById('quantityInput').addEventListener('input', (event) => { state.create.quantity = Number(event.target.value || 1); });
-document.getElementById('durationInput').addEventListener('input', (event) => { state.create.durationMinutes = Number(event.target.value || 60); });
-document.getElementById('titleInput').addEventListener('input', (event) => { state.create.title = event.target.value || ''; });
-document.getElementById('descriptionInput').addEventListener('input', (event) => { state.create.description = event.target.value || ''; });
+document.getElementById('quantityInput').addEventListener('input', (event) => { state.create.quantity = Number(event.target.value || 1); renderCreatePreview(); });
+document.getElementById('durationInput').addEventListener('input', (event) => { state.create.durationMinutes = Number(event.target.value || 60); renderCreatePreview(); });
+document.getElementById('titleInput').addEventListener('input', (event) => { state.create.title = event.target.value || ''; renderCreatePreview(); });
+document.getElementById('descriptionInput').addEventListener('input', (event) => { state.create.description = event.target.value || ''; renderCreatePreview(); });
 document.getElementById('priceInput').addEventListener('input', (event) => {
     const value = Number(event.target.value || 0);
     if (state.create.listingType === 'auction') state.create.minimumBid = value;
     else state.create.price = value;
+    renderCreatePreview();
 });
-document.getElementById('advertisedInput').addEventListener('change', (event) => { state.create.advertised = event.target.checked; });
+document.getElementById('advertisedInput').addEventListener('change', (event) => { state.create.advertised = event.target.checked; renderCreatePreview(); });
 document.getElementById('submitCreate').addEventListener('click', submitCreate);
 document.getElementById('claimWalletBtn').addEventListener('click', async () => {
     sfx.confirm();

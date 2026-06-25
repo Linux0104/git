@@ -14,6 +14,10 @@
     <div id="app" class="app hidden">
         <div class="shell">
             <aside class="sidebar">
+                <button class="sidebar-toggle" id="sidebarToggle" type="button" aria-label="Sidebar einklappen">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+
                 <div class="brand">
                     <div class="brand-mark">LM</div>
                     <div>
@@ -46,6 +50,10 @@
                         <h1 id="viewTitle">Marketplace</h1>
                     </div>
                     <div class="topbar-actions">
+                        <div class="quick-stat" data-tip="Aktive Angebote">
+                            <span>Aktiv</span>
+                            <strong id="activeCount">0</strong>
+                        </div>
                         <div class="wallet-mini">
                             <span>Wallet</span>
                             <strong id="walletMini">$0</strong>
@@ -73,6 +81,10 @@
                             </select>
                         </div>
                     </div>
+                    <div id="featuredRow" class="featured-row hidden">
+                        <div class="featured-label"><i class="fa-solid fa-bolt"></i> Featured</div>
+                        <div id="featuredGrid" class="featured-scroll"></div>
+                    </div>
                     <div id="browseGrid" class="card-grid"></div>
                     <div id="browseEmpty" class="empty-state hidden">
                         <div class="empty-icon"><i class="fa-solid fa-magnifying-glass-dollar"></i></div>
@@ -90,66 +102,76 @@
                         </div>
                     </div>
 
-                    <div class="form-grid">
-                        <div class="field wide">
-                            <label>Kategorie</label>
-                            <div class="segmented" id="categorySwitch">
-                                <button type="button" class="segment active" data-category="item">Item</button>
-                                <button type="button" class="segment" data-category="vehicle">Fahrzeug</button>
+                    <div class="create-layout">
+                        <div class="create-form-col">
+                            <div class="form-grid">
+                                <div class="field wide">
+                                    <label>Kategorie</label>
+                                    <div class="segmented" id="categorySwitch">
+                                        <button type="button" class="segment active" data-category="item">Item</button>
+                                        <button type="button" class="segment" data-category="vehicle">Fahrzeug</button>
+                                    </div>
+                                </div>
+
+                                <div class="field wide">
+                                    <label>Listing Typ</label>
+                                    <div class="segmented" id="typeSwitch">
+                                        <button type="button" class="segment active" data-type="sale">Verkauf</button>
+                                        <button type="button" class="segment" data-type="auction">Auktion</button>
+                                    </div>
+                                </div>
+
+                                <div class="field wide">
+                                    <label id="inventoryLabel">Inventar Auswahl</label>
+                                    <select id="inventorySelect" class="input select"></select>
+                                    <small id="inventoryHint" class="helper-text"></small>
+                                </div>
+
+                                <div class="field" id="quantityField">
+                                    <label>Menge</label>
+                                    <input id="quantityInput" class="input" type="number" min="1" value="1">
+                                </div>
+
+                                <div class="field" id="durationField">
+                                    <label>Auktionsdauer in Minuten</label>
+                                    <input id="durationInput" class="input" type="number" min="10" value="60">
+                                </div>
+
+                                <div class="field wide">
+                                    <label>Titel</label>
+                                    <input id="titleInput" class="input" type="text" maxlength="48" placeholder="Titel fuer dein Angebot">
+                                </div>
+
+                                <div class="field wide">
+                                    <label>Beschreibung</label>
+                                    <textarea id="descriptionInput" class="input textarea" maxlength="180" placeholder="Kurzbeschreibung, Zustand, Besonderheiten"></textarea>
+                                </div>
+
+                                <div class="field">
+                                    <label id="priceLabel">Preis pro Stueck</label>
+                                    <input id="priceInput" class="input" type="number" min="1" value="100">
+                                </div>
+
+                                <div class="field checkbox-field">
+                                    <label>Promotion</label>
+                                    <label class="checkbox">
+                                        <input id="advertisedInput" type="checkbox">
+                                        <span id="advertisedLabel">Als Werbung hervorheben</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-footer">
+                                <div class="helper-text" id="createSummary">Erstelle ein neues Marketplace-Angebot.</div>
+                                <button id="submitCreate" class="primary-btn" type="button"><i class="fa-solid fa-paper-plane"></i> Angebot erstellen</button>
                             </div>
                         </div>
 
-                        <div class="field wide">
-                            <label>Listing Typ</label>
-                            <div class="segmented" id="typeSwitch">
-                                <button type="button" class="segment active" data-type="sale">Verkauf</button>
-                                <button type="button" class="segment" data-type="auction">Auktion</button>
-                            </div>
-                        </div>
-
-                        <div class="field wide">
-                            <label id="inventoryLabel">Inventar Auswahl</label>
-                            <select id="inventorySelect" class="input select"></select>
-                            <small id="inventoryHint" class="helper-text"></small>
-                        </div>
-
-                        <div class="field" id="quantityField">
-                            <label>Menge</label>
-                            <input id="quantityInput" class="input" type="number" min="1" value="1">
-                        </div>
-
-                        <div class="field" id="durationField">
-                            <label>Auktionsdauer in Minuten</label>
-                            <input id="durationInput" class="input" type="number" min="10" value="60">
-                        </div>
-
-                        <div class="field wide">
-                            <label>Titel</label>
-                            <input id="titleInput" class="input" type="text" maxlength="48" placeholder="Titel fuer dein Angebot">
-                        </div>
-
-                        <div class="field wide">
-                            <label>Beschreibung</label>
-                            <textarea id="descriptionInput" class="input textarea" maxlength="180" placeholder="Kurzbeschreibung, Zustand, Besonderheiten"></textarea>
-                        </div>
-
-                        <div class="field">
-                            <label id="priceLabel">Preis pro Stueck</label>
-                            <input id="priceInput" class="input" type="number" min="1" value="100">
-                        </div>
-
-                        <div class="field checkbox-field">
-                            <label>Promotion</label>
-                            <label class="checkbox">
-                                <input id="advertisedInput" type="checkbox">
-                                <span id="advertisedLabel">Als Werbung hervorheben</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="form-footer">
-                        <div class="helper-text" id="createSummary">Erstelle ein neues Marketplace-Angebot.</div>
-                        <button id="submitCreate" class="primary-btn" type="button"><i class="fa-solid fa-paper-plane"></i> Angebot erstellen</button>
+                        <aside class="create-preview-col">
+                            <div class="preview-label"><i class="fa-solid fa-eye"></i> Live-Vorschau</div>
+                            <div id="createPreview" class="preview-stage"></div>
+                            <div class="preview-hint">So wird dein Angebot fuer andere Spieler aussehen.</div>
+                        </aside>
                     </div>
                 </section>
 
