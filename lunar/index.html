@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lunar Menu</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div id="app" style="display: none;">
+        <div class="menu-container">
+            <!-- Animated gradient border glow -->
+            <div class="container-glow" aria-hidden="true"></div>
+
+            <!-- Header Image -->
+            <div class="banner-header">
+                <div class="banner-overlay" aria-hidden="true"></div>
+                <img src="https://customer-assets.emergentagent.com/job_376c957f-4650-4b84-910e-b32ba4d464b9/artifacts/img/header.png" alt="Header" id="header-img">
+            </div>
+
+            <div class="title-bar">
+                <span class="menu-title" id="menu-title">MENU</span>
+                <span class="menu-count" id="menu-count">0/0</span>
+            </div>
+
+            <!-- Stats Container (Hidden by default, only for F5) -->
+            <div class="stats-container" id="stats-container" style="display: none;">
+                <div class="stat-row">
+                    <span class="stat-label">Deine Visumstufe:</span>
+                    <span class="stat-value" id="visum-level">0</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Deine Spielzeit:</span>
+                    <span class="stat-value" id="playtime">0 Std.</span>
+                </div>
+            </div>
+
+            <div class="menu-items-scroll-container">
+                <div class="menu-items" id="menu-items">
+                    <!-- Items injected via JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
