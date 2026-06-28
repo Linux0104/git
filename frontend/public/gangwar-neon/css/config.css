@@ -1,0 +1,31 @@
+:root {
+  /* ===== Dark Neon Turquoise Palette ===== */
+  --neon:           #00ffd0;
+  --neon-bright:    #66ffe0;
+  --neon-dim:       #00b894;
+  --neon-deep:      #006b58;
+
+  --bg:             #050709;
+  --bg-2:           #0a0e12;
+  --bg-3:           #0f1419;
+  --surface:        #0d1218;
+  --surface-2:      #131a22;
+  --surface-glow:   rgba(0, 255, 208, 0.05);
+
+  --line:           rgba(0, 255, 208, 0.12);
+  --line-strong:    rgba(0, 255, 208, 0.35);
+
+  --text-primary:   #e6fffa;
+  --text-secondary: rgba(230, 255, 250, 0.55);
+  --text-muted:     rgba(230, 255, 250, 0.3);
+
+  --danger:         #ff3d6e;
+  --warning:        #ffb547;
+
+  --glow-neon:      0 0 24px rgba(0, 255, 208, 0.5);
+  --glow-neon-strong: 0 0 40px rgba(0, 255, 208, 0.8);
+  --glow-neon-soft: 0 0 12px rgba(0, 255, 208, 0.25);
+
+  --sidebar-width:  240px;
+  --header-height:  72px;
+}

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GANGWAR - STRADA #1 · Neon</title>
+  <link rel="stylesheet" href="./css/fonts.css" />
+  <link rel="stylesheet" href="./css/config.css" />
+  <link rel="stylesheet" href="./css/style.css" />
+</head>
+<body>
+
+  <!-- Top Message -->
+  <div id="topMessage" class="custom_top_message"></div>
+
+  <!-- HUD -->
+  <div class="hud_wr" style="display: none;">
+    <div class="hud_team left">
+      <div class="hud_info">
+        <span class="hud_name" id="attackerName">ANGREIFER</span>
+        <div class="hud_bar_bg" id="attackerBarBg">
+          <div class="hud_bar_fill" id="attackerBar" style="width: 100%;"></div>
+          <span class="hud_count" id="attackerCount">0 / 0</span>
+        </div>
+      </div>
+      <div class="hud_logo">
+        <img id="attackerLogo" src="./images/logo_placeholder.png" alt="">
+      </div>
+    </div>
+
+    <div class="hud_timer" id="hudTimer">
+      <span class="hud_timer_label">ZEIT</span>
+      <span class="hud_timer_value" id="timer">00:00</span>
+    </div>
+
+    <div class="hud_team right">
+      <div class="hud_logo">
+        <img id="defenderLogo" src="./images/logo_placeholder.png" alt="">
+      </div>
+      <div class="hud_info">
+        <span class="hud_name" id="defenderName">VERTEIDIGER</span>
+        <div class="hud_bar_bg" id="defenderBarBg">
+          <div class="hud_bar_fill" id="defenderBar" style="width: 100%;"></div>
+          <span class="hud_count" id="defenderCount">0 / 0</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gangwar Menu -->
+  <div class="gw-menu" id="gwMenu">
+
+    <!-- ===== SIDEBAR ===== -->
+    <aside class="gw-sidebar">
+      <div class="gw-brand">
+        <div class="gw-brand-label">LUNAR · STRADA #1</div>
+        <div class="gw-brand-name">GANG<span>WAR</span></div>
+        <div class="gw-brand-bar"><span></span><span></span><span></span><span></span></div>
+      </div>
+
+      <nav class="gw-nav" id="gwTabs">
+        <button class="gw-tab active" data-tab="gangwar">
+          <span class="gw-tab-icon">
+            <svg viewBox="0 0 24 24"><polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"></polyline><line x1="13" y1="19" x2="19" y2="13"></line><line x1="16" y1="16" x2="20" y2="20"></line></svg>
+          </span>
+          <span>GANGWAR</span>
+        </button>
+        <button class="gw-tab" data-tab="rewards">
+          <span class="gw-tab-icon">
+            <svg viewBox="0 0 24 24"><polyline points="20 12 20 22 4 22 4 12"></polyline><rect x="2" y="7" width="20" height="5"></rect><line x1="12" y1="22" x2="12" y2="7"></line><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path></svg>
+          </span>
+          <span>REWARDS</span>
+        </button>
+        <button class="gw-tab" data-tab="topfraks">
+          <span class="gw-tab-icon">
+            <svg viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><line x1="4" y1="22" x2="20" y2="22"></line><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"></path></svg>
+          </span>
+          <span>TOP FRAKS</span>
+        </button>
+        <button class="gw-tab" data-tab="topplayers">
+          <span class="gw-tab-icon">
+            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          </span>
+          <span>TOP PLAYERS</span>
+        </button>
+      </nav>
+
+      <div class="gw-sidebar-footer">
+        <div class="gw-stars">
+          <div class="gw-stars-icon">★</div>
+          <div class="gw-stars-info">
+            <div class="gw-stars-label">Punkte</div>
+            <div class="gw-stars-value" id="gwStars">2,350</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ===== MAIN ===== -->
+    <main class="gw-main">
+
+      <!-- Header -->
+      <header class="gw-header">
+        <div class="gw-header-title">
+          <span class="gw-page-label">SECTOR</span>
+          <h1 class="gw-title" id="gwMainTitle">GANGWAR</h1>
+        </div>
+        <div class="gw-header-right">
+          <div class="gw-zone-counter"><span id="gwZoneCount">12</span>ZONES AVAILABLE</div>
+          <button class="gw-close" data-action="close" title="Schließen">
+            <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <!-- Content / Cards -->
+      <div class="gw-content">
+        <div class="gw-grid" id="gwGrid"></div>
+      </div>
+    </main>
+
+  </div>
+
+  <div id="app"></div>
+
+  <script src="./js/app.js"></script>
+</body>
+</html>
