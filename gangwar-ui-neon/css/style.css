@@ -357,7 +357,7 @@ img { -webkit-user-drag: none; pointer-events: none; }
   gap: 16px;
 }
 
-/* ===== Zone Card - Horizontal Layout ===== */
+/* ===== Zone Card - Horizontal Layout with BG Image ===== */
 .gw-card {
   position: relative;
   display: grid;
@@ -372,6 +372,44 @@ img { -webkit-user-drag: none; pointer-events: none; }
   min-height: 100px;
   transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   animation: neon-card-in 0.5s ease-out backwards;
+}
+
+/* Zone Background Image */
+.gw-card-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0.5;
+  filter: saturate(0.7) brightness(0.65) contrast(1.05);
+  transition: opacity 0.5s, transform 0.7s, filter 0.5s;
+  z-index: 0;
+}
+/* Dark gradient overlay on top of BG image (kept text readable) */
+.gw-card-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg,
+      var(--surface) 0%,
+      rgba(13, 18, 24, 0.92) 30%,
+      rgba(13, 18, 24, 0.65) 70%,
+      rgba(13, 18, 24, 0.4) 100%),
+    linear-gradient(180deg, rgba(0, 255, 208, 0.02) 0%, transparent 100%);
+  z-index: 0;
+  pointer-events: none;
+}
+.gw-card:hover .gw-card-bg {
+  opacity: 0.75;
+  transform: scale(1.08);
+  filter: saturate(1) brightness(0.8) contrast(1.1);
+}
+/* Force content above bg + overlay */
+.gw-card > .gw-card-icon,
+.gw-card > .gw-card-info,
+.gw-card > .gw-attack-btn {
+  position: relative;
+  z-index: 1;
 }
 
 .gw-grid .gw-card:nth-child(1) { animation-delay: 0.04s; }
@@ -632,41 +670,82 @@ img { -webkit-user-drag: none; pointer-events: none; }
 
 .hud_bar_bg {
   position: relative;
+  display: flex;
+  gap: 4px;
   width: 200px;
-  height: 8px;
+  height: 12px;
+}
+.hud_seg {
+  flex: 1;
+  min-width: 4px;
+  height: 100%;
   background: rgba(0, 0, 0, 0.6);
   border: 1px solid var(--line);
+  transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.25s ease, border-color 0.3s;
+  position: relative;
   overflow: hidden;
 }
-.hud_bar_fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--neon-dim), var(--neon), var(--neon-bright));
-  transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-  box-shadow: 0 0 12px var(--neon);
-  position: relative;
+.hud_seg.filled {
+  background: var(--neon);
+  border-color: var(--neon);
+  box-shadow:
+    0 0 8px var(--neon),
+    inset 0 0 6px rgba(255, 255, 255, 0.4);
 }
-.hud_bar_fill::after {
+.hud_seg.filled::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-  animation: hud-shimmer 2.4s linear infinite;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, transparent 50%);
+  pointer-events: none;
 }
-@keyframes hud-shimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+/* Animated entry */
+.hud_seg.filled {
+  animation: seg-pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
 }
+@keyframes seg-pop {
+  0% { transform: scaleY(0.2); opacity: 0; }
+  100% { transform: scaleY(1); opacity: 1; }
+}
+/* Stagger animation delays for filled segments */
+.hud_seg.filled:nth-child(1) { animation-delay: 0.00s; }
+.hud_seg.filled:nth-child(2) { animation-delay: 0.05s; }
+.hud_seg.filled:nth-child(3) { animation-delay: 0.10s; }
+.hud_seg.filled:nth-child(4) { animation-delay: 0.15s; }
+.hud_seg.filled:nth-child(5) { animation-delay: 0.20s; }
+.hud_seg.filled:nth-child(6) { animation-delay: 0.25s; }
+.hud_seg.filled:nth-child(7) { animation-delay: 0.30s; }
+.hud_seg.filled:nth-child(8) { animation-delay: 0.35s; }
+.hud_seg.filled:nth-child(9) { animation-delay: 0.40s; }
+.hud_seg.filled:nth-child(10) { animation-delay: 0.45s; }
 
 .hud_count {
-  position: absolute;
-  top: -20px;
-  right: 0;
+  position: relative;
   font-family: 'G_ExBold', sans-serif;
-  font-size: 10px;
+  font-size: 12px;
   letter-spacing: 1.5px;
-  color: var(--text-secondary);
+  color: var(--neon);
+  text-shadow: 0 0 6px var(--neon);
 }
-.hud_team.left .hud_count { right: auto; left: 0; }
+.hud_count strong {
+  font-family: 'Bebas', sans-serif;
+  font-size: 18px;
+  color: var(--neon-bright);
+  text-shadow: 0 0 10px var(--neon);
+  margin-right: 2px;
+  letter-spacing: 2px;
+}
+.hud_count em {
+  font-style: normal;
+  color: var(--text-secondary);
+  font-size: 10px;
+}
+.hud_bar_row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.hud_team.right .hud_bar_row { flex-direction: row-reverse; }
 
 .hud_logo {
   width: 48px;

@@ -2,23 +2,26 @@
    GANGWAR - STRADA #1 · Neon UI Controller
    - Vanilla JS, FiveM NUI compatible
    - Menü + HUD + Top-Message (KEIN Scoreboard, KEIN MVP)
+   - Player count als einzelne Striche (Segmente)
+   - Zonen mit Background-Bildern
    ========================================================================== */
 
 const RESOURCE_NAME = 'gangwar';
 
+/* Beispiel-Bilder (Unsplash) -- für den FiveM-Einsatz durch eigene nui:// URLs ersetzen */
 const DEFAULT_ZONES = [
-  { id: 'windraeder',     name: 'WINDRÄDER',         status: 'wait', image: '' },
-  { id: 'windraeder2',    name: 'WINDRÄDER 2',       status: 'wait', image: '' },
-  { id: 'flugzeug',       name: 'FLUGZEUGFRIEDHOF',  status: 'wait', image: '' },
-  { id: 'fibhq',          name: 'FIB HQ',            status: 'wait', image: '' },
-  { id: 'vespucci',       name: 'VESPUCCI KANÄLE',   status: 'wait', image: '' },
-  { id: 'fibtanke',       name: 'FIB TANKE',         status: 'wait', image: '' },
-  { id: 'easthighway',    name: 'EAST HIGHWAY',      status: 'wait', image: '' },
-  { id: 'stadt',          name: 'STADT',             status: 'wait', image: '' },
-  { id: 'sandy',          name: 'SANDY',             status: 'wait', image: '' },
-  { id: 'paleto',         name: 'PALETO',            status: 'wait', image: '' },
-  { id: 'oelfelder',      name: 'ÖLFELDER',          status: 'wait', image: '' },
-  { id: 'route68',        name: 'ROUTE68',           status: 'wait', image: '' },
+  { id: 'windraeder',   name: 'WINDRÄDER',        status: 'wait', image: 'https://images.unsplash.com/photo-1466611653911-95081537e5b7?w=600&q=70&auto=format' },
+  { id: 'windraeder2',  name: 'WINDRÄDER 2',      status: 'wait', image: 'https://images.unsplash.com/photo-1532601224476-15c79f2f7a51?w=600&q=70&auto=format' },
+  { id: 'flugzeug',     name: 'FLUGZEUGFRIEDHOF', status: 'wait', image: 'https://images.unsplash.com/photo-1583878312220-9d99c8a8c2c1?w=600&q=70&auto=format' },
+  { id: 'fibhq',        name: 'FIB HQ',           status: 'wait', image: 'https://images.unsplash.com/photo-1444723121867-7a241cacace9?w=600&q=70&auto=format' },
+  { id: 'vespucci',     name: 'VESPUCCI KANÄLE',  status: 'wait', image: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=600&q=70&auto=format' },
+  { id: 'fibtanke',     name: 'FIB TANKE',        status: 'wait', image: 'https://images.unsplash.com/photo-1542759564-7ccbb6ac450a?w=600&q=70&auto=format' },
+  { id: 'easthighway',  name: 'EAST HIGHWAY',     status: 'wait', image: 'https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=600&q=70&auto=format' },
+  { id: 'stadt',        name: 'STADT',            status: 'wait', image: 'https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=600&q=70&auto=format' },
+  { id: 'sandy',        name: 'SANDY',            status: 'wait', image: 'https://images.unsplash.com/photo-1547234935-80c7145ec969?w=600&q=70&auto=format' },
+  { id: 'paleto',       name: 'PALETO',           status: 'wait', image: 'https://images.unsplash.com/photo-1551524613-1b4f5ad3da9b?w=600&q=70&auto=format' },
+  { id: 'oelfelder',    name: 'ÖLFELDER',         status: 'wait', image: 'https://images.unsplash.com/photo-1487875961445-47a00398c267?w=600&q=70&auto=format' },
+  { id: 'route68',      name: 'ROUTE68',          status: 'wait', image: 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=600&q=70&auto=format' },
 ];
 
 const STATUS_LABEL = {
@@ -47,6 +50,7 @@ function iconSword() {
   </svg>`;
 }
 
+/* ============== Render Zones (mit BG-Bild + Overlay) ============== */
 function renderZones(zones) {
   const grid = document.getElementById('gwGrid');
   grid.innerHTML = '';
@@ -55,7 +59,13 @@ function renderZones(zones) {
     card.className = `gw-card ${z.status || 'wait'}`;
     card.dataset.zoneId = z.id;
 
+    const bgImage = z.image
+      ? `<div class="gw-card-bg" style="background-image:url('${z.image}')"></div>`
+      : `<div class="gw-card-bg"></div>`;
+
     card.innerHTML = `
+      ${bgImage}
+      <div class="gw-card-overlay"></div>
       <div class="gw-card-icon">${iconSword()}</div>
       <div class="gw-card-info">
         <div class="gw-card-name">${z.name}</div>
@@ -75,11 +85,31 @@ function renderZones(zones) {
     grid.appendChild(card);
   });
 
-  // Update zone counter
   const counter = document.getElementById('gwZoneCount');
   if (counter) counter.textContent = String(zones.length).padStart(2, '0');
 }
 
+/* ============== HUD: Spieler-Segmente ============== */
+function renderSegments(containerId, current, max) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = '';
+  const total = Math.max(0, Math.floor(max || 0));
+  const filled = Math.max(0, Math.min(total, Math.floor(current || 0)));
+  for (let i = 0; i < total; i++) {
+    const seg = document.createElement('div');
+    seg.className = 'hud_seg' + (i < filled ? ' filled' : '');
+    container.appendChild(seg);
+  }
+}
+
+function updateCountLabel(elId, current, max) {
+  const el = document.getElementById(elId);
+  if (!el) return;
+  el.innerHTML = `<strong>${current ?? 0}</strong><em>/${max ?? 0}</em>`;
+}
+
+/* ============== Tabs ============== */
 function bindTabs() {
   const tabs = document.querySelectorAll('.gw-tab');
   tabs.forEach(t => {
@@ -111,6 +141,7 @@ function openMenu() {
   document.getElementById('gwMenu').style.display = 'grid';
 }
 
+/* ============== HUD Update ============== */
 function updateHud(data) {
   const wr = document.querySelector('.hud_wr');
   if (data.visible === false) { wr.style.display = 'none'; return; }
@@ -119,16 +150,18 @@ function updateHud(data) {
   if (data.attacker) {
     document.getElementById('attackerName').textContent = data.attacker.name || 'ANGREIFER';
     if (data.attacker.logo) document.getElementById('attackerLogo').src = data.attacker.logo;
-    const pct = data.attacker.max > 0 ? (data.attacker.current / data.attacker.max) * 100 : 0;
-    document.getElementById('attackerBar').style.width = `${pct}%`;
-    document.getElementById('attackerCount').textContent = `${data.attacker.current || 0} / ${data.attacker.max || 0}`;
+    const cur = data.attacker.current || 0;
+    const max = data.attacker.max || 0;
+    renderSegments('attackerBarBg', cur, max);
+    updateCountLabel('attackerCount', cur, max);
   }
   if (data.defender) {
     document.getElementById('defenderName').textContent = data.defender.name || 'VERTEIDIGER';
     if (data.defender.logo) document.getElementById('defenderLogo').src = data.defender.logo;
-    const pct = data.defender.max > 0 ? (data.defender.current / data.defender.max) * 100 : 0;
-    document.getElementById('defenderBar').style.width = `${pct}%`;
-    document.getElementById('defenderCount').textContent = `${data.defender.current || 0} / ${data.defender.max || 0}`;
+    const cur = data.defender.current || 0;
+    const max = data.defender.max || 0;
+    renderSegments('defenderBarBg', cur, max);
+    updateCountLabel('defenderCount', cur, max);
   }
   if (data.timer !== undefined) {
     document.getElementById('timer').textContent = data.timer;
@@ -175,6 +208,10 @@ document.addEventListener('DOMContentLoaded', () => {
   renderZones(DEFAULT_ZONES);
   bindTabs();
   bindClose();
+
+  // Initial-Segmente (alle leer) damit was zu sehen ist
+  renderSegments('attackerBarBg', 0, 6);
+  renderSegments('defenderBarBg', 0, 6);
 
   if (!window.invokeNative) {
     openMenu();
