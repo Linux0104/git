@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<title>Style Showcase - GANGWAR</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background: #0a0a0a;
+    color: #fff;
+    padding: 40px 32px;
+  }
+  h1 {
+    font-family: 'Impact', sans-serif;
+    font-size: 36px;
+    letter-spacing: 4px;
+    text-align: center;
+    margin-bottom: 8px;
+    color: #33ccff;
+  }
+  .sub { text-align:center; opacity:.6; margin-bottom: 48px; font-size:14px; letter-spacing:2px; }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    max-width: 1600px;
+    margin: 0 auto;
+  }
+  .style-block { display:flex; flex-direction:column; gap:14px; }
+  .label {
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: #33ccff;
+    font-weight: bold;
+  }
+  .style-name {
+    font-size: 22px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+  }
+  .desc { font-size: 12px; opacity:.65; line-height:1.5; margin-bottom: 8px; }
+  .preview {
+    height: 280px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 4px;
+  }
+
+  /* ============ a) STREET / MAFIA GRAFFITI ============ */
+  .style-street .preview {
+    background:
+      radial-gradient(circle at 20% 30%, rgba(255,200,50,0.08), transparent 50%),
+      linear-gradient(135deg, #14110d 0%, #1f1a12 100%);
+    padding: 24px;
+    border: 1px solid rgba(212, 175, 55, 0.2);
+  }
+  .style-street .card {
+    background: rgba(0,0,0,0.5);
+    padding: 20px;
+    border: 1px dashed rgba(212, 175, 55, 0.4);
+    transform: rotate(-1.5deg);
+    position: relative;
+    height: 100%;
+  }
+  .style-street .card::before {
+    content: 'WANTED';
+    position: absolute;
+    top: 8px; right: 12px;
+    font-family: 'Impact', sans-serif;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: #d4af37;
+    transform: rotate(8deg);
+    opacity: 0.6;
+  }
+  .style-street .title {
+    font-family: 'Impact', 'Arial Black', sans-serif;
+    font-size: 32px;
+    letter-spacing: 2px;
+    color: #f5e9c8;
+    text-shadow: 3px 3px 0 #d4af37;
+    margin-bottom: 8px;
+    transform: skewX(-3deg);
+  }
+  .style-street .status {
+    color: #d4af37;
+    font-size: 11px;
+    letter-spacing: 2px;
+    margin-bottom: 16px;
+    font-family: 'Courier New', monospace;
+  }
+  .style-street .btn {
+    background: #d4af37;
+    color: #0a0a0a;
+    padding: 10px;
+    text-align: center;
+    font-family: 'Impact', sans-serif;
+    letter-spacing: 4px;
+    font-size: 14px;
+    border: 2px solid #0a0a0a;
+    box-shadow: 4px 4px 0 #5a4317;
+    transform: rotate(0.5deg);
+  }
+
+  /* ============ b) CYBERPUNK / SYNTHWAVE ============ */
+  .style-cyber .preview {
+    background:
+      linear-gradient(180deg, #0a0017 0%, #1a0030 50%, #000020 100%);
+    padding: 24px;
+    position: relative;
+  }
+  .style-cyber .preview::before {
+    content:'';
+    position:absolute; inset:0;
+    background:
+      repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(255,0,200,0.04) 3px, rgba(255,0,200,0.04) 4px);
+    pointer-events: none;
+  }
+  .style-cyber .card {
+    background: rgba(20,0,40,0.7);
+    padding: 20px;
+    border: 1px solid #ff00b8;
+    box-shadow:
+      0 0 20px rgba(255, 0, 184, 0.5),
+      inset 0 0 20px rgba(0, 240, 255, 0.1);
+    height: 100%;
+    position: relative;
+  }
+  .style-cyber .card::after {
+    content:'';
+    position:absolute;
+    bottom: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, #00f0ff, #ff00b8, #00f0ff);
+    animation: cyber-scan 2s linear infinite;
+  }
+  @keyframes cyber-scan { 0%,100%{opacity:1} 50%{opacity:.3} }
+  .style-cyber .title {
+    font-family: 'Courier New', monospace;
+    font-size: 26px;
+    font-weight: 900;
+    letter-spacing: 3px;
+    color: #fff;
+    text-shadow:
+      -2px 0 #ff00b8,
+      2px 0 #00f0ff;
+    margin-bottom: 8px;
+  }
+  .style-cyber .status {
+    color: #00f0ff;
+    font-size: 11px;
+    letter-spacing: 3px;
+    font-family: 'Courier New', monospace;
+    margin-bottom: 16px;
+  }
+  .style-cyber .btn {
+    background: linear-gradient(90deg, #ff00b8, #6b00ff);
+    color: #fff;
+    padding: 10px;
+    text-align: center;
+    letter-spacing: 4px;
+    font-size: 13px;
+    font-weight: 900;
+    font-family: 'Courier New', monospace;
+    border: 1px solid #00f0ff;
+    box-shadow: 0 0 16px rgba(255, 0, 184, 0.6);
+  }
+
+  /* ============ c) MINIMAL / GLASSMORPHISM ============ */
+  .style-glass .preview {
+    background:
+      radial-gradient(circle at 30% 20%, #5fb4ff44, transparent 50%),
+      radial-gradient(circle at 70% 80%, #ff6bb544, transparent 50%),
+      linear-gradient(135deg, #e8edf4, #cbd6e6);
+    padding: 24px;
+  }
+  .style-glass .card {
+    background: rgba(255,255,255,0.35);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.5);
+    border-radius: 20px;
+    padding: 22px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+    height: 100%;
+  }
+  .style-glass .title {
+    font-family: 'Helvetica Neue', sans-serif;
+    font-size: 22px;
+    font-weight: 300;
+    letter-spacing: 1px;
+    color: #1a2332;
+    margin-bottom: 6px;
+  }
+  .style-glass .status {
+    color: #5a6c80;
+    font-size: 12px;
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+  .style-glass .btn {
+    background: rgba(0,120,255,0.85);
+    color: #fff;
+    padding: 12px;
+    text-align: center;
+    border-radius: 12px;
+    letter-spacing: 2px;
+    font-size: 12px;
+    font-weight: 500;
+    backdrop-filter: blur(10px);
+  }
+
+  /* ============ d) MILITARY / TACTICAL ============ */
+  .style-mil .preview {
+    background:
+      linear-gradient(135deg, #1a2014 0%, #2a3320 100%);
+    padding: 24px;
+    position: relative;
+  }
+  .style-mil .preview::before {
+    content:'';
+    position:absolute; inset:0;
+    background-image:
+      linear-gradient(rgba(149,176,71,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(149,176,71,0.06) 1px, transparent 1px);
+    background-size: 20px 20px;
+    pointer-events: none;
+  }
+  .style-mil .card {
+    background: rgba(0,0,0,0.5);
+    border: 1px solid #95b047;
+    padding: 18px;
+    height: 100%;
+    position: relative;
+    font-family: 'Courier New', monospace;
+  }
+  .style-mil .card::before {
+    content: '[ SECTOR ALPHA-04 ]';
+    position: absolute;
+    top: -8px; left: 12px;
+    background: #1a2014;
+    padding: 0 6px;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: #95b047;
+  }
+  .style-mil .title {
+    font-family: 'Impact', 'Arial Black', sans-serif;
+    font-size: 24px;
+    letter-spacing: 3px;
+    color: #d4dca8;
+    margin: 8px 0 4px;
+  }
+  .style-mil .status {
+    color: #95b047;
+    font-size: 11px;
+    letter-spacing: 2px;
+    margin-bottom: 16px;
+  }
+  .style-mil .status::before {
+    content: '> ';
+  }
+  .style-mil .btn {
+    background: #95b047;
+    color: #0a0a0a;
+    padding: 8px;
+    text-align: center;
+    letter-spacing: 3px;
+    font-size: 12px;
+    font-weight: 900;
+    border-top: 2px solid #d4dca8;
+    border-bottom: 2px solid #4a5a20;
+  }
+
+  /* ============ e) BRUTALIST / INDUSTRIAL ============ */
+  .style-bru .preview {
+    background: #f0e8d4;
+    padding: 24px;
+  }
+  .style-bru .card {
+    background: #fff;
+    border: 4px solid #000;
+    padding: 20px;
+    height: 100%;
+    box-shadow: 8px 8px 0 #000;
+    transform: rotate(-1deg);
+  }
+  .style-bru .title {
+    font-family: 'Arial Black', sans-serif;
+    font-size: 30px;
+    letter-spacing: -1px;
+    color: #000;
+    margin-bottom: 4px;
+    line-height: 1;
+  }
+  .style-bru .status {
+    color: #000;
+    font-size: 11px;
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    font-weight: 700;
+    border-top: 2px solid #000;
+    padding-top: 6px;
+  }
+  .style-bru .btn {
+    background: #ff5500;
+    color: #000;
+    padding: 12px;
+    text-align: center;
+    letter-spacing: 2px;
+    font-size: 14px;
+    font-weight: 900;
+    border: 4px solid #000;
+    text-transform: uppercase;
+  }
+
+  /* ============ f) ARCADE / FORTNITE ============ */
+  .style-arcade .preview {
+    background:
+      linear-gradient(135deg, #2a1565 0%, #6b1fb5 50%, #d63384 100%);
+    padding: 24px;
+  }
+  .style-arcade .card {
+    background: linear-gradient(180deg, rgba(0,0,0,0.55), rgba(0,0,0,0.75));
+    border: 3px solid #ffd23f;
+    border-radius: 16px;
+    padding: 22px;
+    height: 100%;
+    box-shadow:
+      0 0 30px rgba(255, 210, 63, 0.4),
+      inset 0 0 20px rgba(255,255,255,0.05);
+  }
+  .style-arcade .title {
+    font-family: 'Impact', 'Arial Black', sans-serif;
+    font-size: 28px;
+    letter-spacing: 2px;
+    color: #ffd23f;
+    text-shadow:
+      2px 2px 0 #d63384,
+      4px 4px 0 rgba(0,0,0,0.5);
+    margin-bottom: 8px;
+  }
+  .style-arcade .status {
+    color: #5dffb5;
+    font-size: 12px;
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+    font-weight: 700;
+  }
+  .style-arcade .btn {
+    background: linear-gradient(135deg, #ff3d6e, #ff6b00);
+    color: #fff;
+    padding: 12px;
+    text-align: center;
+    border-radius: 30px;
+    letter-spacing: 3px;
+    font-size: 14px;
+    font-weight: 900;
+    border: 3px solid #fff;
+    box-shadow: 0 6px 0 #8b0028;
+    text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+  <h1>STYLE SHOWCASE</h1>
+  <div class="sub">DIESELBE KARTE „WINDRÄDER" — IN 6 VERSCHIEDENEN STILEN</div>
+
+  <div class="grid">
+
+    <!-- A -->
+    <div class="style-block style-street">
+      <div class="label">A · STREET / MAFIA</div>
+      <div class="style-name">GRAFFITI · GOLD</div>
+      <div class="desc">Raues Mafia-Feeling, schiefe Karten, Tape-Optik, Stempel-Stamps, schwarz × gold. Passt 1:1 zum „Gangwar"-Vibe.</div>
+      <div class="preview">
+        <div class="card">
+          <div class="title">WINDRÄDER</div>
+          <div class="status">// warte auf angreifer</div>
+          <div class="btn">ANGREIFEN</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- B -->
+    <div class="style-block style-cyber">
+      <div class="label">B · CYBERPUNK</div>
+      <div class="style-name">SYNTHWAVE · GLITCH</div>
+      <div class="desc">Pink × Cyan, Chromatic Aberration, animierte Scanlines, Terminal-Fonts. Auffällig & 80er-Retrofuture.</div>
+      <div class="preview">
+        <div class="card">
+          <div class="title">WINDRÄDER</div>
+          <div class="status">&gt;&gt; AWAITING ATTACKER</div>
+          <div class="btn">► ANGREIFEN ◄</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- C -->
+    <div class="style-block style-glass">
+      <div class="label">C · MINIMAL</div>
+      <div class="style-name">GLASSMORPHISM · LIGHT</div>
+      <div class="desc">Frosted Glass, viel Luft, abgerundete Ecken, weicher Gradient-Hintergrund. Edel, ruhig, modern.</div>
+      <div class="preview">
+        <div class="card">
+          <div class="title">Windräder</div>
+          <div class="status">Warte auf Angreifer…</div>
+          <div class="btn">ANGREIFEN</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- D -->
+    <div class="style-block style-mil">
+      <div class="label">D · MILITARY</div>
+      <div class="style-name">TACTICAL · OLIVE</div>
+      <div class="desc">Tarkov/ARMA-Look, Koordinaten-Grid, Stencil-Schriften, Olive-Grün × Cyan-Akzent. Sehr taktisch.</div>
+      <div class="preview">
+        <div class="card">
+          <div class="title">WINDRÄDER</div>
+          <div class="status">STANDBY · NO HOSTILES</div>
+          <div class="btn">[ ENGAGE ]</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- E -->
+    <div class="style-block style-bru">
+      <div class="label">E · BRUTALIST</div>
+      <div class="style-name">INDUSTRIAL · RAW</div>
+      <div class="desc">Schwere Outlines, harte Schatten, knallige Akzent-Farbe, leicht gekippte Karten. Sehr trendy 2025.</div>
+      <div class="preview">
+        <div class="card">
+          <div class="title">WINDRÄDER</div>
+          <div class="status">Warte auf Angreifer</div>
+          <div class="btn">ANGREIFEN</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- F -->
+    <div class="style-block style-arcade">
+      <div class="label">F · ARCADE</div>
+      <div class="style-name">FORTNITE · APEX</div>
+      <div class="desc">Pinker/lila Gradient, dicke gelbe Outlines, runde Buttons mit 3D-Shadow, sehr verspielt und arcadig.</div>
+      <div class="preview">
+        <div class="card">
+          <div class="title">WINDRÄDER</div>
+          <div class="status">WAITING FOR ATTACKER</div>
+          <div class="btn">ANGREIFEN</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>
