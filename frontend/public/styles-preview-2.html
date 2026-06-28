@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<title>Style Showcase 2 - GANGWAR</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background: #0a0a0a;
+    color: #fff;
+    padding: 40px 32px;
+  }
+  h1 {
+    font-family: 'Impact', sans-serif;
+    font-size: 36px;
+    letter-spacing: 4px;
+    text-align: center;
+    margin-bottom: 8px;
+    color: #33ccff;
+  }
+  .sub { text-align:center; opacity:.6; margin-bottom: 48px; font-size:14px; letter-spacing:2px; }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    max-width: 1600px;
+    margin: 0 auto;
+  }
+  .style-block { display:flex; flex-direction:column; gap:14px; }
+  .label {
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: #33ccff;
+    font-weight: bold;
+  }
+  .style-name {
+    font-size: 22px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+  }
+  .desc { font-size: 12px; opacity:.65; line-height:1.5; margin-bottom: 8px; }
+  .preview {
+    height: 280px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 4px;
+  }
+
+  /* ============ G) PERSONA 5 / ANIME POP ============ */
+  .style-persona .preview {
+    background: #d20000;
+    padding: 24px;
+    overflow: hidden;
+  }
+  .style-persona .preview::before {
+    content: '';
+    position: absolute;
+    inset: -40px;
+    background:
+      repeating-linear-gradient(45deg, transparent 0 30px, rgba(0,0,0,0.15) 30px 60px);
+    transform: rotate(-2deg);
+  }
+  .style-persona .preview::after {
+    content: 'WINDRÄDER';
+    position: absolute;
+    top: 10px; right: -20px;
+    transform: rotate(15deg);
+    font-family: 'Impact', sans-serif;
+    font-size: 60px;
+    color: rgba(0,0,0,0.08);
+    letter-spacing: 2px;
+  }
+  .style-persona .card {
+    position: relative;
+    background: #fff;
+    padding: 18px 22px;
+    color: #000;
+    height: 100%;
+    transform: rotate(-2.5deg) skew(-1deg);
+    clip-path: polygon(0 8%, 95% 0, 100% 92%, 5% 100%);
+    border-left: 8px solid #000;
+  }
+  .style-persona .title {
+    font-family: 'Impact', sans-serif;
+    font-size: 36px;
+    color: #000;
+    letter-spacing: 0;
+    line-height: 0.95;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    transform: skew(-4deg);
+  }
+  .style-persona .status {
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: #d20000;
+    font-weight: bold;
+    margin-bottom: 12px;
+  }
+  .style-persona .btn {
+    background: #000;
+    color: #fff;
+    padding: 12px;
+    text-align: center;
+    font-family: 'Impact', sans-serif;
+    letter-spacing: 5px;
+    font-size: 16px;
+    clip-path: polygon(0 0, 100% 0, 95% 100%, 5% 100%);
+    transform: skew(-6deg);
+    border-top: 3px solid #d20000;
+  }
+
+  /* ============ H) LUXURY BLACK-GOLD ============ */
+  .style-lux .preview {
+    background:
+      linear-gradient(135deg, #0a0a0a 0%, #1a1612 100%);
+    padding: 24px;
+    position: relative;
+  }
+  .style-lux .preview::before {
+    content:'';
+    position:absolute; inset:0;
+    background-image:
+      radial-gradient(circle at 50% 0%, rgba(212,175,55,0.08), transparent 60%);
+    pointer-events:none;
+  }
+  .style-lux .card {
+    background: linear-gradient(180deg, #1a1612 0%, #0a0a0a 100%);
+    border: 1px solid rgba(212,175,55,0.5);
+    padding: 22px;
+    height: 100%;
+    position: relative;
+  }
+  .style-lux .card::before, .style-lux .card::after {
+    content:'';
+    position:absolute;
+    width:14px; height:14px;
+    border: 1px solid #d4af37;
+  }
+  .style-lux .card::before { top:8px; left:8px; border-right:none; border-bottom:none; }
+  .style-lux .card::after { bottom:8px; right:8px; border-left:none; border-top:none; }
+  .style-lux .title {
+    font-family: Georgia, serif;
+    font-size: 26px;
+    font-weight: 300;
+    letter-spacing: 6px;
+    background: linear-gradient(180deg, #f5e9b9 0%, #d4af37 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+  .style-lux .status {
+    color: rgba(212,175,55,0.7);
+    font-size: 10px;
+    letter-spacing: 4px;
+    font-family: Georgia, serif;
+    font-style: italic;
+    margin-bottom: 18px;
+    border-bottom: 1px solid rgba(212,175,55,0.2);
+    padding-bottom: 12px;
+  }
+  .style-lux .btn {
+    background: transparent;
+    color: #d4af37;
+    padding: 12px;
+    text-align: center;
+    letter-spacing: 6px;
+    font-size: 11px;
+    font-family: Georgia, serif;
+    border: 1px solid #d4af37;
+    position: relative;
+  }
+  .style-lux .btn::after {
+    content: '→';
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  /* ============ I) HOLOGRAPHIC / IRIDESCENT ============ */
+  .style-holo .preview {
+    background: #08081a;
+    padding: 24px;
+  }
+  .style-holo .card {
+    background:
+      linear-gradient(135deg,
+        rgba(255, 80, 200, 0.18) 0%,
+        rgba(120, 180, 255, 0.18) 30%,
+        rgba(80, 255, 200, 0.18) 60%,
+        rgba(255, 220, 100, 0.18) 100%),
+      rgba(20, 15, 40, 0.7);
+    border: 1.5px solid;
+    border-image: linear-gradient(135deg, #ff66ff, #66ffff, #ffff66, #ff66ff) 1;
+    padding: 22px;
+    height: 100%;
+    backdrop-filter: blur(20px);
+    position: relative;
+    box-shadow:
+      0 0 30px rgba(170, 100, 255, 0.3),
+      inset 0 0 20px rgba(255, 255, 255, 0.05);
+  }
+  .style-holo .card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 30% 20%, rgba(255, 100, 220, 0.25), transparent 50%),
+      radial-gradient(circle at 70% 80%, rgba(100, 220, 255, 0.25), transparent 50%);
+    pointer-events: none;
+  }
+  .style-holo .title {
+    position:relative;
+    font-family: 'Helvetica Neue', sans-serif;
+    font-size: 26px;
+    font-weight: 900;
+    letter-spacing: 3px;
+    background: linear-gradient(135deg, #ff66ff, #66e3ff, #a8ff6e, #ffea66);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 10px;
+  }
+  .style-holo .status {
+    position:relative;
+    color: rgba(255,255,255,0.85);
+    font-size: 11px;
+    letter-spacing: 3px;
+    margin-bottom: 18px;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+  .style-holo .btn {
+    position:relative;
+    background: linear-gradient(135deg, #ff66ff 0%, #66e3ff 50%, #a8ff6e 100%);
+    color: #08081a;
+    padding: 12px;
+    text-align: center;
+    border-radius: 30px;
+    letter-spacing: 3px;
+    font-size: 13px;
+    font-weight: 800;
+    box-shadow: 0 0 24px rgba(170, 100, 255, 0.5);
+  }
+
+  /* ============ J) Y2K / FRUTIGER AERO ============ */
+  .style-y2k .preview {
+    background:
+      radial-gradient(circle at 50% 30%, #b3e6ff 0%, #4ab8ff 60%, #1a6fcc 100%);
+    padding: 24px;
+  }
+  .style-y2k .preview::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.6), transparent 50%);
+    pointer-events: none;
+  }
+  .style-y2k .card {
+    background:
+      linear-gradient(180deg,
+        rgba(255,255,255,0.6) 0%,
+        rgba(255,255,255,0.2) 40%,
+        rgba(255,255,255,0.05) 60%,
+        rgba(255,255,255,0.15) 100%),
+      rgba(140, 200, 255, 0.35);
+    border: 2px solid rgba(255,255,255,0.7);
+    border-radius: 20px;
+    padding: 22px;
+    height: 100%;
+    backdrop-filter: blur(8px);
+    box-shadow:
+      0 4px 20px rgba(0, 70, 150, 0.3),
+      inset 0 1px 0 rgba(255,255,255,0.9);
+  }
+  .style-y2k .title {
+    font-family: 'Helvetica Neue', sans-serif;
+    font-size: 26px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    color: #fff;
+    text-shadow:
+      0 2px 0 rgba(0, 70, 150, 0.5),
+      0 0 12px rgba(255,255,255,0.6);
+    margin-bottom: 6px;
+  }
+  .style-y2k .status {
+    color: #003366;
+    font-size: 12px;
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+    font-weight: 600;
+  }
+  .style-y2k .btn {
+    background:
+      linear-gradient(180deg,
+        rgba(255,255,255,0.8) 0%,
+        rgba(255,255,255,0.3) 50%,
+        rgba(70, 160, 255, 0.5) 51%,
+        rgba(20, 90, 200, 0.8) 100%);
+    color: #fff;
+    padding: 12px;
+    text-align: center;
+    border-radius: 30px;
+    letter-spacing: 2px;
+    font-size: 14px;
+    font-weight: 800;
+    border: 1px solid rgba(255,255,255,0.8);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+    box-shadow:
+      0 4px 8px rgba(0, 70, 150, 0.4),
+      inset 0 1px 0 rgba(255,255,255,0.9);
+  }
+
+  /* ============ K) CARBON / RACING ============ */
+  .style-carbon .preview {
+    background:
+      repeating-linear-gradient(45deg,
+        #111 0px, #111 2px,
+        #1a1a1a 2px, #1a1a1a 4px,
+        #0a0a0a 4px, #0a0a0a 6px);
+    padding: 24px;
+  }
+  .style-carbon .preview::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(90deg, transparent 0%, transparent 60%, rgba(220, 30, 30, 0.15) 60%, rgba(220, 30, 30, 0.15) 62%, transparent 62%);
+    pointer-events: none;
+  }
+  .style-carbon .card {
+    background:
+      linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+    border: 2px solid #2a2a2a;
+    border-left: 4px solid #dc1e1e;
+    padding: 22px;
+    height: 100%;
+    position: relative;
+    clip-path: polygon(0 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%);
+  }
+  .style-carbon .card::after {
+    content: '01';
+    position: absolute;
+    top: 12px; right: 16px;
+    font-family: 'Courier New', monospace;
+    font-size: 32px;
+    font-weight: 900;
+    color: rgba(220, 30, 30, 0.3);
+  }
+  .style-carbon .title {
+    font-family: 'Impact', sans-serif;
+    font-size: 30px;
+    letter-spacing: 3px;
+    color: #fff;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+  .style-carbon .title::before {
+    content: '//';
+    color: #dc1e1e;
+    margin-right: 8px;
+  }
+  .style-carbon .status {
+    color: #888;
+    font-size: 11px;
+    letter-spacing: 2px;
+    font-family: 'Courier New', monospace;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    border-bottom: 1px solid #2a2a2a;
+    padding-bottom: 8px;
+  }
+  .style-carbon .btn {
+    background: linear-gradient(135deg, #dc1e1e 0%, #8b0000 100%);
+    color: #fff;
+    padding: 12px;
+    text-align: center;
+    letter-spacing: 3px;
+    font-size: 14px;
+    font-weight: 900;
+    font-family: 'Impact', sans-serif;
+    border: 1px solid #dc1e1e;
+    clip-path: polygon(0 0, 100% 0, calc(100% - 12px) 100%, 0 100%);
+    box-shadow: 0 0 16px rgba(220, 30, 30, 0.4);
+  }
+
+  /* ============ L) NEON TOKYO / STREET JAPAN ============ */
+  .style-tokyo .preview {
+    background:
+      linear-gradient(180deg, #0a0a14 0%, #1a0a1a 100%);
+    padding: 24px;
+    position: relative;
+  }
+  .style-tokyo .preview::before {
+    content: '街';
+    position: absolute;
+    top: 5%; right: 5%;
+    font-size: 100px;
+    color: rgba(255, 50, 100, 0.06);
+    font-weight: bold;
+  }
+  .style-tokyo .preview::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      repeating-linear-gradient(0deg, transparent 0 2px, rgba(255,255,255,0.02) 2px 3px);
+    pointer-events: none;
+  }
+  .style-tokyo .card {
+    background: rgba(15, 5, 20, 0.85);
+    padding: 20px;
+    border: 1px solid #ff2e5b;
+    height: 100%;
+    position: relative;
+    box-shadow:
+      0 0 20px rgba(255, 46, 91, 0.4),
+      inset 0 0 30px rgba(255, 46, 91, 0.05);
+  }
+  .style-tokyo .card::before {
+    content: 'ウィンドミル';
+    position: absolute;
+    top: 8px; left: 12px;
+    font-size: 10px;
+    color: #ff2e5b;
+    letter-spacing: 2px;
+    opacity: 0.7;
+  }
+  .style-tokyo .title {
+    font-family: 'Impact', sans-serif;
+    font-size: 28px;
+    letter-spacing: 2px;
+    color: #fff;
+    margin: 18px 0 6px;
+    text-shadow:
+      0 0 8px #ff2e5b,
+      0 0 16px rgba(255, 46, 91, 0.5);
+  }
+  .style-tokyo .status {
+    color: #66ddff;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-shadow: 0 0 8px #66ddff;
+    font-family: 'Courier New', monospace;
+    margin-bottom: 18px;
+  }
+  .style-tokyo .btn {
+    background: transparent;
+    color: #ff2e5b;
+    padding: 12px;
+    text-align: center;
+    letter-spacing: 4px;
+    font-size: 13px;
+    font-weight: 800;
+    border: 1px solid #ff2e5b;
+    text-shadow: 0 0 8px #ff2e5b;
+    box-shadow:
+      0 0 16px rgba(255, 46, 91, 0.4),
+      inset 0 0 16px rgba(255, 46, 91, 0.1);
+  }
+</style>
+</head>
+<body>
+  <h1>STYLE SHOWCASE · TEIL 2</h1>
+  <div class="sub">6 KOMPLETT NEUE STILE — JEWEILS „WINDRÄDER"-KARTE</div>
+
+  <div class="grid">
+
+    <!-- G -->
+    <div class="style-block style-persona">
+      <div class="label">G · ANIME / POP</div>
+      <div class="style-name">PERSONA 5 · RED-BLACK</div>
+      <div class="desc">Wuchtige diagonale Schrift, knalliges Rot, schwarz-weiße Comic-Stripes, Impact-Font, alles schief & dynamisch. Sehr stylisch.</div>
+      <div class="preview">
+        <div class="card">
+          <div class="title">WINDRÄDER</div>
+          <div class="status">// WARTE AUF ANGREIFER</div>
+          <div class="btn">ANGREIFEN</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- H -->
+    <div class="style-block style-lux">
+      <div class="label">H · LUXURY</div>
+      <div class="style-name">BLACK · GOLD ELEGANT</div>
+      <div class="desc">Dezente Eleganz, dünne Linien, gold-gradient Serif-Schrift, viel Schwarz, Pfeil-Buttons. Edel & ruhig — wie ein 5-Sterne-Hotel.</div>
+      <div class="preview">
+        <div class="card">
+          <div class="title">WINDRÄDER</div>
+          <div class="status">— Warte auf Angreifer —</div>
+          <div class="btn">ANGREIFEN</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- I -->
+    <div class="style-block style-holo">
+      <div class="label">I · HOLOGRAPHIC</div>
+      <div class="style-name">IRIDESCENT · RAINBOW</div>
+      <div class="desc">Schillernde Regenbogen-Gradients (pink → cyan → grün → gelb), Glasmorphismus, sehr futuristisch. Modern wie ein Premium-Sneaker.</div>
+      <div class="preview">
+        <div class="card">
+          <div class="title">WINDRÄDER</div>
+          <div class="status">WARTE AUF ANGREIFER</div>
+          <div class="btn">ANGREIFEN</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- J -->
+    <div class="style-block style-y2k">
+      <div class="label">J · Y2K</div>
+      <div class="style-name">FRUTIGER AERO · AQUA</div>
+      <div class="desc">2000er-Aero-Look, glossy Buttons mit Highlight-Reflexion, hellblauer Sky-Gradient, weiße bubble-Borders. Nostalgisch & trendy 2025.</div>
+      <div class="preview">
+        <div class="card">
+          <div class="title">WINDRÄDER</div>
+          <div class="status">Warte auf Angreifer…</div>
+          <div class="btn">ANGREIFEN</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- K -->
+    <div class="style-block style-carbon">
+      <div class="label">K · CARBON</div>
+      <div class="style-name">RACING · RED-BLACK</div>
+      <div class="desc">Carbon-Faser-Textur, rote Akzent-Linie links, geschnittene Ecken, Race-Number im BG, Forza/F1-Vibe. Sportlich & technisch.</div>
+      <div class="preview">
+        <div class="card">
+          <div class="title">WINDRÄDER</div>
+          <div class="status">STATUS · STANDBY</div>
+          <div class="btn">ANGREIFEN</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- L -->
+    <div class="style-block style-tokyo">
+      <div class="label">L · NEON TOKYO</div>
+      <div class="style-name">JAPANESE · STREET</div>
+      <div class="desc">Pink-Magenta + Cyan-Neon, japanische Kanji als BG-Akzent, Scanlines, sehr „Akira/Ghost in the Shell". Urban Cool.</div>
+      <div class="preview">
+        <div class="card">
+          <div class="title">WINDRÄDER</div>
+          <div class="status">&gt;&gt; STANDBY MODE</div>
+          <div class="btn">攻撃 · ANGREIFEN</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>
