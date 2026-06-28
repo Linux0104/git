@@ -1,0 +1,42 @@
+:root {
+  /* ===== Arcade / Fortnite-Apex Farbpalette ===== */
+  /* Background gradient stops */
+  --bg-start:   #2a1565;   /* deep purple */
+  --bg-mid:     #6b1fb5;   /* magenta */
+  --bg-end:     #d63384;   /* pink */
+  --bg-solid:   #1a0a3a;
+
+  /* Accents */
+  --arcade-yellow:  #ffd23f;   /* primary border/title */
+  --arcade-yellow-dark: #c79a00;
+  --arcade-pink:    #ff3d6e;
+  --arcade-orange:  #ff6b00;
+  --arcade-green:   #5dffb5;
+  --arcade-cyan:    #33ccff;
+  --arcade-purple:  #b347ff;
+
+  /* Surfaces */
+  --surface-glass:   rgba(20, 8, 50, 0.55);
+  --surface-glass-2: rgba(30, 12, 70, 0.75);
+  --surface-dark:    rgba(0, 0, 0, 0.55);
+  --surface-light:   rgba(255, 255, 255, 0.08);
+
+  /* Text */
+  --text-primary:    #ffffff;
+  --text-secondary:  rgba(255, 255, 255, 0.78);
+  --text-muted:      rgba(255, 255, 255, 0.5);
+
+  /* Shadows / Glows */
+  --shadow-3d-yellow: 0 6px 0 #8b6b00;
+  --shadow-3d-pink:   0 6px 0 #8b0028;
+  --shadow-3d-orange: 0 6px 0 #8b3a00;
+  --shadow-3d-cyan:   0 6px 0 #006b8b;
+  --glow-yellow:      0 0 24px rgba(255, 210, 63, 0.55);
+  --glow-pink:        0 0 24px rgba(255, 61, 110, 0.6);
+
+  /* Border */
+  --border-thick: 3px;
+  --border-arcade: var(--border-thick) solid var(--arcade-yellow);
+  --radius-card: 18px;
+  --radius-btn: 50px;
+}
