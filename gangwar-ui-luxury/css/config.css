@@ -1,0 +1,24 @@
+:root {
+  /* ===== Luxury Black-Gold Palette ===== */
+  --gold:           #d4af37;
+  --gold-bright:    #f5e9b9;
+  --gold-deep:      #a8841e;
+  --gold-shadow:    #5a4317;
+
+  --black:          #0a0908;
+  --black-soft:     #14110d;
+  --black-elevated: #1c1812;
+
+  --surface:        rgba(20, 17, 13, 0.92);
+  --surface-glass:  rgba(28, 24, 18, 0.7);
+
+  --text-primary:   #f5ecd0;
+  --text-secondary: rgba(245, 233, 200, 0.65);
+  --text-muted:     rgba(245, 233, 200, 0.35);
+
+  --gold-line:      rgba(212, 175, 55, 0.35);
+  --gold-line-soft: rgba(212, 175, 55, 0.15);
+
+  --glow-gold:      0 0 30px rgba(212, 175, 55, 0.25);
+  --glow-gold-soft: 0 0 50px rgba(212, 175, 55, 0.12);
+}
