@@ -1,0 +1,41 @@
+:root {
+  /* Brand colors - kept cyan/blue */
+  --main-color: rgb(51, 204, 255);
+  --main-color-dark: rgb(0, 184, 230);
+  --main-color-bright: rgb(120, 230, 255);
+
+  --main-color-opacity-first: rgba(51, 204, 255, 0.75);
+  --main-color-opacity-second: rgba(51, 204, 255, 0.5);
+  --main-color-opacity-third: rgba(51, 204, 255, 0.25);
+  --main-color-opacity-four: rgba(51, 204, 255, 0.05);
+
+  /* Backgrounds */
+  --background: rgb(8, 10, 14);
+  --surface-1: rgba(18, 22, 28, 0.92);
+  --surface-2: rgba(26, 32, 40, 0.85);
+  --surface-3: rgba(38, 46, 56, 0.7);
+
+  /* Text */
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.65);
+  --text-tertiary: rgba(255, 255, 255, 0.35);
+
+  /* Status colors */
+  --color-success: #2dd17b;
+  --color-warning: #ffb547;
+  --color-danger: #ff4d6d;
+
+  /* Team colors */
+  --team-attack: #ff4d6d;
+  --team-defend: #33ccff;
+
+  /* Effects */
+  --glow-cyan: 0 0 24px rgba(51, 204, 255, 0.45);
+  --glow-cyan-strong: 0 0 40px rgba(51, 204, 255, 0.75);
+  --shadow-card: 0 12px 32px rgba(0, 0, 0, 0.55);
+
+  /* Geometry */
+  --clip-card: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 18px 100%, 0 calc(100% - 18px));
+  --clip-tab: polygon(12px 0, 100% 0, calc(100% - 12px) 100%, 0 100%);
+  --clip-button: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+}

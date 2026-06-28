@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GANGWAR - STRADA #1</title>
+  <link rel="stylesheet" href="./css/fonts.css" />
+  <link rel="stylesheet" href="./css/config.css" />
+  <link rel="stylesheet" href="./css/style.css" />
+</head>
+<body>
+
+  <!-- ============================================================
+       SCOREBOARD (Round End)
+       ============================================================ -->
+  <div class="scoreboard" style="display: none;">
+    <div class="scoreboardHeader">
+      <img src="./images/scoreboard_header.png" alt="">
+      <div class="scoreboardHeaderText">
+        <p>LUNAR</p>
+        <p class="scoreboardTitle">GEWINNER: SANTO</p>
+      </div>
+    </div>
+    <div class="scoreboardBody"></div>
+  </div>
+
+  <!-- ============================================================
+       MVP
+       ============================================================ -->
+  <div class="scoreboardMVP" style="display: none;">
+    <div class="scoreboardBody2">
+      <div class="scoreboardPlayer">
+        <div class="playerRanking">#1</div>
+        <div class="playerName">Nico Dev</div>
+        <img class="killIcon" src="./images/kill.png" alt="">
+        <div class="killAmount">10</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       TOP MESSAGE
+       ============================================================ -->
+  <div id="topMessage" class="custom_top_message"></div>
+
+  <!-- ============================================================
+       HUD (Attacker | Timer | Defender)
+       ============================================================ -->
+  <div class="hud_wr" style="display: none;">
+    <!-- ATTACKER (Left) -->
+    <div class="hud_team left">
+      <div class="hud_info">
+        <span class="hud_name" id="attackerName">ANGREIFER</span>
+        <div class="hud_bar_bg" id="attackerBarBg">
+          <div class="hud_bar_fill" id="attackerBar" style="width: 100%;"></div>
+          <span class="hud_count" id="attackerCount">0 / 0</span>
+        </div>
+      </div>
+      <div class="hud_logo">
+        <img id="attackerLogo" src="./images/logo_placeholder.png" alt="">
+      </div>
+    </div>
+
+    <!-- TIMER (Center) -->
+    <div class="hud_timer" id="hudTimer">
+      <span class="hud_timer_label">ZEIT</span>
+      <span class="hud_timer_value" id="timer">00:00</span>
+    </div>
+
+    <!-- DEFENDER (Right) -->
+    <div class="hud_team right">
+      <div class="hud_logo">
+        <img id="defenderLogo" src="./images/logo_placeholder.png" alt="">
+      </div>
+      <div class="hud_info">
+        <span class="hud_name" id="defenderName">VERTEIDIGER</span>
+        <div class="hud_bar_bg" id="defenderBarBg">
+          <div class="hud_bar_fill" id="defenderBar" style="width: 100%;"></div>
+          <span class="hud_count" id="defenderCount">0 / 0</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       GANGWAR MENU
+       ============================================================ -->
+  <div class="gw-menu" id="gwMenu">
+    <!-- Header -->
+    <div class="gw-header">
+      <div class="gw-stars" data-action="stars">
+        <span class="gw-stars-value" id="gwStars">2,350</span>
+        <span class="gw-stars-icon">★</span>
+      </div>
+      <div class="gw-title-block">
+        <div class="gw-subtitle">LUNAR</div>
+        <div class="gw-title" id="gwMainTitle">GANGWAR</div>
+      </div>
+      <div class="gw-close" data-action="close" title="Schließen">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="gw-tabs" id="gwTabs">
+      <button class="gw-tab active" data-tab="gangwar">GANGWAR</button>
+      <button class="gw-tab" data-tab="rewards">REWARDS</button>
+      <button class="gw-tab" data-tab="topfraks">TOP FRAKS</button>
+      <button class="gw-tab" data-tab="topplayers">TOP PLAYERS</button>
+    </div>
+
+    <!-- Content -->
+    <div class="gw-content">
+      <div class="gw-grid" id="gwGrid">
+        <!-- Cards rendered dynamically via app.js -->
+      </div>
+    </div>
+  </div>
+
+  <div id="app"></div>
+
+  <script src="./js/app.js"></script>
+</body>
+</html>
