@@ -19,6 +19,28 @@ SANTO        ▰▰▰▰░░ 4 /6        ZEIT        5 /6 ▰▰▰▰▰░ 
              ─────                02:14                ─────
 ```
 
+### 3. Active-State: Orange Glow Indicator 🔥
+Wenn eine Zone `status: 'active'` hat, wird sie komplett **orange dargestellt**:
+- 🟠 **Pulsierender orangener Border** um die Karte
+- 🟠 **Orangener Streifen links** (immer sichtbar)
+- 🟠 **„LIVE"-Badge** oben rechts (blinkend)
+- 🟠 **Bild wird orange-getönt** via `hue-rotate(-12deg)` + Sättigung
+- 🟠 **Status-Text:** „Kampf läuft"
+- 🟠 Icon, Name, Button — alles in Warmton
+
+### 4. Smooth Tab-Transition 🎬
+Beim Tab-Wechsel:
+- 1. Aktuelle Cards **blurren + entsättigen + ausblenden** (280ms)
+- 2. Re-Render mit neuen/gefilterten Daten
+- 3. Cards **scalen einzeln gestaffelt rein** (stagger entry animation)
+- Titel slidet sanft mit aus & rein
+
+Demo-Filter pro Tab (im FiveM-Einsatz vom Server überschreibbar):
+- **GANGWAR**: alle Zonen
+- **REWARDS**: nur `active` + `locked`
+- **TOP FRAKS**: nur `wait` (max 6)
+- **TOP PLAYERS**: erste 8 Zonen
+
 
 
 ---

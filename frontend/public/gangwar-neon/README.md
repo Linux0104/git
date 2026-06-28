@@ -1,7 +1,25 @@
 # GANGWAR – STRADA #1 · Dark Neon Turquoise
 
 Futuristische UI mit **neuem Layout** im dunklen Neon-Stil mit Türkis-Akzent.
-**Enthält:** Menü · HUD · Top-Message *(KEIN Scoreboard/MVP)*
+**Enthält:** Menü mit Zonen-Bildern · HUD mit Spieler-Segmenten · Top-Message *(KEIN Scoreboard/MVP)*
+
+---
+
+## 🆕 Neue Features
+
+### 1. Zonen-Bilder als Background
+Jede Karte hat jetzt ein **Hintergrundbild der Zone** mit einem **dunklen Gradient-Overlay** (von links nach rechts) — Text bleibt links komplett lesbar, das Bild leuchtet rechts durch. Beim Hover wird das Bild leicht heller, sättigt sich und zoomt sanft rein.
+
+### 2. Spieler als einzelne Striche
+Statt einer durchgehenden Balken-Bar zeigt das HUD jetzt **N Segmente** (= max Spieler).
+Jeder gefüllte Strich = ein Spieler im Team. Mit Pop-In-Animation (gestaffelt) und Türkis-Glow.
+
+```
+SANTO        ▰▰▰▰░░ 4 /6        ZEIT        5 /6 ▰▰▰▰▰░ LUNAR
+             ─────                02:14                ─────
+```
+
+
 
 ---
 
@@ -100,19 +118,28 @@ files {
 
 ### 4. Server NUI-Messages
 ```lua
--- Menü öffnen
+-- Menü öffnen (mit Zonen-Bildern)
 SendNUIMessage({
   type = 'openMenu',
   stars = 2350,
   zones = {
-    { id = 'windraeder', name = 'WINDRÄDER', status = 'wait' },
-    { id = 'fibhq',      name = 'FIB HQ',    status = 'active' },
-    { id = 'sandy',      name = 'SANDY',     status = 'locked' },
+    {
+      id = 'windraeder',
+      name = 'WINDRÄDER',
+      status = 'wait',   -- 'wait' | 'active' | 'locked'
+      image = 'nui://gangwar/html/images/zones/windraeder.jpg'  -- ← Pfad zum Zonen-Bild
+    },
+    {
+      id = 'fibhq',
+      name = 'FIB HQ',
+      status = 'active',
+      image = 'nui://gangwar/html/images/zones/fibhq.jpg'
+    },
     -- ...
   }
 })
 
--- HUD updaten
+-- HUD updaten (Spieler als Striche)
 SendNUIMessage({
   type = 'hud',
   data = {
@@ -121,6 +148,7 @@ SendNUIMessage({
     warning = false,
     attacker = { name = 'SANTO', logo = 'nui://gangwar/html/images/santo.png', current = 4, max = 6 },
     defender = { name = 'LUNAR', logo = 'nui://gangwar/html/images/lunar.png', current = 5, max = 6 },
+    -- "max" bestimmt die Anzahl der Striche; "current" wie viele leuchten
   }
 })
 
@@ -133,6 +161,20 @@ SendNUIMessage({ type = 'updateStars', stars = 3500 })
 -- Menü schließen
 SendNUIMessage({ type = 'closeMenu' })
 ```
+
+### 📦 Wichtig: Bilder ablegen
+Lege deine Zonen-Bilder unter `html/images/zones/` ab (oder einem anderen Ordner) und nutze diese Pfade in der `zones`-Liste:
+```
+html/
+├── images/
+│   └── zones/
+│       ├── windraeder.jpg
+│       ├── fibhq.jpg
+│       ├── sandy.jpg
+│       └── ...
+```
+
+Empfohlene Bild-Größe: **600×200px** oder größer (16:5 Ratio passt am besten zur Karte).
 
 ### 5. NUI-Callbacks (Server-Lua)
 ```lua

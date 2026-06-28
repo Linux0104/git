@@ -10,18 +10,18 @@ const RESOURCE_NAME = 'gangwar';
 
 /* Beispiel-Bilder (Unsplash) -- für den FiveM-Einsatz durch eigene nui:// URLs ersetzen */
 const DEFAULT_ZONES = [
-  { id: 'windraeder',   name: 'WINDRÄDER',        status: 'wait', image: 'https://images.unsplash.com/photo-1466611653911-95081537e5b7?w=600&q=70&auto=format' },
-  { id: 'windraeder2',  name: 'WINDRÄDER 2',      status: 'wait', image: 'https://images.unsplash.com/photo-1532601224476-15c79f2f7a51?w=600&q=70&auto=format' },
-  { id: 'flugzeug',     name: 'FLUGZEUGFRIEDHOF', status: 'wait', image: 'https://images.unsplash.com/photo-1583878312220-9d99c8a8c2c1?w=600&q=70&auto=format' },
-  { id: 'fibhq',        name: 'FIB HQ',           status: 'wait', image: 'https://images.unsplash.com/photo-1444723121867-7a241cacace9?w=600&q=70&auto=format' },
-  { id: 'vespucci',     name: 'VESPUCCI KANÄLE',  status: 'wait', image: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=600&q=70&auto=format' },
-  { id: 'fibtanke',     name: 'FIB TANKE',        status: 'wait', image: 'https://images.unsplash.com/photo-1542759564-7ccbb6ac450a?w=600&q=70&auto=format' },
-  { id: 'easthighway',  name: 'EAST HIGHWAY',     status: 'wait', image: 'https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=600&q=70&auto=format' },
-  { id: 'stadt',        name: 'STADT',            status: 'wait', image: 'https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=600&q=70&auto=format' },
-  { id: 'sandy',        name: 'SANDY',            status: 'wait', image: 'https://images.unsplash.com/photo-1547234935-80c7145ec969?w=600&q=70&auto=format' },
-  { id: 'paleto',       name: 'PALETO',           status: 'wait', image: 'https://images.unsplash.com/photo-1551524613-1b4f5ad3da9b?w=600&q=70&auto=format' },
-  { id: 'oelfelder',    name: 'ÖLFELDER',         status: 'wait', image: 'https://images.unsplash.com/photo-1487875961445-47a00398c267?w=600&q=70&auto=format' },
-  { id: 'route68',      name: 'ROUTE68',          status: 'wait', image: 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=600&q=70&auto=format' },
+  { id: 'windraeder',   name: 'WINDRÄDER',        status: 'active', image: 'https://images.unsplash.com/photo-1466611653911-95081537e5b7?w=600&q=70&auto=format' },
+  { id: 'windraeder2',  name: 'WINDRÄDER 2',      status: 'wait',   image: 'https://images.unsplash.com/photo-1532601224476-15c79f2f7a51?w=600&q=70&auto=format' },
+  { id: 'flugzeug',     name: 'FLUGZEUGFRIEDHOF', status: 'wait',   image: 'https://images.unsplash.com/photo-1583878312220-9d99c8a8c2c1?w=600&q=70&auto=format' },
+  { id: 'fibhq',        name: 'FIB HQ',           status: 'active', image: 'https://images.unsplash.com/photo-1444723121867-7a241cacace9?w=600&q=70&auto=format' },
+  { id: 'vespucci',     name: 'VESPUCCI KANÄLE',  status: 'wait',   image: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=600&q=70&auto=format' },
+  { id: 'fibtanke',     name: 'FIB TANKE',        status: 'locked', image: 'https://images.unsplash.com/photo-1542759564-7ccbb6ac450a?w=600&q=70&auto=format' },
+  { id: 'easthighway',  name: 'EAST HIGHWAY',     status: 'wait',   image: 'https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=600&q=70&auto=format' },
+  { id: 'stadt',        name: 'STADT',            status: 'active', image: 'https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=600&q=70&auto=format' },
+  { id: 'sandy',        name: 'SANDY',            status: 'wait',   image: 'https://images.unsplash.com/photo-1547234935-80c7145ec969?w=600&q=70&auto=format' },
+  { id: 'paleto',       name: 'PALETO',           status: 'wait',   image: 'https://images.unsplash.com/photo-1551524613-1b4f5ad3da9b?w=600&q=70&auto=format' },
+  { id: 'oelfelder',    name: 'ÖLFELDER',         status: 'wait',   image: 'https://images.unsplash.com/photo-1487875961445-47a00398c267?w=600&q=70&auto=format' },
+  { id: 'route68',      name: 'ROUTE68',          status: 'wait',   image: 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=600&q=70&auto=format' },
 ];
 
 const STATUS_LABEL = {
@@ -109,7 +109,56 @@ function updateCountLabel(elId, current, max) {
   el.innerHTML = `<strong>${current ?? 0}</strong><em>/${max ?? 0}</em>`;
 }
 
-/* ============== Tabs ============== */
+/* ============== Tabs mit Smooth Transition ============== */
+let _currentTab = 'gangwar';
+
+function filterZonesForTab(tab, zones) {
+  // Demo-Filter — in FiveM überschreibt der Server diese Logik via updateZones
+  switch (tab) {
+    case 'rewards':
+      return zones.filter(z => z.status === 'active' || z.status === 'locked');
+    case 'topfraks':
+      return zones.filter(z => z.status === 'wait').slice(0, 6);
+    case 'topplayers':
+      return zones.slice(0, 8);
+    case 'gangwar':
+    default:
+      return zones;
+  }
+}
+
+function switchTab(tab) {
+  if (tab === _currentTab) return;
+  _currentTab = tab;
+
+  const grid = document.getElementById('gwGrid');
+  const titleEl = document.getElementById('gwMainTitle');
+  const titleMap = {
+    gangwar:    'GANGWAR',
+    rewards:    'REWARDS',
+    topfraks:   'TOP FRAKS',
+    topplayers: 'TOP PLAYERS',
+  };
+
+  // 1) Animate out
+  grid.classList.add('switching-out');
+  titleEl.classList.add('switching');
+
+  setTimeout(() => {
+    // 2) Re-render with filtered data
+    const filtered = filterZonesForTab(tab, DEFAULT_ZONES);
+    renderZones(filtered);
+    titleEl.textContent = titleMap[tab] || 'GANGWAR';
+
+    // Force reflow so animation triggers
+    void grid.offsetWidth;
+
+    // 3) Animate in
+    grid.classList.remove('switching-out');
+    titleEl.classList.remove('switching');
+  }, 280);
+}
+
 function bindTabs() {
   const tabs = document.querySelectorAll('.gw-tab');
   tabs.forEach(t => {
@@ -118,13 +167,7 @@ function bindTabs() {
       t.classList.add('active');
       const tab = t.dataset.tab;
       nuiPost('changeTab', { tab });
-      const titleMap = {
-        gangwar:    'GANGWAR',
-        rewards:    'REWARDS',
-        topfraks:   'TOP FRAKS',
-        topplayers: 'TOP PLAYERS',
-      };
-      document.getElementById('gwMainTitle').textContent = titleMap[tab] || 'GANGWAR';
+      switchTab(tab);
     });
   });
 }
