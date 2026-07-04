@@ -234,7 +234,16 @@ function renderVehicles() {
     $carList.append(`
       <div class="carlist-item" data-plate="${escapeHtml(v.plate)}" data-testid="car-${escapeHtml(v.plate)}">
         <div class="top-carCtn">
-          <div class="plate"><p class="plate-value">${escapeHtml(v.plate)}</p></div>
+          <div class="plate">
+            <div class="plate-inner">
+              <div class="plate-top">
+                <span class="plate-sticker blue">MAY</span>
+                <span class="plate-region">San Andreas</span>
+                <span class="plate-sticker orange">•</span>
+              </div>
+              <p class="plate-value">${escapeHtml(v.plate)}</p>
+            </div>
+          </div>
           <div class="car-actions">${actionsHtml}</div>
         </div>
         <div class="car-visual">
