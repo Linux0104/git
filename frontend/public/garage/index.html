@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lunar Garage — FiveM UI</title>
+  <link rel="stylesheet" href="./fonts.css" />
+  <link rel="stylesheet" href="./style.css" />
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+
+  <!-- Rename Modal -->
+  <div class="edit-menu" data-testid="rename-modal">
+    <div class="edit-panel">
+      <div class="header-edit">
+        <div class="c-names">
+          <p class="sec-Name">Lunar Garage</p>
+          <p class="prim-Name">Fahrzeug umbenennen</p>
+        </div>
+        <p class="menu-desc">Gib deinem Fahrzeug einen neuen Namen — max. 24 Zeichen.</p>
+      </div>
+      <div class="content">
+        <input type="text" placeholder="Neuer Name…" class="input-name" data-testid="rename-input" maxlength="24" />
+        <div class="btns">
+          <div class="btn cancel" data-testid="rename-cancel">Abbrechen</div>
+          <div class="btn ready" data-testid="rename-confirm">Speichern</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Container -->
+  <div class="container" data-testid="garage-container">
+    <div class="garage">
+      <div class="garage-content">
+
+        <!-- HEADER -->
+        <div class="header" data-testid="garage-header">
+          <div class="menu-iBox">
+            <div class="brand-mark" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 17h14l-1.5-5h-11L5 17z"></path>
+                <path d="M7 12l1.5-4h7L17 12"></path>
+                <circle cx="7.5" cy="17.5" r="1.5" fill="currentColor"></circle>
+                <circle cx="16.5" cy="17.5" r="1.5" fill="currentColor"></circle>
+              </svg>
+            </div>
+            <div class="menu-txts">
+              <p class="menu-title">Garage</p>
+              <p class="menu-secTitle">Lunar · Vehicle Manager</p>
+            </div>
+          </div>
+
+          <div class="header-elements">
+            <label class="search-box">
+              <span class="search-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="11" cy="11" r="7"></circle>
+                  <path d="m21 21-4.3-4.3"></path>
+                </svg>
+              </span>
+              <input class="search-input" type="text" placeholder="Fahrzeug oder Kennzeichen suchen…" data-testid="search-input" />
+            </label>
+
+            <div class="header-btns" role="tablist">
+              <button class="header-btn aktivBtn" data-testid="tab-park-out" role="tab">Ausparken</button>
+              <button class="header-btn" data-testid="tab-park-in" role="tab">Einparken</button>
+              <button class="header-btn" data-testid="tab-favourites" role="tab">Favoriten</button>
+            </div>
+
+            <button class="close-btn" data-testid="close-btn" aria-label="Schließen">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 6 6 18"></path><path d="m6 6 12 12"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- CAR LIST -->
+        <div class="carlist" data-testid="car-list"></div>
+
+        <!-- FOOTER -->
+        <div class="footer-stats" data-testid="footer-stats">
+          <div class="stat"><span class="dot"></span>Eingeparkt <b data-testid="stat-parked">0</b></div>
+          <div class="stat warn"><span class="dot"></span>Impound <b data-testid="stat-impound">0</b></div>
+          <div class="stat err"><span class="dot"></span>Ausgeparkt <b data-testid="stat-out">0</b></div>
+          <div class="hint">
+            <span class="kbd">ESC</span> Schließen
+            <span class="kbd">↩</span> Bestätigen
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="./script.js"></script>
+</body>
+</html>

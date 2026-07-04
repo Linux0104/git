@@ -84,8 +84,8 @@ function Home() {
 
           <Card className="border-white/10 bg-white/8 backdrop-blur-xl" data-testid="hero-side-card">
             <CardContent className="p-6 md:p-8">
-              <div className="flex items-center justify-between">
-                <div><p className="text-xs uppercase tracking-[0.2em] text-[#FF3B30]">Command Panel</p><h3 className="mt-2 font-display text-3xl uppercase">Server Status</h3></div>
+            <div className="flex items-center justify-between">
+                <div><p className="text-xs uppercase tracking-[0.2em] text-[#FF3B30]">Command Panel</p><h3 className="mt-2 font-display text-3xl uppercase text-white">Server Status</h3></div>
                 <div className="rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1 text-xs text-emerald-300">Online</div>
               </div>
               <div className="mt-6 space-y-4">
