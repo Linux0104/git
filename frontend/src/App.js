@@ -1,124 +1,581 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { ArrowRight, ChevronRight, Clock3, CloudMoon, Crown, MapPinned, Menu, MessageSquareText, ShieldCheck, Sparkles, Users2, Zap } from "lucide-react";
+import {
+  ArrowRight,
+  Check,
+  Copy,
+  Download,
+  ExternalLink,
+  Layers,
+  Palette,
+  Search,
+  ShieldCheck,
+  Sparkles,
+  Star,
+  Type,
+  Zap,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Toaster, toast } from "@/components/ui/sonner";
-import { cn } from "@/lib/utils";
 import "@/App.css";
 
-const highlights = [
-  { label: "Live Server", value: "24/7", note: "Stabil, schnell, bereit" },
-  { label: "Aktive Spieler", value: "128+", note: "Starke Community" },
-  { label: "Custom Systems", value: "12", note: "Jobs, Cars, RP" },
+const FILES = [
+  { name: "index.html", path: "/garage/index.html", label: "Struktur" },
+  { name: "style.css", path: "/garage/style.css", label: "Design" },
+  { name: "script.js", path: "/garage/script.js", label: "Logik" },
+  { name: "fonts.css", path: "/garage/fonts.css", label: "Typografie" },
 ];
 
-const features = [
-  { icon: ShieldCheck, title: "Sicheres RP", text: "Moderation, Anti-Cheat und klare Regeln halten das Erlebnis sauber." },
-  { icon: Sparkles, title: "Premium Feeling", text: "Dunkles Cinatic-Design mit Neon-Akzenten und hochwertiger Typo." },
-  { icon: MapPinned, title: "Eigene City", text: "Stadtleben, Fraktionen, Immobilien und Events in einer starken Welt." },
-  { icon: Users2, title: "Community First", text: "Events, Feedback und Teamarbeit stehen im Zentrum des Servers." },
+const IMPROVEMENTS = [
+  {
+    icon: Palette,
+    title: "Neue Farbwelt",
+    text: "Cyan-Electric (#5EE9FF) + Violet-Plasma (#8A6BFF) statt flachem Blau. Mehr Tiefe, mehr Charakter.",
+  },
+  {
+    icon: Layers,
+    title: "Echtes Glass-Panel",
+    text: "Saubere Glasmorphie mit Backdrop-Blur, feinem Border-Gradient und cinematischen Shadows.",
+  },
+  {
+    icon: Type,
+    title: "Klare Hierarchie",
+    text: "BebasNeue-Display für Titel, Gilroy für Body, JetBrains Mono für Codes/Kennzeichen.",
+  },
+  {
+    icon: Sparkles,
+    title: "Smooth Micro-Interaktionen",
+    text: "Hover-Lift, animierter Status-Puls, weiche Gradienten-Border beim Fokus.",
+  },
+  {
+    icon: Search,
+    title: "Bessere UX-Signale",
+    text: "Aktiver Tab mit Underline, Fokus-Ring auf Inputs, kbd-Hints für ESC / Enter.",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Kompatibel",
+    text: "Original NUI-Message-Protokoll bleibt: open, close, toggleFavourite, renameVehicle, storeVehicle, spawnVehicle.",
+  },
 ];
 
-const agenda = [
-  { time: "20:00", title: "Server Opening", text: "Einlass, kurze Ansprache, direkte Action." },
-  { time: "20:30", title: "City Tour", text: "Fraktionen, Jobs und Einstieg für neue Spieler." },
-  { time: "21:15", title: "Car Meet", text: "Showcars, Meetups und Content für Screenshots." },
-  { time: "22:00", title: "Heist Night", text: "Große Missionen und Teamplay mit Belohnungen." },
+const CHANGE_LOG = [
+  "Neuer Header mit Brand-Mark (Auto-Icon), Search-Fokus-Ring und Tab-Group",
+  "Fahrzeugkarten: gradient border on hover, weicher lift, glow-plate unter dem Auto",
+  "Status-LEDs mit Puls-Animation (parkend / ausgeparkt / impound)",
+  "Fußzeile mit Live-Statistiken und Tastatur-Shortcuts (ESC, ↩)",
+  "Rename-Modal als echtes Overlay mit Blur-Backdrop und Gradient-Border",
+  "Web-Preview: läuft ohne FiveM mit Demo-Daten (12 Fahrzeuge)",
+  "Fallback-Fonts via Google Fonts, damit die UI auch außerhalb von FiveM strahlt",
 ];
 
-const galleryTabs = [
-  { value: "cars", label: "Cars" },
-  { value: "city", label: "City" },
-  { value: "community", label: "Community" },
-];
+function CopyBtn({ text, testid }) {
+  const [copied, setCopied] = useState(false);
+  return (
+    <button
+      data-testid={testid}
+      onClick={async () => {
+        await navigator.clipboard.writeText(text);
+        setCopied(true);
+        toast("Kopiert", { description: text });
+        setTimeout(() => setCopied(false), 1400);
+      }}
+      className="inline-flex items-center gap-1.5 rounded-md border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-zinc-300 transition hover:border-cyan-400/40 hover:bg-cyan-400/10 hover:text-white"
+    >
+      {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+      {copied ? "Kopiert" : "Kopieren"}
+    </button>
+  );
+}
 
 function Home() {
-  const [menuOpen, setMenuOpen] = useState(false);
-
   useEffect(() => {
-    document.title = "FiveM Elite Landing";
+    document.title = "Lunar Garage · FiveM UI Redesign";
   }, []);
 
-  const handleJoin = () => toast("Server-CTA angeklickt", { description: "Hier kannst du später Discord, IP oder Whitelist verlinken." });
-
-  const stats = useMemo(() => highlights, []);
+  const handleOpenPreview = () =>
+    window.open("/garage/index.html", "_blank", "noopener,noreferrer");
 
   return (
-    <main className="min-h-screen bg-[var(--fivem-bg)] text-white" data-testid="landing-page-root">
+    <main
+      className="min-h-screen bg-[#05070d] text-white"
+      data-testid="landing-root"
+    >
       <Toaster />
-      <header className="sticky top-0 z-40 border-b border-white/10 bg-black/55 backdrop-blur-xl" data-testid="site-header">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 md:px-8">
-          <div>
-            <p className="text-[11px] uppercase tracking-[0.35em] text-[#FF3B30]">FiveM Server</p>
-            <h1 className="font-display text-2xl tracking-[0.2em] uppercase">Night Shift RP</h1>
-          </div>
-          <nav className="hidden items-center gap-6 md:flex" data-testid="desktop-nav">
-            {['Features', 'Agenda', 'Gallery'].map((item) => <a key={item} className="text-sm text-zinc-300 transition hover:text-white" href={`#${item.toLowerCase()}`} data-testid={`nav-${item.toLowerCase()}`}>{item}</a>)}
-          </nav>
+
+      {/* ambient background */}
+      <div
+        aria-hidden
+        className="pointer-events-none fixed inset-0 -z-10"
+        style={{
+          background:
+            "radial-gradient(1200px 800px at 10% 0%, rgba(94,233,255,0.10), transparent 60%), radial-gradient(900px 700px at 90% 100%, rgba(138,107,255,0.12), transparent 60%), radial-gradient(1400px 800px at 50% 50%, rgba(94,233,255,0.03), transparent 70%), linear-gradient(180deg, #05070d 0%, #070a14 55%, #05070d 100%)",
+        }}
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none fixed inset-0 -z-10 opacity-30"
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(120,190,255,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(120,190,255,0.06) 1px, transparent 1px)",
+          backgroundSize: "48px 48px",
+          maskImage:
+            "radial-gradient(ellipse at center, black 40%, transparent 80%)",
+          WebkitMaskImage:
+            "radial-gradient(ellipse at center, black 40%, transparent 80%)",
+        }}
+      />
+
+      {/* Header */}
+      <header
+        className="sticky top-0 z-40 border-b border-white/10 bg-black/40 backdrop-blur-xl"
+        data-testid="site-header"
+      >
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
           <div className="flex items-center gap-3">
-            <Button variant="outline" className="hidden border-white/15 bg-white/5 text-white hover:bg-white/10 md:inline-flex" data-testid="header-discord-btn" onClick={handleJoin}><MessageSquareText className="h-4 w-4" /> Discord</Button>
-            <Button size="icon" variant="outline" className="border-white/10 bg-white/5 text-white md:hidden" data-testid="mobile-menu-btn" onClick={() => setMenuOpen((v) => !v)}><Menu className="h-4 w-4" /></Button>
+            <div
+              className="grid h-9 w-9 place-items-center rounded-lg"
+              style={{
+                background:
+                  "conic-gradient(from 210deg at 50% 50%, #5EE9FF, #8A6BFF, #5EE9FF)",
+                boxShadow: "0 0 20px rgba(94,233,255,0.35)",
+              }}
+            >
+              <div className="grid h-7 w-7 place-items-center rounded-md bg-[#0a0f1e] text-cyan-300">
+                <Star className="h-4 w-4" />
+              </div>
+            </div>
+            <div>
+              <p className="text-[10px] uppercase tracking-[0.35em] text-cyan-300/80">
+                FiveM · NUI Redesign
+              </p>
+              <h1 className="font-mono text-lg tracking-[0.18em] text-white">
+                LUNAR&nbsp;GARAGE
+              </h1>
+            </div>
           </div>
+          <nav
+            className="hidden items-center gap-8 md:flex"
+            data-testid="desktop-nav"
+          >
+            {[
+              { l: "Preview", h: "#preview" },
+              { l: "Verbesserungen", h: "#improvements" },
+              { l: "Dateien", h: "#files" },
+              { l: "Integration", h: "#integration" },
+            ].map((i) => (
+              <a
+                key={i.l}
+                href={i.h}
+                className="text-sm text-zinc-400 transition hover:text-white"
+                data-testid={`nav-${i.l.toLowerCase()}`}
+              >
+                {i.l}
+              </a>
+            ))}
+          </nav>
+          <Button
+            onClick={handleOpenPreview}
+            className="bg-gradient-to-r from-cyan-400 to-violet-500 text-[#05070d] hover:brightness-110"
+            data-testid="header-open-preview"
+          >
+            Live Preview <ExternalLink className="ml-1 h-4 w-4" />
+          </Button>
         </div>
-        {menuOpen && <div className="border-t border-white/10 bg-black/80 px-4 py-4 md:hidden" data-testid="mobile-menu"><div className="flex flex-col gap-3">{['Features', 'Agenda', 'Gallery'].map((item) => <a key={item} href={`#${item.toLowerCase()}`} className="text-sm text-zinc-300" data-testid={`mobile-nav-${item.toLowerCase()}`}>{item}</a>)}</div></div>}
       </header>
 
-      <section className="relative overflow-hidden" data-testid="hero-section">
-        <div className="absolute inset-0 bg-[url('https://images.pexels.com/photos/27703377/pexels-photo-27703377.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=1200&w=1600')] bg-cover bg-center opacity-55" />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/70 to-black/25" />
-        <div className="relative mx-auto grid max-w-7xl gap-12 px-4 py-20 md:px-8 lg:grid-cols-[1.15fr_0.85fr] lg:py-28">
-          <div className="max-w-3xl">
-            <Badge className="mb-5 border border-[#FF3B30]/30 bg-[#FF3B30]/10 px-3 py-1 text-[#FF7A72]" data-testid="hero-badge"><CloudMoon className="mr-2 h-3.5 w-3.5" /> Night roleplay experience</Badge>
-            <h2 className="font-display text-5xl uppercase tracking-tight sm:text-6xl lg:text-7xl" data-testid="hero-title">FIVE M UI<br />MIT STYLE</h2>
-            <p className="mt-6 max-w-2xl text-base leading-relaxed text-zinc-300 md:text-lg" data-testid="hero-copy">Ein edles, dunkles FiveM-Landing-Layout mit Neon-Kante, starker Hierarchie und echter Server-Atmosphäre.</p>
-            <div className="mt-8 flex flex-wrap gap-4">
-              <Button className="bg-[#FF3B30] text-white hover:bg-[#D63028]" data-testid="hero-join-btn" onClick={handleJoin}>Jetzt beitreten <ArrowRight className="h-4 w-4" /></Button>
-              <Button variant="outline" className="border-white/15 bg-white/5 text-white hover:bg-white/10" data-testid="hero-learn-btn" onClick={handleJoin}>Mehr sehen <ChevronRight className="h-4 w-4" /></Button>
+      {/* Hero */}
+      <section
+        className="relative mx-auto max-w-7xl px-6 py-20 lg:py-28"
+        data-testid="hero"
+      >
+        <div className="grid gap-14 lg:grid-cols-[1.1fr_1fr] lg:items-center">
+          <div>
+            <Badge
+              className="mb-6 border border-cyan-400/30 bg-cyan-400/10 px-3 py-1 text-cyan-300"
+              data-testid="hero-badge"
+            >
+              <Sparkles className="mr-2 h-3.5 w-3.5" /> Beautified FiveM Garage
+            </Badge>
+            <h2
+              className="font-mono text-5xl leading-[1.05] tracking-[-0.02em] sm:text-6xl lg:text-7xl"
+              data-testid="hero-title"
+            >
+              Dein FiveM UI —{" "}
+              <span
+                className="bg-clip-text text-transparent"
+                style={{
+                  backgroundImage:
+                    "linear-gradient(135deg, #fff 0%, #5EE9FF 55%, #B18BFF 100%)",
+                }}
+              >
+                jetzt cinematic.
+              </span>
+            </h2>
+            <p
+              className="mt-6 max-w-xl text-base leading-relaxed text-zinc-400 md:text-lg"
+              data-testid="hero-copy"
+            >
+              Das originale Garage-NUI komplett überarbeitet: sauberes
+              Glass-Panel, animierte Status-LEDs, cyan-violette Farbwelt und
+              feine Micro-Interaktionen — 100% kompatibel zum bestehenden
+              Message-Protokoll.
+            </p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Button
+                onClick={handleOpenPreview}
+                className="bg-gradient-to-r from-cyan-400 to-violet-500 text-[#05070d] hover:brightness-110"
+                data-testid="hero-preview-btn"
+              >
+                UI ansehen <ArrowRight className="ml-1 h-4 w-4" />
+              </Button>
+              <a
+                href="#files"
+                className="inline-flex items-center gap-2 rounded-md border border-white/10 bg-white/5 px-4 py-2 text-sm text-zinc-200 transition hover:border-cyan-400/40 hover:text-white"
+                data-testid="hero-download-btn"
+              >
+                <Download className="h-4 w-4" /> Dateien herunterladen
+              </a>
             </div>
-            <div className="mt-10 grid gap-4 sm:grid-cols-3" data-testid="hero-stats-grid">{stats.map((item) => <Card key={item.label} className="border-white/10 bg-white/5 backdrop-blur-xl"><CardContent className="p-5"><p className="text-xs uppercase tracking-[0.2em] text-zinc-400">{item.label}</p><p className="mt-2 font-display text-3xl uppercase">{item.value}</p><p className="mt-1 text-sm text-zinc-400">{item.note}</p></CardContent></Card>)}</div>
+
+            <div className="mt-10 grid grid-cols-3 gap-4" data-testid="hero-stats">
+              {[
+                { k: "1 Design-System", v: "Cyan × Violet" },
+                { k: "12 Demo-Autos", v: "Web-Preview inkl." },
+                { k: "100% Kompatibel", v: "NUI-API bleibt" },
+              ].map((s) => (
+                <div
+                  key={s.k}
+                  className="rounded-xl border border-white/10 bg-white/[0.03] p-4"
+                >
+                  <p className="text-[10px] uppercase tracking-[0.2em] text-zinc-500">
+                    {s.k}
+                  </p>
+                  <p className="mt-1 font-mono text-sm text-white">{s.v}</p>
+                </div>
+              ))}
+            </div>
           </div>
 
-          <Card className="border-white/10 bg-white/8 backdrop-blur-xl" data-testid="hero-side-card">
-            <CardContent className="p-6 md:p-8">
-            <div className="flex items-center justify-between">
-                <div><p className="text-xs uppercase tracking-[0.2em] text-[#FF3B30]">Command Panel</p><h3 className="mt-2 font-display text-3xl uppercase text-white">Server Status</h3></div>
-                <div className="rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1 text-xs text-emerald-300">Online</div>
+          {/* Small preview card */}
+          <Card
+            className="overflow-hidden border-white/10 bg-white/[0.03] backdrop-blur-xl"
+            data-testid="hero-preview-card"
+          >
+            <CardContent className="p-0">
+              <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
+                <div className="flex items-center gap-2">
+                  <span className="h-2.5 w-2.5 rounded-full bg-red-400/70"></span>
+                  <span className="h-2.5 w-2.5 rounded-full bg-yellow-400/70"></span>
+                  <span className="h-2.5 w-2.5 rounded-full bg-emerald-400/70"></span>
+                  <p className="ml-2 font-mono text-xs text-zinc-400">
+                    lunar-garage.html
+                  </p>
+                </div>
+                <button
+                  onClick={handleOpenPreview}
+                  className="text-xs text-cyan-300 hover:text-white"
+                  data-testid="hero-open-fullscreen"
+                >
+                  Vollbild ↗
+                </button>
               </div>
-              <div className="mt-6 space-y-4">
-                {[{ label: 'Ping', value: '18ms' }, { label: 'Whitelist', value: 'Open' }, { label: 'Events', value: 'Tonight' }].map((row) => <div key={row.label} className="flex items-center justify-between rounded-xl border border-white/10 bg-black/30 px-4 py-3"><span className="text-sm text-zinc-400">{row.label}</span><span className="font-medium">{row.value}</span></div>)}
-              </div>
-              <div className="mt-6 rounded-2xl border border-[#FF3B30]/20 bg-[#FF3B30]/10 p-5">
-                <p className="text-xs uppercase tracking-[0.2em] text-[#FF7A72]">Quick Tip</p>
-                <p className="mt-2 text-sm text-zinc-200">Hier kannst du Server-IP, Discord oder Whitelist-Infos einbauen.</p>
+              <div className="relative aspect-[16/10] bg-black">
+                <iframe
+                  src="/garage/index.html"
+                  title="Lunar Garage Preview"
+                  className="h-full w-full"
+                  data-testid="hero-iframe"
+                />
               </div>
             </CardContent>
           </Card>
         </div>
       </section>
 
-      <section className="border-y border-white/10 bg-black/60" data-testid="marquee-section">
-        <div className="overflow-hidden whitespace-nowrap py-4 text-sm uppercase tracking-[0.45em] text-white/20"><div className="animate-[marquee_24s_linear_infinite] inline-block">NO PIXEL • RP • CUSTOM CARS • HEISTS • NO PIXEL • RP • CUSTOM CARS • HEISTS •</div></div>
+      {/* Big Preview */}
+      <section
+        id="preview"
+        className="mx-auto max-w-7xl px-6 pb-20"
+        data-testid="preview-section"
+      >
+        <div className="mb-8 flex items-end justify-between gap-4">
+          <div>
+            <p className="text-[10px] uppercase tracking-[0.3em] text-cyan-300/80">
+              Live Preview
+            </p>
+            <h3 className="mt-2 font-mono text-3xl tracking-tight sm:text-4xl">
+              Die neue Garage im Original-Format
+            </h3>
+          </div>
+          <Button
+            onClick={handleOpenPreview}
+            variant="outline"
+            className="hidden border-white/15 bg-white/5 text-white hover:bg-white/10 md:inline-flex"
+            data-testid="preview-open-btn"
+          >
+            In neuem Tab <ExternalLink className="ml-1 h-4 w-4" />
+          </Button>
+        </div>
+        <div
+          className="overflow-hidden rounded-2xl border border-white/10"
+          style={{
+            boxShadow:
+              "0 30px 60px -20px rgba(0,0,0,0.7), 0 0 60px rgba(94,233,255,0.08)",
+          }}
+        >
+          <div className="relative aspect-[16/9] bg-black">
+            <iframe
+              src="/garage/index.html"
+              title="Lunar Garage Full Preview"
+              className="h-full w-full"
+              data-testid="main-iframe"
+            />
+          </div>
+        </div>
       </section>
 
-      <section id="features" className="mx-auto max-w-7xl px-4 py-20 md:px-8" data-testid="features-section">
-        <div className="mb-10 flex items-end justify-between gap-6"><div><p className="text-xs uppercase tracking-[0.25em] text-[#FF3B30]">Features</p><h3 className="mt-2 font-display text-4xl uppercase sm:text-5xl">Was den Server stark macht</h3></div><Badge variant="outline" className="border-white/10 text-zinc-300">Premium Layout</Badge></div>
-        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">{features.map((item) => { const Icon = item.icon; return <Card key={item.title} className="border-white/10 bg-white/5 transition duration-300 hover:-translate-y-1 hover:bg-white/8"><CardContent className="p-6"><Icon className="h-6 w-6 text-[#FF3B30]" /><h4 className="mt-4 font-display text-2xl uppercase">{item.title}</h4><p className="mt-3 text-sm leading-relaxed text-zinc-400">{item.text}</p></CardContent></Card>; })}</div>
+      {/* Improvements */}
+      <section
+        id="improvements"
+        className="mx-auto max-w-7xl px-6 pb-20"
+        data-testid="improvements-section"
+      >
+        <div className="mb-10">
+          <p className="text-[10px] uppercase tracking-[0.3em] text-cyan-300/80">
+            Was neu ist
+          </p>
+          <h3 className="mt-2 font-mono text-3xl tracking-tight sm:text-4xl">
+            6 gezielte Upgrades. Kein Feature-Bloat.
+          </h3>
+        </div>
+        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          {IMPROVEMENTS.map((f, i) => {
+            const Icon = f.icon;
+            return (
+              <Card
+                key={f.title}
+                className="group border-white/10 bg-white/[0.03] transition duration-300 hover:-translate-y-1 hover:border-cyan-400/30 hover:bg-white/[0.05]"
+                data-testid={`improvement-${i}`}
+              >
+                <CardContent className="p-6">
+                  <div
+                    className="grid h-10 w-10 place-items-center rounded-lg border border-cyan-400/20 bg-cyan-400/5 text-cyan-300 transition group-hover:border-cyan-400/50"
+                  >
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <h4 className="mt-5 font-mono text-lg tracking-tight text-white">
+                    {f.title}
+                  </h4>
+                  <p className="mt-2 text-sm leading-relaxed text-zinc-400">
+                    {f.text}
+                  </p>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+
+        <Card className="mt-10 border-white/10 bg-white/[0.03]" data-testid="changelog-card">
+          <CardContent className="p-6 md:p-8">
+            <div className="mb-4 flex items-center gap-2">
+              <div className="h-2 w-2 rounded-full bg-cyan-300 shadow-[0_0_10px_#5EE9FF]" />
+              <p className="font-mono text-xs uppercase tracking-[0.25em] text-zinc-400">
+                Changelog
+              </p>
+            </div>
+            <ul className="grid gap-2 md:grid-cols-2">
+              {CHANGE_LOG.map((c, i) => (
+                <li
+                  key={i}
+                  className="flex gap-3 text-sm text-zinc-300"
+                  data-testid={`changelog-${i}`}
+                >
+                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-cyan-300" />
+                  <span>{c}</span>
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
       </section>
 
-      <section id="agenda" className="mx-auto grid max-w-7xl gap-8 px-4 pb-20 md:px-8 lg:grid-cols-[0.95fr_1.05fr]" data-testid="agenda-section">
-        <Card className="border-white/10 bg-white/5"><CardContent className="p-6 md:p-8"><p className="text-xs uppercase tracking-[0.25em] text-[#FF3B30]">Agenda</p><h3 className="mt-2 font-display text-4xl uppercase">Nächste Highlights</h3><div className="mt-6 space-y-4">{agenda.map((item) => <div key={item.time} className="flex gap-4 rounded-2xl border border-white/10 bg-black/25 p-4"><div className="min-w-16 font-display text-2xl text-[#FF3B30]">{item.time}</div><div><p className="font-medium text-white">{item.title}</p><p className="text-sm text-zinc-400">{item.text}</p></div></div>)}</div></CardContent></Card>
-        <Card className="overflow-hidden border-white/10 bg-white/5" data-testid="gallery-card"><Tabs defaultValue="cars" className="p-6 md:p-8"><TabsList className="grid grid-cols-3 bg-black/40" data-testid="gallery-tabs">{galleryTabs.map((tab) => <TabsTrigger key={tab.value} value={tab.value} data-testid={`gallery-tab-${tab.value}`}>{tab.label}</TabsTrigger>)}</TabsList><TabsContent value="cars" className="mt-6"><div className="grid gap-4 md:grid-cols-2"><div className="rounded-2xl border border-white/10 bg-[url('https://images.pexels.com/photos/30641513/pexels-photo-30641513.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=900&w=1200')] bg-cover bg-center p-6 min-h-56" /><div className="rounded-2xl border border-white/10 bg-black/30 p-6"><p className="text-xs uppercase tracking-[0.25em] text-[#FF3B30]">Cinema</p><h4 className="mt-3 font-display text-3xl uppercase">Nachtstadt & Neon</h4><p className="mt-3 text-sm text-zinc-400">Perfekt für Screenshot-Sections und Server-Storytelling.</p></div></div></TabsContent><TabsContent value="city" className="mt-6"><div className="rounded-2xl border border-white/10 bg-black/30 p-6 text-zinc-300">Stadt, Wirtschaft, Fraktionen und RP-Schwerpunkt in einem technischen Layout.</div></TabsContent><TabsContent value="community" className="mt-6"><div className="rounded-2xl border border-white/10 bg-black/30 p-6 text-zinc-300">Events, Teamspeak/Discord und Community-Fokus als visuelles Highlight.</div></TabsContent></Tabs></Card>
+      {/* Files */}
+      <section
+        id="files"
+        className="mx-auto max-w-7xl px-6 pb-20"
+        data-testid="files-section"
+      >
+        <div className="mb-8">
+          <p className="text-[10px] uppercase tracking-[0.3em] text-cyan-300/80">
+            Deine Dateien
+          </p>
+          <h3 className="mt-2 font-mono text-3xl tracking-tight sm:text-4xl">
+            Drop-in Ersatz für dein NUI-Resource
+          </h3>
+          <p className="mt-3 max-w-2xl text-sm text-zinc-400">
+            Ersetze die vier Dateien in deinem FiveM-Resource-Ordner
+            (<code className="rounded bg-white/5 px-1.5 py-0.5 font-mono text-cyan-300">html/</code>).
+            Die JS-Logik verwendet exakt die gleichen NUI-Endpoints wie deine Originalversion.
+          </p>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-2">
+          {FILES.map((f) => (
+            <Card
+              key={f.name}
+              className="border-white/10 bg-white/[0.03]"
+              data-testid={`file-card-${f.name}`}
+            >
+              <CardContent className="flex items-center justify-between gap-4 p-5">
+                <div className="flex items-center gap-3">
+                  <div className="grid h-10 w-10 place-items-center rounded-md border border-white/10 bg-black/40">
+                    <span className="font-mono text-[10px] text-cyan-300">
+                      {f.name.split(".").pop().toUpperCase()}
+                    </span>
+                  </div>
+                  <div>
+                    <p className="font-mono text-sm text-white">{f.name}</p>
+                    <p className="text-xs text-zinc-500">{f.label}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CopyBtn text={window.location.origin + f.path} testid={`copy-${f.name}`} />
+                  <a
+                    href={f.path}
+                    download={f.name}
+                    className="inline-flex items-center gap-1.5 rounded-md border border-cyan-400/30 bg-cyan-400/10 px-3 py-1.5 text-xs text-cyan-200 transition hover:bg-cyan-400/20 hover:text-white"
+                    data-testid={`download-${f.name}`}
+                  >
+                    <Download className="h-3.5 w-3.5" /> Download
+                  </a>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </section>
 
-      <footer className="border-t border-white/10 bg-black/70 py-10" data-testid="site-footer"><div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 md:px-8 lg:flex-row lg:items-center lg:justify-between"><div><p className="font-display text-2xl uppercase">Night Shift RP</p><p className="text-sm text-zinc-500">FiveM landing page redesign</p></div><Button className="w-fit bg-[#FF3B30] text-white hover:bg-[#D63028]" data-testid="footer-cta-btn" onClick={handleJoin}><Zap className="h-4 w-4" /> Join the city</Button></div></footer>
+      {/* Integration */}
+      <section
+        id="integration"
+        className="mx-auto max-w-7xl px-6 pb-24"
+        data-testid="integration-section"
+      >
+        <Card className="overflow-hidden border-white/10 bg-white/[0.03]">
+          <CardContent className="p-6 md:p-10">
+            <div className="grid gap-10 lg:grid-cols-[1fr_1.1fr]">
+              <div>
+                <p className="text-[10px] uppercase tracking-[0.3em] text-cyan-300/80">
+                  Integration
+                </p>
+                <h3 className="mt-2 font-mono text-3xl tracking-tight">
+                  So baust du es ein
+                </h3>
+                <ol className="mt-6 space-y-4 text-sm text-zinc-300">
+                  {[
+                    "Lade die 4 Dateien herunter (index.html, style.css, script.js, fonts.css).",
+                    "Ersetze sie im html-Ordner deines Garage-Resources.",
+                    "Falls du eigene Fonts hast: lege sie unter assets/fonts/ ab (Namen bleiben identisch).",
+                    "Sende wie gewohnt { action: 'open', vehicles: [...] } vom Client-Script.",
+                  ].map((t, i) => (
+                    <li key={i} className="flex gap-3">
+                      <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-md border border-cyan-400/30 bg-cyan-400/10 font-mono text-xs text-cyan-200">
+                        {i + 1}
+                      </span>
+                      <span>{t}</span>
+                    </li>
+                  ))}
+                </ol>
+
+                <div className="mt-8 rounded-xl border border-cyan-400/20 bg-cyan-400/[0.06] p-4">
+                  <p className="text-[10px] uppercase tracking-[0.3em] text-cyan-300/80">
+                    Kompatibel bleibt
+                  </p>
+                  <p className="mt-2 text-sm text-zinc-300">
+                    Alle NUI-POSTs (
+                    <code className="font-mono text-cyan-200">close</code>,{" "}
+                    <code className="font-mono text-cyan-200">
+                      toggleFavourite
+                    </code>
+                    ,{" "}
+                    <code className="font-mono text-cyan-200">renameVehicle</code>
+                    ,{" "}
+                    <code className="font-mono text-cyan-200">storeVehicle</code>
+                    ,{" "}
+                    <code className="font-mono text-cyan-200">spawnVehicle</code>
+                    ) sind unverändert.
+                  </p>
+                </div>
+              </div>
+
+              <div>
+                <p className="mb-2 font-mono text-xs uppercase tracking-[0.25em] text-zinc-400">
+                  Beispiel · Client-Side
+                </p>
+                <pre
+                  className="overflow-x-auto rounded-xl border border-white/10 bg-black/60 p-5 font-mono text-[12px] leading-relaxed text-zinc-300"
+                  data-testid="integration-code"
+                >
+{`SendNUIMessage({
+  action = "open",
+  context = "garage",         -- "garage" | "impound"
+  title = "Garage",
+  subtitle = "Lunar",
+  vehicles = {
+    { plate="LN-9F1X", label="Mitsubishi Evo X",
+      category="Sport", stored=true, active=false, isFav=true },
+    { plate="AU-R8V0", label="Audi R8 V10",
+      category="Super", stored=false, active=true, isFav=true },
+  }
+})`}
+                </pre>
+                <div className="mt-4 flex items-center gap-2">
+                  <CopyBtn
+                    text={`SendNUIMessage({ action = "open", context = "garage", vehicles = { { plate="LN-9F1X", label="Mitsubishi Evo X", stored=true, active=false } } })`}
+                    testid="copy-integration-code"
+                  />
+                  <span className="text-xs text-zinc-500">Lua Snippet</span>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </section>
+
+      {/* Footer */}
+      <footer
+        className="border-t border-white/10 bg-black/40"
+        data-testid="site-footer"
+      >
+        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-6 py-10 md:flex-row md:items-center md:justify-between">
+          <div>
+            <p className="font-mono text-lg tracking-[0.18em]">LUNAR GARAGE</p>
+            <p className="text-xs text-zinc-500">
+              FiveM UI Redesign · Cyan × Violet
+            </p>
+          </div>
+          <Button
+            onClick={handleOpenPreview}
+            className="bg-gradient-to-r from-cyan-400 to-violet-500 text-[#05070d] hover:brightness-110"
+            data-testid="footer-cta"
+          >
+            <Zap className="mr-1 h-4 w-4" /> UI im Vollbild öffnen
+          </Button>
+        </div>
+      </footer>
     </main>
   );
 }
 
 export default function App() {
-  return <BrowserRouter><Routes><Route path="/" element={<Home />} /></Routes></BrowserRouter>;
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
