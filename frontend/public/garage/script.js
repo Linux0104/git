@@ -325,7 +325,7 @@ function renderVehicles() {
 
     const imgSrc = v.image || state.defaultImage || "";
     const carImg = imgSrc
-      ? `<img class="car-preview" src="${escapeHtml(imgSrc)}" alt="${escapeHtml(v.label)}" onerror="this.style.display='none'" />`
+      ? `<img class="car-preview" src="${escapeHtml(imgSrc)}" alt="${escapeHtml(v.label)}" onload="this.closest('.car-visual')?.classList.add('has-photo')" onerror="this.remove()" />`
       : "";
 
     $carList.append(`
@@ -438,8 +438,8 @@ $headerBtns.eq(2).on("click", () => {
   state.view = "favourites"; updateHeaderButtons(); renderVehicles();
 });
 
-$(document).on("mouseenter", ".header-btn, .action-btn, .close-btn", () => SFX.hover());
-$(document).on("mouseenter", ".carlist-item", () => SFX.hover());
+$(document).on("mouseenter", ".header-btn, .action-btn, .close-btn", () => {});
+// Hover-Sounds bewusst deaktiviert — nur explizite Aktionen erzeugen Ton.
 
 $searchInput.on("input", function () {
   state.search = $(this).val() || "";
@@ -540,6 +540,6 @@ if (!state.isFiveM) {
     title: "Garage",
     subtitle: "Lunar",
     vehicles: demoVehicles,
-    defaultImage: "",
+    defaultImage: "./assets/img/header-Car.png",
   });
 }

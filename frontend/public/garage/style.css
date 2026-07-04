@@ -557,8 +557,23 @@ body::after {
 .carlist-item:hover .car-svg-bg svg { transform: translateY(-0.2vh) scale(1.06); opacity: 1; }
 .carlist-item:hover .car-preview { transform: translateY(-0.3vh) scale(1.05); }
 
-/* Remove old car-preview positioning */
-.carlist-item .car-preview[hidden] { display: none; }
+.car-preview {
+  position: relative;
+  z-index: 3;
+  max-width: 92%;
+  max-height: 9.5vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 0.6vh 1vh rgba(0, 0, 0, 0.6)) drop-shadow(0 0 1.2vh rgba(94, 233, 255, 0.15));
+  transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1), filter 0.35s ease;
+}
+.carlist-item:hover .car-preview {
+  transform: translateY(-0.4vh) scale(1.06);
+  filter: drop-shadow(0 0.8vh 1.4vh rgba(0, 0, 0, 0.7)) drop-shadow(0 0 1.8vh rgba(94, 233, 255, 0.35));
+}
+/* Hide SVG fallback when the photo is loaded */
+.car-visual.has-photo .car-svg-bg { display: none; }
 
 .car-glow {
   position: absolute;
