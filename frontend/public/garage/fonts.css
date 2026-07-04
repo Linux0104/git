@@ -1,0 +1,44 @@
+/* Local fallback to your original TTFs — replace URLs with your resource path. */
+@font-face {
+  font-family: "BebasNeue-Bold";
+  src: url("../fonts/BebasNeue-Bold.ttf") format("truetype"),
+       local("Bebas Neue"), local("Impact");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Gilroy-Regular";
+  src: url("../fonts/Gilroy-Regular.ttf") format("truetype"),
+       local("Inter"), local("Helvetica Neue");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Gilroy-Medium";
+  src: url("../fonts/Gilroy-Medium.ttf") format("truetype"),
+       local("Inter"), local("Helvetica Neue");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Gilroy-Bold";
+  src: url("../fonts/Gilroy-Bold.ttf") format("truetype"),
+       local("Inter"), local("Helvetica Neue");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "ForgottenNovember-Regular";
+  src: url("../fonts/ForgottenNovember-Regular.otf") format("opentype"),
+       local("Space Grotesk"), local("Manrope");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Web-preview fallback fonts so the beautified UI still looks great in any browser */
+@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap");

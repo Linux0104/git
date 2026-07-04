@@ -1,0 +1,24 @@
+{
+  "summary": "Frontend-only smoke test of the redesigned FiveM landing page. Previous compile error (missing toast export from sonner.jsx) is fixed. App loads cleanly with zero console errors/warnings. All key data-testid elements present and interactive. Hero, marquee, features, agenda/gallery, footer render correctly. Gallery tabs (cars/city/community) switch. Mobile menu opens on 390px viewport. CTA buttons clickable without runtime errors.",
+  "tested_scope": ["frontend"],
+  "passed": [
+    "Frontend compiles successfully (no webpack errors)",
+    "Page loads at REACT_APP_BACKEND_URL preview URL",
+    "landing-page-root, site-header, hero-section, hero-title ('FIVE M UI / MIT STYLE'), hero-badge, hero-copy, hero-join-btn, hero-learn-btn, hero-stats-grid, hero-side-card visible",
+    "marquee-section, features-section, agenda-section, gallery-card, gallery-tabs, site-footer, footer-cta-btn visible",
+    "Desktop nav visible; header-discord-btn visible on desktop; mobile-menu-btn hidden on desktop (md:hidden) as expected",
+    "Mobile viewport (390x844): mobile-menu-btn visible, clicking opens mobile-menu",
+    "Gallery tabs cars/city/community all clickable and switch content",
+    "hero-join-btn click executes without runtime errors",
+    "0 console errors and 0 console warnings during full flow"
+  ],
+  "failed": [],
+  "action_items": [],
+  "success_rate": {"backend": "not tested", "frontend": "100%"},
+  "retest_needed": false,
+  "notes": [
+    "Minor visual observation (non-blocking): In the hero-side-card 'Command Panel', the server-name headline text appears very low-contrast/washed-out and slightly overlaps the 'Online' badge. Design polish item, not a functional bug.",
+    "test_credentials.md not required (no auth flows tested)."
+  ],
+  "full_testing_deferred": true
+}
