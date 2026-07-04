@@ -1,0 +1,70 @@
+{
+  "project_context": {
+    "domain": "Gaming / FiveM Mod Server Landing Page",
+    "goal": "Beautify the existing React setup into a stunning, premium gaming landing page without expanding product scope or altering file architecture.",
+    "theme": "Dark",
+    "archetype": "2 (Performance Pro) - Tactical, command-center focus adapted for Elite Gaming/FiveM",
+    "visual_mood": "Cinematic, moody, high-octane. Deep Obsidian background with Electric Blaze (Crimson) accents, using technical grid borders."
+  },
+  "typography": {
+    "heading_font": "Bebas Neue",
+    "body_font": "IBM Plex Sans",
+    "hierarchy": {
+      "h1": "text-5xl sm:text-6xl tracking-tighter uppercase font-normal",
+      "h2": "text-3xl sm:text-4xl tracking-tight uppercase font-normal",
+      "h3": "text-xl sm:text-2xl tracking-tight uppercase",
+      "body": "text-base leading-relaxed tracking-wide",
+      "overline": "text-xs uppercase tracking-[0.2em] text-[#FF3B30] font-bold"
+    },
+    "notes": "Bebas Neue is naturally bold and condensed, giving an athletic/gaming impact. Use normal font weight for Bebas Neue since it's already heavy."
+  },
+  "colors": {
+    "background": "#0A0A0A",
+    "surface": "#18181B",
+    "surface_glass": "rgba(24, 24, 27, 0.7)",
+    "primary": "#FF3B30",
+    "primary_hover": "#D63028",
+    "text_main": "#FFFFFF",
+    "text_muted": "#A1A1AA",
+    "border": "rgba(255, 255, 255, 0.1)"
+  },
+  "layout_and_spacing": {
+    "philosophy": "Generous Spacing + Bento Grid Protocol (Mode A: Tetris Grid). Visual tension, asymmetry, and technical precision.",
+    "container_padding": "p-6 md:p-12 lg:p-24",
+    "grid_gaps": "gap-8 md:gap-12",
+    "alignment": "Left-aligned for dense content. Optical alignment over geometric."
+  },
+  "surfaces_and_micro_themes": {
+    "cards": "Grid Borders (Technical Look): Expose the skeleton. Container uses border-collapse style with border-border/40 on grid items to create a tactical server UI.",
+    "header": "Glassmorphism (Crystal): Sticky nav using backdrop-blur-xl, bg-black/60, and a delicate 1px border-white/10 on the bottom.",
+    "hero_overlay": "Max bg-black/50 or bg-gradient-to-r from-black/80 via-black/50 to-transparent. Never completely obscure the background."
+  },
+  "motion_and_interaction": {
+    "hover_states": "Crisp transitions (transition-all duration-300). Buttons should lift slightly (-translate-y-1) and gain a subtle drop-shadow.",
+    "focus_states": "focus:ring-2 focus:ring-[#FF3B30]/50 outline-none",
+    "marquee": "Use a slow, smooth kinetic text marquee ('NO PIXEL • RP • CUSTOM CARS • HEISTS') with text-transparent and stroke styling for an industrial feel."
+  },
+  "media": {
+    "hero_background": {
+      "url": "https://images.pexels.com/photos/27703377/pexels-photo-27703377.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "description": "Two modified sports cars parked under streetlights at night. Perfect GTA/FiveM vibe.",
+      "usage": "Main hero section background image. Overlay with a dark gradient so left-aligned text is fully readable."
+    },
+    "features_background": {
+      "url": "https://images.pexels.com/photos/30641513/pexels-photo-30641513.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "description": "Nighttime Tokyo street view. Tactical, urban vibe.",
+      "usage": "Use as a background for a specific 'Server Features' or 'About the City' bento card."
+    },
+    "community_image": {
+      "url": "https://images.pexels.com/photos/16896020/pexels-photo-16896020.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "description": "Vibrant car meet at night in an urban parking lot.",
+      "usage": "Use in the community/gallery section or as a secondary promotional image."
+    }
+  },
+  "icons": "Use lucide-react for standard icons, ensuring they align with the tactical, clean aesthetic.",
+  "implementation_instructions": {
+    "file_structure": "DO NOT alter the overall file structure. Keep App.js, App.css, index.css. Overwrite App.js to become the new single-page FiveM landing page.",
+    "components": "Use pure HTML + Tailwind for structural layouts to ensure maximum creative freedom. Use Shadcn components only for complex interactions (like dialogs) if needed.",
+    "testing_attributes": "Add data-testid attributes to all buttons, links, and key sections (e.g., data-testid='hero-join-btn')."
+  }
+}
