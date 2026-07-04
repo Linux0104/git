@@ -43,16 +43,65 @@ function escapeHtml(v) {
     .replace(/'/g, "&#39;");
 }
 
-/* SVG generic car silhouette used when no preview image is provided. */
+/* SVG universelles Sportauto (Seitenansicht) — passt für alle Fahrzeuge */
 const CAR_SVG = `
-<svg viewBox="0 0 141 50" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+<svg viewBox="0 0 200 90" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid meet">
   <defs>
-    <linearGradient id="carg" x1="0" x2="1" y1="0" y2="1">
-      <stop offset="0" stop-color="#ffffff" stop-opacity="0.85"/>
-      <stop offset="1" stop-color="#5EE9FF" stop-opacity="0.35"/>
+    <linearGradient id="carBody" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#eaf3ff" stop-opacity="0.95"/>
+      <stop offset="0.55" stop-color="#8fb6dd" stop-opacity="0.75"/>
+      <stop offset="1" stop-color="#1a2740" stop-opacity="0.85"/>
     </linearGradient>
+    <linearGradient id="carGlass" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#5EE9FF" stop-opacity="0.85"/>
+      <stop offset="1" stop-color="#1a2740" stop-opacity="0.9"/>
+    </linearGradient>
+    <radialGradient id="carShadow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#000" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#000" stop-opacity="0"/>
+    </radialGradient>
   </defs>
-  <path fill="url(#carg)" d="M70.6 0.1c-7.3.6-12.3 1.8-16.9 4-2 1-3.7 2-7.4 4.6-4.5 3.1-6.3 4-9.2 4.9-2.9.8-5.2 1.1-11.8 1.8-2.4.2-5.1.5-6.1.6C6.9 17.5 1.8 21.3.3 30.2c-.5 2.9-.4 8.4.2 9.7.3.7.7 1.1 1.4 1.5.5.3.7.3 5.1.3l4.6.1-.1-.6c-.4-2.3-.2-4.6.5-6.8 1.5-4.5 5.2-7.8 9.7-8.8 5.9-1.2 11.8 1.7 14.4 7.3 1.1 2.4 1.5 5 1.2 7.8v.9h32.9c29.1 0 32.8-.1 32.8-.3 0-.1-.1-1.1-.1-2.2-.1-2.3.1-3.5.8-5.4 1.5-3.9 4.8-7 8.9-8.1 1-.3 1.5-.3 3.4-.3 2 0 2.4 0 3.5.4 4.6 1.4 7.9 4.9 9.1 9.6.3 1.3.4 4 .2 5.5l-.1.8 1.1-.1c4-.3 6.5-1.3 8.5-3.5 1.7-1.8 2.3-3.3 2.6-7.4.4-5.1-.4-13.7-1.5-15.3-.7-1-1.5-1.4-3.4-1.6-5.1-.6-8.5-1.6-14.7-4.1-1.7-.7-4.7-2-6.7-2.8C97.3 3 89.9 1.2 78.9.2 76.6 0 65.2 0 63.2.1z"/>
+  <!-- ground shadow -->
+  <ellipse cx="100" cy="82" rx="82" ry="4" fill="url(#carShadow)"/>
+  <!-- body -->
+  <path d="M18 63
+           C 18 55, 26 50, 36 49
+           L 60 44
+           C 68 38, 78 30, 96 28
+           C 118 26, 132 30, 146 40
+           L 168 44
+           C 178 46, 184 52, 184 62
+           L 184 68
+           C 184 70, 183 71, 181 71
+           L 166 71
+           C 165 66, 160 62, 154 62
+           C 148 62, 143 66, 142 71
+           L 60 71
+           C 59 66, 54 62, 48 62
+           C 42 62, 37 66, 36 71
+           L 21 71
+           C 19 71, 18 70, 18 68 Z"
+        fill="url(#carBody)" stroke="rgba(255,255,255,0.12)" stroke-width="0.6"/>
+  <!-- windows -->
+  <path d="M64 46 C 72 38, 82 32, 96 31
+           C 116 29, 128 33, 140 41
+           L 132 46 L 96 47 L 78 48 Z"
+        fill="url(#carGlass)" opacity="0.75"/>
+  <!-- door line -->
+  <path d="M96 32 L 96 68" stroke="rgba(0,0,0,0.35)" stroke-width="0.5"/>
+  <!-- headlight -->
+  <path d="M180 55 L 176 58 L 180 60 Z" fill="#5EE9FF" opacity="0.9"/>
+  <!-- taillight -->
+  <path d="M22 55 L 26 58 L 22 60 Z" fill="#FF4B6A" opacity="0.9"/>
+  <!-- wheels -->
+  <circle cx="48" cy="71" r="9" fill="#0a0f1a" stroke="rgba(255,255,255,0.25)" stroke-width="0.8"/>
+  <circle cx="48" cy="71" r="4.5" fill="#1e2a44"/>
+  <circle cx="48" cy="71" r="1.6" fill="rgba(255,255,255,0.4)"/>
+  <circle cx="154" cy="71" r="9" fill="#0a0f1a" stroke="rgba(255,255,255,0.25)" stroke-width="0.8"/>
+  <circle cx="154" cy="71" r="4.5" fill="#1e2a44"/>
+  <circle cx="154" cy="71" r="1.6" fill="rgba(255,255,255,0.4)"/>
+  <!-- highlight -->
+  <path d="M40 52 C 80 40, 130 40, 170 50" stroke="rgba(255,255,255,0.4)" stroke-width="0.8" fill="none"/>
 </svg>`;
 
 /* ----------------- Rendering ----------------- */
@@ -122,11 +171,10 @@ function renderVehicles() {
         <svg viewBox="0 0 19 19" fill="currentColor"><path d="M15.4.02c-.3.06-.5.15-.8.31-.2.15-1.7 1.6-1.7 1.68 0 .05 4 4.07 4.07 4.07.02 0 .4-.36.83-.81.66-.67.82-.85.94-1.07.33-.63.34-1.3.02-1.94-.1-.2-.26-.38-.9-1.02-.82-.84-1.03-1-1.48-1.14a2 2 0 0 0-.98-.07zM6.5 8.44 1.15 13.86c-.48 1.87-1.15 4.65-1.15 4.75 0 .19.2.39.38.39.16 0 4.72-1.13 4.87-1.21.06-.03 2.47-2.41 5.35-5.29l5.23-5.23-2.04-2.05c-1.12-1.12-2.05-2.04-2.06-2.04L6.5 8.44z"/></svg>
       </button>`;
 
-    const carImg = v.image
-      ? `<img class="car-preview" src="${escapeHtml(v.image)}" alt="${escapeHtml(v.label)}" onerror="this.remove()" />`
-      : (state.defaultImage
-          ? `<img class="car-preview" src="${escapeHtml(state.defaultImage)}" alt="${escapeHtml(v.label)}" onerror="this.remove()" />`
-          : "");
+    const imgSrc = v.image || state.defaultImage || "";
+    const carImg = imgSrc
+      ? `<img class="car-preview" src="${escapeHtml(imgSrc)}" alt="${escapeHtml(v.label)}" onerror="this.style.display='none'" />`
+      : "";
 
     $carList.append(`
       <div class="carlist-item" data-plate="${escapeHtml(v.plate)}" data-testid="car-${escapeHtml(v.plate)}">
@@ -135,7 +183,8 @@ function renderVehicles() {
           <div class="car-actions">${actionsHtml}</div>
         </div>
         <div class="car-visual">
-          ${carImg || CAR_SVG}
+          <div class="car-svg-bg">${CAR_SVG}</div>
+          ${carImg}
           <div class="car-glow"></div>
         </div>
         <div class="car-infos">
