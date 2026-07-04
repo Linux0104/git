@@ -43,66 +43,121 @@ function escapeHtml(v) {
     .replace(/'/g, "&#39;");
 }
 
-/* SVG universelles Sportauto (Seitenansicht) — passt für alle Fahrzeuge */
-const CAR_SVG = `
-<svg viewBox="0 0 200 90" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid meet">
+/* Realistisches modernes Sportcoupé — Seitenansicht, ohne Logos. */
+const _svgUID = () => "u" + Math.random().toString(36).slice(2, 8);
+function buildCarSVG() {
+  const b = _svgUID(), g = _svgUID(), s = _svgUID(), r = _svgUID(), hl = _svgUID();
+  return `
+<svg viewBox="0 0 340 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid meet">
   <defs>
-    <linearGradient id="carBody" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#eaf3ff" stop-opacity="0.95"/>
-      <stop offset="0.55" stop-color="#8fb6dd" stop-opacity="0.75"/>
-      <stop offset="1" stop-color="#1a2740" stop-opacity="0.85"/>
+    <linearGradient id="${b}" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0"    stop-color="#f2f7ff" stop-opacity="0.98"/>
+      <stop offset="0.45" stop-color="#a9c1e0" stop-opacity="0.92"/>
+      <stop offset="1"    stop-color="#141a29" stop-opacity="0.98"/>
     </linearGradient>
-    <linearGradient id="carGlass" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#5EE9FF" stop-opacity="0.85"/>
-      <stop offset="1" stop-color="#1a2740" stop-opacity="0.9"/>
+    <linearGradient id="${g}" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0e1524" stop-opacity="0.95"/>
+      <stop offset="1" stop-color="#5EE9FF" stop-opacity="0.55"/>
     </linearGradient>
-    <radialGradient id="carShadow" cx="0.5" cy="0.5" r="0.5">
-      <stop offset="0" stop-color="#000" stop-opacity="0.55"/>
+    <radialGradient id="${s}" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#000" stop-opacity="0.7"/>
       <stop offset="1" stop-color="#000" stop-opacity="0"/>
     </radialGradient>
+    <radialGradient id="${r}" cx="0.5" cy="0.5" r="0.55">
+      <stop offset="0"    stop-color="#3a4966"/>
+      <stop offset="0.55" stop-color="#141a29"/>
+      <stop offset="1"    stop-color="#05070d"/>
+    </radialGradient>
+    <linearGradient id="${hl}" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0"    stop-color="#fff" stop-opacity="0"/>
+      <stop offset="0.5"  stop-color="#fff" stop-opacity="0.55"/>
+      <stop offset="1"    stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
   </defs>
-  <!-- ground shadow -->
-  <ellipse cx="100" cy="82" rx="82" ry="4" fill="url(#carShadow)"/>
-  <!-- body -->
-  <path d="M18 63
-           C 18 55, 26 50, 36 49
-           L 60 44
-           C 68 38, 78 30, 96 28
-           C 118 26, 132 30, 146 40
-           L 168 44
-           C 178 46, 184 52, 184 62
-           L 184 68
-           C 184 70, 183 71, 181 71
-           L 166 71
-           C 165 66, 160 62, 154 62
-           C 148 62, 143 66, 142 71
-           L 60 71
-           C 59 66, 54 62, 48 62
-           C 42 62, 37 66, 36 71
-           L 21 71
-           C 19 71, 18 70, 18 68 Z"
-        fill="url(#carBody)" stroke="rgba(255,255,255,0.12)" stroke-width="0.6"/>
-  <!-- windows -->
-  <path d="M64 46 C 72 38, 82 32, 96 31
-           C 116 29, 128 33, 140 41
-           L 132 46 L 96 47 L 78 48 Z"
-        fill="url(#carGlass)" opacity="0.75"/>
-  <!-- door line -->
-  <path d="M96 32 L 96 68" stroke="rgba(0,0,0,0.35)" stroke-width="0.5"/>
-  <!-- headlight -->
-  <path d="M180 55 L 176 58 L 180 60 Z" fill="#5EE9FF" opacity="0.9"/>
-  <!-- taillight -->
-  <path d="M22 55 L 26 58 L 22 60 Z" fill="#FF4B6A" opacity="0.9"/>
-  <!-- wheels -->
-  <circle cx="48" cy="71" r="9" fill="#0a0f1a" stroke="rgba(255,255,255,0.25)" stroke-width="0.8"/>
-  <circle cx="48" cy="71" r="4.5" fill="#1e2a44"/>
-  <circle cx="48" cy="71" r="1.6" fill="rgba(255,255,255,0.4)"/>
-  <circle cx="154" cy="71" r="9" fill="#0a0f1a" stroke="rgba(255,255,255,0.25)" stroke-width="0.8"/>
-  <circle cx="154" cy="71" r="4.5" fill="#1e2a44"/>
-  <circle cx="154" cy="71" r="1.6" fill="rgba(255,255,255,0.4)"/>
-  <!-- highlight -->
-  <path d="M40 52 C 80 40, 130 40, 170 50" stroke="rgba(255,255,255,0.4)" stroke-width="0.8" fill="none"/>
+
+  <!-- Bodenschatten -->
+  <ellipse cx="170" cy="107" rx="140" ry="5" fill="url(#${s})"/>
+
+  <!-- Karosserie (schlanker Coupé-Umriss) -->
+  <path d="M20 92
+           C 22 78, 34 72, 52 70
+           L 84 66
+           C 94 56, 112 46, 138 42
+           C 168 38, 200 42, 228 54
+           C 248 62, 268 68, 288 72
+           C 306 74, 316 82, 318 92
+           L 316 96
+           C 316 98, 315 99, 313 99
+           L 260 99
+           C 258 92, 250 86, 240 86
+           C 230 86, 222 92, 220 99
+           L 120 99
+           C 118 92, 110 86, 100 86
+           C 90 86, 82 92, 80 99
+           L 24 99
+           C 22 99, 20 98, 20 96 Z"
+        fill="url(#${b})" stroke="rgba(255,255,255,0.14)" stroke-width="0.8"/>
+
+  <!-- Glasfläche / Fenster -->
+  <path d="M92 66
+           C 104 54, 122 46, 142 44
+           C 164 42, 186 46, 206 54
+           L 224 66
+           L 214 70
+           L 100 70 Z"
+        fill="url(#${g})" opacity="0.9"/>
+
+  <!-- B-Säule -->
+  <path d="M156 46 L 158 70" stroke="rgba(0,0,0,0.4)" stroke-width="0.9"/>
+  <!-- Türlinie -->
+  <path d="M156 70 L 156 86" stroke="rgba(0,0,0,0.35)" stroke-width="0.7"/>
+
+  <!-- Sicken / Highlight -->
+  <path d="M40 80 C 100 74, 220 74, 300 82" stroke="url(#${hl})" stroke-width="0.9" fill="none"/>
+  <path d="M56 88 L 300 88" stroke="rgba(94,233,255,0.28)" stroke-width="0.6" stroke-linecap="round"/>
+
+  <!-- Frontscheinwerfer -->
+  <path d="M296 78 L 314 82 L 314 86 L 296 86 Z" fill="rgba(255,240,190,0.95)"/>
+  <ellipse cx="308" cy="82" rx="4" ry="1.4" fill="#fff" opacity="0.9"/>
+  <!-- Kühlergrill -->
+  <rect x="284" y="92" width="24" height="4" rx="1" fill="rgba(0,0,0,0.55)"/>
+
+  <!-- Rücklicht -->
+  <path d="M20 82 L 40 78 L 40 86 L 20 86 Z" fill="rgba(255,90,105,0.92)"/>
+  <rect x="24" y="92" width="18" height="4" rx="1" fill="rgba(0,0,0,0.55)"/>
+
+  <!-- Türgriff -->
+  <rect x="120" y="76" width="14" height="1.6" rx="0.8" fill="rgba(0,0,0,0.55)"/>
+  <rect x="200" y="76" width="14" height="1.6" rx="0.8" fill="rgba(0,0,0,0.55)"/>
+
+  <!-- Radhäuser -->
+  <path d="M76 99 A 24 24 0 0 1 124 99 Z" fill="rgba(0,0,0,0.5)"/>
+  <path d="M216 99 A 24 24 0 0 1 264 99 Z" fill="rgba(0,0,0,0.5)"/>
+
+  <!-- Hinterrad -->
+  <circle cx="100" cy="99" r="16" fill="url(#${r})" stroke="rgba(255,255,255,0.28)" stroke-width="0.8"/>
+  <circle cx="100" cy="99" r="7"  fill="#0a0f1a" stroke="rgba(255,255,255,0.15)" stroke-width="0.5"/>
+  <circle cx="100" cy="99" r="1.8" fill="rgba(94,233,255,0.9)"/>
+  <g stroke="rgba(220,232,255,0.55)" stroke-width="1" stroke-linecap="round">
+    <line x1="100" y1="86"  x2="100" y2="112"/>
+    <line x1="87"  y1="99"  x2="113" y2="99"/>
+    <line x1="91"  y1="90"  x2="109" y2="108"/>
+    <line x1="91"  y1="108" x2="109" y2="90"/>
+  </g>
+
+  <!-- Vorderrad -->
+  <circle cx="240" cy="99" r="16" fill="url(#${r})" stroke="rgba(255,255,255,0.28)" stroke-width="0.8"/>
+  <circle cx="240" cy="99" r="7"  fill="#0a0f1a" stroke="rgba(255,255,255,0.15)" stroke-width="0.5"/>
+  <circle cx="240" cy="99" r="1.8" fill="rgba(94,233,255,0.9)"/>
+  <g stroke="rgba(220,232,255,0.55)" stroke-width="1" stroke-linecap="round">
+    <line x1="240" y1="86"  x2="240" y2="112"/>
+    <line x1="227" y1="99"  x2="253" y2="99"/>
+    <line x1="231" y1="90"  x2="249" y2="108"/>
+    <line x1="231" y1="108" x2="249" y2="90"/>
+  </g>
 </svg>`;
+}
+const CAR_SVG_STATIC = buildCarSVG();
 
 /* ----------------- Rendering ----------------- */
 function updateHeaderButtons() {
@@ -183,7 +238,7 @@ function renderVehicles() {
           <div class="car-actions">${actionsHtml}</div>
         </div>
         <div class="car-visual">
-          <div class="car-svg-bg">${CAR_SVG}</div>
+          <div class="car-svg-bg">${buildCarSVG()}</div>
           ${carImg}
           <div class="car-glow"></div>
         </div>
@@ -233,7 +288,7 @@ function openUi(payload) {
   state.view = state.context === "impound" ? "impound" : "park-out";
   state.vehicles = Array.isArray(payload.vehicles) ? payload.vehicles : [];
   state.search = "";
-  state.defaultImage = payload.defaultImage || "./assets/img/header-Car.png";
+  state.defaultImage = typeof payload.defaultImage === "string" ? payload.defaultImage : "";
   state.trackOutside = payload.trackOutside !== false;
 
   $(".menu-title").text(payload.title || "Garage");
