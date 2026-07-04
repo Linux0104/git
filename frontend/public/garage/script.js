@@ -43,118 +43,215 @@ function escapeHtml(v) {
     .replace(/'/g, "&#39;");
 }
 
-/* Realistisches modernes Sportcoupé — Seitenansicht, ohne Logos. */
+/* ----------------- Sound Engine (WebAudio synth, no external files) ----------------- */
+const SFX = (() => {
+  let ctx = null;
+  let muted = false;
+  const getCtx = () => {
+    if (!ctx) {
+      try { ctx = new (window.AudioContext || window.webkitAudioContext)(); }
+      catch (e) { ctx = null; }
+    }
+    if (ctx && ctx.state === "suspended") ctx.resume();
+    return ctx;
+  };
+  const play = ({ freq = 440, type = "sine", dur = 0.08, vol = 0.06, sweep = 0, delay = 0 }) => {
+    if (muted) return;
+    const c = getCtx();
+    if (!c) return;
+    const t = c.currentTime + delay;
+    const osc = c.createOscillator();
+    const gain = c.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, t);
+    if (sweep) osc.frequency.exponentialRampToValueAtTime(Math.max(40, freq + sweep), t + dur);
+    gain.gain.setValueAtTime(0.0001, t);
+    gain.gain.exponentialRampToValueAtTime(vol, t + 0.008);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    osc.connect(gain).connect(c.destination);
+    osc.start(t);
+    osc.stop(t + dur + 0.02);
+  };
+  return {
+    hover:   () => play({ freq: 720, type: "sine", dur: 0.055, vol: 0.025 }),
+    click:   () => { play({ freq: 620, type: "triangle", dur: 0.05, vol: 0.05 }); play({ freq: 960, type: "sine", dur: 0.06, vol: 0.03, delay: 0.04 }); },
+    tab:     () => { play({ freq: 520, type: "square",   dur: 0.045, vol: 0.035 }); play({ freq: 780, type: "sine",     dur: 0.06,  vol: 0.03, delay: 0.03 }); },
+    open:    () => { play({ freq: 320, type: "sine", dur: 0.15, vol: 0.05, sweep: 480 }); play({ freq: 640, type: "sine", dur: 0.18, vol: 0.04, delay: 0.05, sweep: 320 }); },
+    close:   () => { play({ freq: 660, type: "sine", dur: 0.15, vol: 0.05, sweep: -300 }); },
+    fav:     () => { play({ freq: 880, type: "triangle", dur: 0.07, vol: 0.05 }); play({ freq: 1320, type: "sine", dur: 0.08, vol: 0.04, delay: 0.05 }); },
+    error:   () => { play({ freq: 220, type: "sawtooth", dur: 0.15, vol: 0.05, sweep: -60 }); },
+    setMuted(m) { muted = !!m; },
+    isMuted() { return muted; },
+  };
+})();
+
+/* Aggressive Sportlimousine im Lancer Evo Stil — Seitenansicht mit Heckflügel,
+   Hood-Scoop, kantigen Frontscheinwerfern und markanten BBS-Speichen. */
 const _svgUID = () => "u" + Math.random().toString(36).slice(2, 8);
 function buildCarSVG() {
-  const b = _svgUID(), g = _svgUID(), s = _svgUID(), r = _svgUID(), hl = _svgUID();
+  const b = _svgUID(), g = _svgUID(), s = _svgUID(), r = _svgUID(), hl = _svgUID(), hd = _svgUID();
   return `
-<svg viewBox="0 0 340 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid meet">
+<svg viewBox="0 0 360 130" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid meet">
   <defs>
     <linearGradient id="${b}" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0"    stop-color="#f2f7ff" stop-opacity="0.98"/>
-      <stop offset="0.45" stop-color="#a9c1e0" stop-opacity="0.92"/>
-      <stop offset="1"    stop-color="#141a29" stop-opacity="0.98"/>
+      <stop offset="0"    stop-color="#e9f0fb" stop-opacity="0.98"/>
+      <stop offset="0.35" stop-color="#7f97b8" stop-opacity="0.95"/>
+      <stop offset="0.7"  stop-color="#2b3446" stop-opacity="0.98"/>
+      <stop offset="1"    stop-color="#0b1120" stop-opacity="1"/>
     </linearGradient>
     <linearGradient id="${g}" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#0e1524" stop-opacity="0.95"/>
-      <stop offset="1" stop-color="#5EE9FF" stop-opacity="0.55"/>
+      <stop offset="0" stop-color="#0a1020" stop-opacity="0.95"/>
+      <stop offset="0.5" stop-color="#1c2b45" stop-opacity="0.9"/>
+      <stop offset="1" stop-color="#5EE9FF" stop-opacity="0.35"/>
     </linearGradient>
     <radialGradient id="${s}" cx="0.5" cy="0.5" r="0.5">
-      <stop offset="0" stop-color="#000" stop-opacity="0.7"/>
+      <stop offset="0" stop-color="#000" stop-opacity="0.72"/>
       <stop offset="1" stop-color="#000" stop-opacity="0"/>
     </radialGradient>
-    <radialGradient id="${r}" cx="0.5" cy="0.5" r="0.55">
-      <stop offset="0"    stop-color="#3a4966"/>
-      <stop offset="0.55" stop-color="#141a29"/>
+    <radialGradient id="${r}" cx="0.5" cy="0.5" r="0.6">
+      <stop offset="0"    stop-color="#4a5a7a"/>
+      <stop offset="0.55" stop-color="#1a2233"/>
       <stop offset="1"    stop-color="#05070d"/>
     </radialGradient>
     <linearGradient id="${hl}" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0"    stop-color="#fff" stop-opacity="0"/>
-      <stop offset="0.5"  stop-color="#fff" stop-opacity="0.55"/>
-      <stop offset="1"    stop-color="#fff" stop-opacity="0"/>
+      <stop offset="0"   stop-color="#fff" stop-opacity="0"/>
+      <stop offset="0.5" stop-color="#fff" stop-opacity="0.7"/>
+      <stop offset="1"   stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="${hd}" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffcc55"/>
+      <stop offset="0.6" stop-color="#fff5c8"/>
+      <stop offset="1" stop-color="#ffe680"/>
     </linearGradient>
   </defs>
 
   <!-- Bodenschatten -->
-  <ellipse cx="170" cy="107" rx="140" ry="5" fill="url(#${s})"/>
+  <ellipse cx="180" cy="115" rx="155" ry="5" fill="url(#${s})"/>
 
-  <!-- Karosserie (schlanker Coupé-Umriss) -->
-  <path d="M20 92
-           C 22 78, 34 72, 52 70
-           L 84 66
-           C 94 56, 112 46, 138 42
-           C 168 38, 200 42, 228 54
-           C 248 62, 268 68, 288 72
-           C 306 74, 316 82, 318 92
-           L 316 96
-           C 316 98, 315 99, 313 99
-           L 260 99
-           C 258 92, 250 86, 240 86
-           C 230 86, 222 92, 220 99
-           L 120 99
-           C 118 92, 110 86, 100 86
-           C 90 86, 82 92, 80 99
-           L 24 99
-           C 22 99, 20 98, 20 96 Z"
-        fill="url(#${b})" stroke="rgba(255,255,255,0.14)" stroke-width="0.8"/>
+  <!-- Heckspoiler (Wing) -->
+  <path d="M18 68
+           L 18 62
+           C 18 60, 20 59, 22 59
+           L 60 59
+           C 62 59, 63 60, 63 62
+           L 63 66
+           L 55 68 Z"
+        fill="#12192a" stroke="rgba(255,255,255,0.18)" stroke-width="0.6"/>
+  <!-- Wing stützen -->
+  <rect x="26" y="66" width="2.5" height="8" fill="#0d1120"/>
+  <rect x="50" y="66" width="2.5" height="8" fill="#0d1120"/>
 
-  <!-- Glasfläche / Fenster -->
-  <path d="M92 66
-           C 104 54, 122 46, 142 44
-           C 164 42, 186 46, 206 54
-           L 224 66
-           L 214 70
-           L 100 70 Z"
-        fill="url(#${g})" opacity="0.9"/>
+  <!-- Karosserie: Sedan mit aggressiver Front -->
+  <path d="M20 100
+           C 22 84, 30 76, 46 74
+           L 68 72
+           L 82 68
+           C 92 60, 108 52, 132 48
+           C 158 44, 190 46, 220 56
+           L 250 66
+           C 270 72, 290 76, 306 82
+           C 324 84, 336 90, 338 100
+           L 335 106
+           C 335 108, 334 109, 332 109
+           L 274 109
+           C 272 100, 262 92, 250 92
+           C 238 92, 228 100, 226 109
+           L 130 109
+           C 128 100, 118 92, 106 92
+           C 94 92, 84 100, 82 109
+           L 24 109
+           C 22 109, 20 108, 20 106 Z"
+        fill="url(#${b})" stroke="rgba(255,255,255,0.16)" stroke-width="0.8"/>
+
+  <!-- Motorhaube Kante -->
+  <path d="M220 56 L 232 62 L 250 68" stroke="rgba(0,0,0,0.35)" stroke-width="0.7" fill="none"/>
+
+  <!-- Hood Scoop (Luftöffnung auf Motorhaube) -->
+  <path d="M240 66 L 268 70 L 272 76 L 244 74 Z"
+        fill="#0a0f1c" stroke="rgba(255,255,255,0.28)" stroke-width="0.6"/>
+  <rect x="248" y="70" width="20" height="2" fill="rgba(0,0,0,0.7)"/>
+
+  <!-- Fensterfläche -->
+  <path d="M92 72
+           C 104 60, 122 52, 144 50
+           C 168 48, 194 52, 216 62
+           L 224 72
+           L 108 72 Z"
+        fill="url(#${g})" opacity="0.95"/>
+
+  <!-- Fensterhighlight -->
+  <path d="M100 66 C 130 54, 180 54, 210 62" stroke="rgba(255,255,255,0.4)" stroke-width="0.5" fill="none"/>
 
   <!-- B-Säule -->
-  <path d="M156 46 L 158 70" stroke="rgba(0,0,0,0.4)" stroke-width="0.9"/>
+  <path d="M158 50 L 160 72" stroke="rgba(0,0,0,0.5)" stroke-width="1"/>
+  <!-- C-Säule -->
+  <path d="M108 62 L 110 72" stroke="rgba(0,0,0,0.35)" stroke-width="0.6"/>
+
   <!-- Türlinie -->
-  <path d="M156 70 L 156 86" stroke="rgba(0,0,0,0.35)" stroke-width="0.7"/>
+  <path d="M158 72 L 158 92" stroke="rgba(0,0,0,0.4)" stroke-width="0.6"/>
+  <!-- Karosserie-Sicke -->
+  <path d="M46 90 C 120 84, 240 84, 322 92" stroke="url(#${hl})" stroke-width="0.9" fill="none"/>
+  <!-- Untere Sicke / Sideskirt -->
+  <path d="M60 100 L 320 100" stroke="rgba(94,233,255,0.35)" stroke-width="0.6" stroke-linecap="round"/>
 
-  <!-- Sicken / Highlight -->
-  <path d="M40 80 C 100 74, 220 74, 300 82" stroke="url(#${hl})" stroke-width="0.9" fill="none"/>
-  <path d="M56 88 L 300 88" stroke="rgba(94,233,255,0.28)" stroke-width="0.6" stroke-linecap="round"/>
+  <!-- Frontscheinwerfer (Xenon-Streifen, kantig) -->
+  <path d="M310 78 L 336 82 L 338 86 L 314 88 Z" fill="url(#${hd})"/>
+  <path d="M312 80 L 332 84" stroke="#fff" stroke-width="0.6" opacity="0.9"/>
+  <ellipse cx="326" cy="84" rx="3.5" ry="1" fill="#fff" opacity="0.95"/>
 
-  <!-- Frontscheinwerfer -->
-  <path d="M296 78 L 314 82 L 314 86 L 296 86 Z" fill="rgba(255,240,190,0.95)"/>
-  <ellipse cx="308" cy="82" rx="4" ry="1.4" fill="#fff" opacity="0.9"/>
   <!-- Kühlergrill -->
-  <rect x="284" y="92" width="24" height="4" rx="1" fill="rgba(0,0,0,0.55)"/>
+  <path d="M292 100 L 332 102 L 332 108 L 292 106 Z" fill="rgba(0,0,0,0.75)"/>
+  <path d="M296 103 L 328 105" stroke="rgba(94,233,255,0.4)" stroke-width="0.4"/>
+  <!-- Frontlippe -->
+  <path d="M292 108 L 330 110" stroke="#0b0e17" stroke-width="1.4"/>
 
   <!-- Rücklicht -->
-  <path d="M20 82 L 40 78 L 40 86 L 20 86 Z" fill="rgba(255,90,105,0.92)"/>
-  <rect x="24" y="92" width="18" height="4" rx="1" fill="rgba(0,0,0,0.55)"/>
+  <path d="M20 82 L 44 78 L 46 88 L 22 90 Z" fill="rgba(255,80,100,0.95)"/>
+  <path d="M22 84 L 42 82" stroke="#fff" stroke-width="0.4" opacity="0.6"/>
+  <rect x="26" y="102" width="18" height="4" rx="1" fill="rgba(0,0,0,0.6)"/>
 
-  <!-- Türgriff -->
-  <rect x="120" y="76" width="14" height="1.6" rx="0.8" fill="rgba(0,0,0,0.55)"/>
-  <rect x="200" y="76" width="14" height="1.6" rx="0.8" fill="rgba(0,0,0,0.55)"/>
+  <!-- Türgriffe -->
+  <rect x="126" y="82" width="14" height="1.6" rx="0.8" fill="rgba(0,0,0,0.55)"/>
+  <rect x="204" y="82" width="14" height="1.6" rx="0.8" fill="rgba(0,0,0,0.55)"/>
 
-  <!-- Radhäuser -->
-  <path d="M76 99 A 24 24 0 0 1 124 99 Z" fill="rgba(0,0,0,0.5)"/>
-  <path d="M216 99 A 24 24 0 0 1 264 99 Z" fill="rgba(0,0,0,0.5)"/>
+  <!-- Seitliche Kühlöffnung (Fender Vent) -->
+  <path d="M188 76 L 202 76 L 204 82 L 186 82 Z" fill="rgba(0,0,0,0.55)"/>
+  <path d="M190 79 L 202 79" stroke="rgba(94,233,255,0.4)" stroke-width="0.3"/>
 
-  <!-- Hinterrad -->
-  <circle cx="100" cy="99" r="16" fill="url(#${r})" stroke="rgba(255,255,255,0.28)" stroke-width="0.8"/>
-  <circle cx="100" cy="99" r="7"  fill="#0a0f1a" stroke="rgba(255,255,255,0.15)" stroke-width="0.5"/>
-  <circle cx="100" cy="99" r="1.8" fill="rgba(94,233,255,0.9)"/>
-  <g stroke="rgba(220,232,255,0.55)" stroke-width="1" stroke-linecap="round">
-    <line x1="100" y1="86"  x2="100" y2="112"/>
-    <line x1="87"  y1="99"  x2="113" y2="99"/>
-    <line x1="91"  y1="90"  x2="109" y2="108"/>
-    <line x1="91"  y1="108" x2="109" y2="90"/>
+  <!-- Radhäuser (aggressiv, ausgestellt) -->
+  <path d="M76 109 A 28 28 0 0 1 136 109 Z" fill="rgba(0,0,0,0.55)"/>
+  <path d="M220 109 A 28 28 0 0 1 280 109 Z" fill="rgba(0,0,0,0.55)"/>
+
+  <!-- Hinterrad — BBS-Style Speichen -->
+  <circle cx="106" cy="109" r="20" fill="url(#${r})" stroke="rgba(255,255,255,0.32)" stroke-width="0.9"/>
+  <circle cx="106" cy="109" r="15" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="0.4"/>
+  <circle cx="106" cy="109" r="6"  fill="#0a0f1a" stroke="rgba(255,255,255,0.15)" stroke-width="0.4"/>
+  <circle cx="106" cy="109" r="2"  fill="rgba(94,233,255,0.95)"/>
+  <g stroke="rgba(220,232,255,0.65)" stroke-width="1.2" stroke-linecap="round">
+    <line x1="106" y1="94"  x2="106" y2="124"/>
+    <line x1="91"  y1="109" x2="121" y2="109"/>
+    <line x1="95"  y1="98"  x2="117" y2="120"/>
+    <line x1="95"  y1="120" x2="117" y2="98"/>
+    <line x1="99"  y1="95"  x2="113" y2="123"/>
+    <line x1="99"  y1="123" x2="113" y2="95"/>
   </g>
+  <!-- Rote Bremsanlage -->
+  <path d="M100 118 A 8 8 0 0 1 112 118" fill="none" stroke="#e63946" stroke-width="1.6" opacity="0.9"/>
 
   <!-- Vorderrad -->
-  <circle cx="240" cy="99" r="16" fill="url(#${r})" stroke="rgba(255,255,255,0.28)" stroke-width="0.8"/>
-  <circle cx="240" cy="99" r="7"  fill="#0a0f1a" stroke="rgba(255,255,255,0.15)" stroke-width="0.5"/>
-  <circle cx="240" cy="99" r="1.8" fill="rgba(94,233,255,0.9)"/>
-  <g stroke="rgba(220,232,255,0.55)" stroke-width="1" stroke-linecap="round">
-    <line x1="240" y1="86"  x2="240" y2="112"/>
-    <line x1="227" y1="99"  x2="253" y2="99"/>
-    <line x1="231" y1="90"  x2="249" y2="108"/>
-    <line x1="231" y1="108" x2="249" y2="90"/>
+  <circle cx="250" cy="109" r="20" fill="url(#${r})" stroke="rgba(255,255,255,0.32)" stroke-width="0.9"/>
+  <circle cx="250" cy="109" r="15" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="0.4"/>
+  <circle cx="250" cy="109" r="6"  fill="#0a0f1a" stroke="rgba(255,255,255,0.15)" stroke-width="0.4"/>
+  <circle cx="250" cy="109" r="2"  fill="rgba(94,233,255,0.95)"/>
+  <g stroke="rgba(220,232,255,0.65)" stroke-width="1.2" stroke-linecap="round">
+    <line x1="250" y1="94"  x2="250" y2="124"/>
+    <line x1="235" y1="109" x2="265" y2="109"/>
+    <line x1="239" y1="98"  x2="261" y2="120"/>
+    <line x1="239" y1="120" x2="261" y2="98"/>
+    <line x1="243" y1="95"  x2="257" y2="123"/>
+    <line x1="243" y1="123" x2="257" y2="95"/>
   </g>
+  <path d="M244 118 A 8 8 0 0 1 256 118" fill="none" stroke="#e63946" stroke-width="1.6" opacity="0.9"/>
 </svg>`;
 }
 const CAR_SVG_STATIC = buildCarSVG();
@@ -275,12 +372,15 @@ function openRenameMenu(plate) {
   state.renamePlate = plate;
   $renameInput.val(v.label || "");
   $editMenu.addClass("open").css("display", "flex");
+  SFX.open();
   setTimeout(() => $renameInput.trigger("focus"), 50);
 }
 function closeRenameMenu() {
+  const wasOpen = $editMenu.hasClass("open");
   state.renamePlate = null;
   $renameInput.val("");
   $editMenu.removeClass("open").hide();
+  if (wasOpen) SFX.close();
 }
 
 /* ----------------- UI lifecycle ----------------- */
@@ -301,7 +401,7 @@ function openUi(payload) {
   state.trackOutside = payload.trackOutside !== false;
 
   $(".menu-title").text(payload.title || "Garage");
-  $(".menu-secTitle").text(payload.subtitle || "Lunar · Vehicle Manager");
+  $(".menu-secTitle").text(payload.subtitle || "Lunar");
   $(".prim-Name").text(payload.renameTitle || "Fahrzeug umbenennen");
   $(".menu-desc").text(payload.renameDescription || "Gib deinem Fahrzeug einen neuen Namen — max. 24 Zeichen.");
 
@@ -310,6 +410,7 @@ function openUi(payload) {
   closeRenameMenu();
   updateHeaderButtons();
   renderVehicles();
+  SFX.open();
 }
 
 /* ----------------- Events ----------------- */
@@ -319,20 +420,26 @@ window.addEventListener("message", (event) => {
   if (data.action === "close") closeUi();
 });
 
-$(".close-btn").on("click", () => post("close"));
+$(".close-btn").on("click", () => { SFX.close(); post("close"); });
 
 $headerBtns.eq(0).on("click", () => {
   if (state.context === "impound") return;
+  if (state.view !== "park-out") SFX.tab();
   state.view = "park-out"; updateHeaderButtons(); renderVehicles();
 });
 $headerBtns.eq(1).on("click", () => {
   if (state.context === "impound") return;
+  if (state.view !== "park-in") SFX.tab();
   state.view = "park-in"; updateHeaderButtons(); renderVehicles();
 });
 $headerBtns.eq(2).on("click", () => {
   if (state.context === "impound") return;
+  if (state.view !== "favourites") SFX.tab();
   state.view = "favourites"; updateHeaderButtons(); renderVehicles();
 });
+
+$(document).on("mouseenter", ".header-btn, .action-btn, .close-btn", () => SFX.hover());
+$(document).on("mouseenter", ".carlist-item", () => SFX.hover());
 
 $searchInput.on("input", function () {
   state.search = $(this).val() || "";
@@ -345,6 +452,7 @@ $(document).on("click", ".fav-toggle", function (e) {
   const v = state.vehicles.find((x) => x.plate === plate);
   if (!v) return;
   v.isFav = !v.isFav;
+  SFX.fav();
   post("toggleFavourite", { plate, state: v.isFav });
   renderVehicles();
 });
@@ -359,6 +467,7 @@ $(document).on("click", ".carlist-item", function () {
   const plate = $(this).data("plate");
   const v = state.vehicles.find((x) => x.plate === plate);
   if (!v) return;
+  SFX.click();
 
   if (state.context === "impound") return post("spawnVehicle", { plate });
   if (state.view === "park-in" || v.active) return post("storeVehicle", { plate });
@@ -370,6 +479,7 @@ $(".cancel").on("click", closeRenameMenu);
 $(".ready").on("click", () => {
   const name = ($renameInput.val() || "").trim();
   if (!state.renamePlate) return;
+  SFX.click();
   post("renameVehicle", { plate: state.renamePlate, name }).done((response) => {
     if (!response || !response.success) return;
     const v = state.vehicles.find((x) => x.plate === state.renamePlate);
@@ -387,6 +497,24 @@ $(document).on("keydown", (e) => {
     post("close");
   }
 });
+/* ----------------- Mute Button ----------------- */
+$(document).on("click", ".mute-btn", function () {
+  const now = !SFX.isMuted();
+  SFX.setMuted(now);
+  $(this).toggleClass("muted", now);
+  try { localStorage.setItem("lunar-garage-muted", now ? "1" : "0"); } catch (e) {}
+  if (!now) SFX.click();
+});
+try {
+  if (localStorage.getItem("lunar-garage-muted") === "1") {
+    SFX.setMuted(true);
+    $(".mute-btn").addClass("muted");
+  }
+} catch (e) {}
+// Resume AudioContext on first user gesture (browser autoplay policy)
+$(document).one("pointerdown keydown", () => { try { SFX.hover(); } catch (e) {} });
+
+
 
 /* ----------------- Preview Mode -----------------
    When previewed in a normal browser (not FiveM),
@@ -410,7 +538,7 @@ if (!state.isFiveM) {
   openUi({
     context: "garage",
     title: "Garage",
-    subtitle: "Lunar · Vehicle Manager",
+    subtitle: "Lunar",
     vehicles: demoVehicles,
     defaultImage: "",
   });

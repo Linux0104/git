@@ -81,9 +81,7 @@ body::after {
 /* =============== MAIN CONTAINER =============== */
 .container {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -841,3 +839,126 @@ body::after {
 
 /* Legacy blur helpers no-op'd (kept for backward compat with your original DOM) */
 .blur, .blur-ready, .blur-cancel { display: none; }
+
+/* =============== MUTE BUTTON =============== */
+.mute-btn {
+  display: grid;
+  place-items: center;
+  width: 2.9vh;
+  height: 2.9vh;
+  border-radius: 0.5vh;
+  border: 0.09vh solid var(--line-strong);
+  background: rgba(255,255,255,0.04);
+  color: var(--cyan);
+  cursor: pointer;
+  transition: 0.25s ease;
+  position: relative;
+}
+.mute-btn svg { width: 1.4vh; height: 1.4vh; }
+.mute-btn .ico-sound-off { display: none; color: #ff8a9e; }
+.mute-btn.muted .ico-sound-on { display: none; }
+.mute-btn.muted .ico-sound-off { display: block; }
+.mute-btn.muted { border-color: rgba(255,75,106,0.4); background: rgba(255,75,106,0.08); }
+.mute-btn:hover {
+  color: #fff;
+  border-color: rgba(94,233,255,0.55);
+  background: rgba(94,233,255,0.12);
+  box-shadow: 0 0 1.5vh rgba(94,233,255,0.35);
+}
+.mute-btn.muted:hover { color: #fff; border-color: rgba(255,75,106,0.7); background: rgba(255,75,106,0.18); box-shadow: 0 0 1.5vh rgba(255,75,106,0.35); }
+
+/* =============== ANIMATIONS =============== */
+@keyframes lg-fadeUp {
+  0%   { opacity: 0; transform: translateY(1.4vh) scale(0.985); filter: blur(2px); }
+  60%  { opacity: 1; filter: blur(0); }
+  100% { opacity: 1; transform: translateY(0)     scale(1);     filter: blur(0); }
+}
+@keyframes lg-slideIn {
+  0%   { opacity: 0; transform: translateY(-1vh); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes lg-glowPulse {
+  0%, 100% { box-shadow: 0 0 0 rgba(94,233,255,0); }
+  50%      { box-shadow: 0 0 3vh rgba(94,233,255,0.35); }
+}
+@keyframes lg-modalIn {
+  0%   { opacity: 0; transform: translateY(2vh) scale(0.94); }
+  60%  { opacity: 1; }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes lg-backdropIn {
+  0%   { opacity: 0; backdrop-filter: blur(0); -webkit-backdrop-filter: blur(0); }
+  100% { opacity: 1; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+}
+@keyframes lg-lightSweep {
+  0%   { transform: translateX(-120%); opacity: 0; }
+  15%  { opacity: 0.7; }
+  100% { transform: translateX(220%);  opacity: 0; }
+}
+@keyframes lg-shine {
+  0%, 100% { opacity: 0.6; }
+  50%      { opacity: 1;   }
+}
+
+/* Panel entrance */
+.container { animation: lg-fadeUp 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.garage-content > .header { animation: lg-slideIn 0.5s ease 0.05s both; }
+.garage-content > .footer-stats { animation: lg-slideIn 0.5s ease 0.15s both; }
+
+/* Card entrance (staggered) */
+.carlist-item {
+  animation: lg-fadeUp 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  will-change: transform, opacity;
+}
+.carlist-item:nth-child(1) { animation-delay: 0.06s; }
+.carlist-item:nth-child(2) { animation-delay: 0.10s; }
+.carlist-item:nth-child(3) { animation-delay: 0.14s; }
+.carlist-item:nth-child(4) { animation-delay: 0.18s; }
+.carlist-item:nth-child(5) { animation-delay: 0.22s; }
+.carlist-item:nth-child(6) { animation-delay: 0.26s; }
+.carlist-item:nth-child(7) { animation-delay: 0.30s; }
+.carlist-item:nth-child(8) { animation-delay: 0.34s; }
+.carlist-item:nth-child(9) { animation-delay: 0.38s; }
+.carlist-item:nth-child(10){ animation-delay: 0.42s; }
+.carlist-item:nth-child(11){ animation-delay: 0.46s; }
+.carlist-item:nth-child(12){ animation-delay: 0.50s; }
+.carlist-item:nth-child(n+13){ animation-delay: 0.54s; }
+
+/* Card light sweep on hover */
+.carlist-item { position: relative; }
+.carlist-item::after {
+  content: "";
+  position: absolute;
+  top: 0; bottom: 0;
+  left: 0;
+  width: 40%;
+  background: linear-gradient(115deg, transparent 30%, rgba(255,255,255,0.10) 50%, transparent 70%);
+  transform: translateX(-120%);
+  opacity: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  z-index: 4;
+}
+.carlist-item:hover::after { animation: lg-lightSweep 0.9s ease forwards; }
+
+/* Status dot: nicer pulse */
+.car-dot { animation: pulse 2.2s ease-in-out infinite, lg-shine 3s ease-in-out infinite; }
+
+/* Modal entrance */
+.edit-menu.open { animation: lg-backdropIn 0.28s ease forwards; }
+.edit-menu.open .edit-panel { animation: lg-modalIn 0.42s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+
+/* Active tab underline animation */
+.header-btn.aktivBtn::before {
+  transform-origin: center;
+  animation: lg-glowPulse 2.4s ease-in-out infinite;
+}
+
+/* Search focus micro-animation */
+.search-box:focus-within { transform: translateY(-0.1vh); }
+
+/* Wheel spin idle (subtle) — only on hover */
+.carlist-item:hover .car-svg-bg svg g {
+  transform-origin: center;
+}
+
