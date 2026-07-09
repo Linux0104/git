@@ -28,13 +28,15 @@ Clarified by user:
 - Demo mode: shows info toast instead of redirect.
 
 ## Implemented (2026-07-09)
-- Full dark "lunar" themed storefront: sticky glass header, hero (banner + floating coin), coin grid (6 packages, badges), cart drawer with qty controls, FiveM linking step, trust section, FAQ, footer.
-- Backend Tebex Headless proxy with demo fallback (6 EUR coin packages).
-- German UI throughout. All interactive elements have data-testid.
-- E2E tested: 100% backend (6/6) + frontend flows pass.
+- Full dark "lunar" storefront: header, hero, coin grid, cart drawer + FiveM linking, trust, FAQ, footer.
+- Backend Tebex Headless proxy (store, basket create/add, sidebar) with demo fallback.
+- **LIVE**: valid public token configured -> 7 real coin packages (475–27500 Coins, real Tebex CDN images), full checkout redirect to Tebex FiveM auth verified.
+- Auto badges ("Beliebt" / "Bester Wert"), Community section (Top-Kunde des Monats + Neueste Käufe via Tebex sidebar), Discord join banner.
+- German UI, data-testid everywhere. E2E tested 100% (backend 6/6 + all frontend flows), twice.
 
 ## Known limitations
-- **DEMO MODE**: The token the user provided (`YfQBCrYMSfnL0iVtZanOR5dN5HGHOzPx`) is a Tebex **secret key**, not a valid Headless **public token**, so real products & checkout are not live. Needs the correct public token in `backend/.env` -> `TEBEX_PUBLIC_TOKEN`.
+- Discord invite link is a placeholder (`https://discord.gg/lunar` in `src/lib/assets.js`) — replace with the real invite.
+- "Top-Kunde des Monats" shows a fallback until Tebex reports a top customer for the month.
 
 ## Backlog
 - P0: User provides valid Tebex public token → verify real packages load + full checkout redirect.
