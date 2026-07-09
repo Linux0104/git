@@ -1,0 +1,78 @@
+{
+  "theme": "dark",
+  "typography": {
+    "headings": "Outfit, sans-serif",
+    "body": "Manrope, sans-serif",
+    "instructions": "Use 'Outfit' for headings with weights ranging from font-light to font-black for extreme contrast. Use 'Manrope' for highly legible body text. Apply tight tracking (tracking-tight or tracking-tighter) on all large headings (>text-3xl)."
+  },
+  "colors": {
+    "background": "#08080C",
+    "foreground": "#FAFAFA",
+    "card": "#101016",
+    "card_border": "rgba(255, 255, 255, 0.06)",
+    "primary": "#0055FF",
+    "primary_foreground": "#FFFFFF",
+    "accent": "#00E5FF",
+    "muted": "#8A8A9E",
+    "destructive": "#FF3366"
+  },
+  "visual_enhancers": {
+    "glassmorphism": "Use 'Crystal Glass' for the header and cart drawer: backdrop-blur-xl bg-[#08080C]/70 with a delicate 1px border-white/10.",
+    "glow_effects": "Use subtle primary-colored drop shadows (e.g., drop-shadow-[0_0_20px_rgba(0,85,255,0.3)]) on hover states for coin cards and primary buttons to enhance the neon/lunar vibe.",
+    "surface_strategy": "Use the 'Grid Borders' or 'Tactile' variants for dashboard/store sections. Avoid flat, muddy grays. Cards should feel like dark, milled metal or glass with sharp 1px borders."
+  },
+  "components": {
+    "header": "Sticky navigation, crystal glassmorphism background. Must include the 'Lunar' brand name in primary blue (Outfit font, bold, wide tracking). Links in center, Cart button with item count on right. No fully transparent headers.",
+    "hero": "Min-height 80vh. Full-width background image of the moon/night sky with a dark overlay (bg-[#08080C]/70) so text is highly readable. Left-aligned or balanced asymmetrical layout. H1 should be massive and impactful.",
+    "coin_grid": "Bento or standard responsive grid (gap-6 or gap-8). Cards should display the gold coins image, package name, coin amount, price, and 'In den Warenkorb' (Add to cart) button. Add a glowing badge for 'Bester Wert' (Best Value).",
+    "cart_drawer": "Right-side slide-over (Shadcn Sheet). Dark glass background. Shows item list, quantity controls, subtotal. MUST include a section/step for FiveM account linking before checkout.",
+    "account_linking_step": "Tebex requires FiveM/Cfx.re linking. Design a clear, trusted input field in the cart or as a dialog: 'Verknüpfe deinen FiveM Account' asking for the username.",
+    "trust_section": "Section highlighting instant delivery, secure payments, and 24/7 support. Use Phosphor or Lucide icons with glowing accents.",
+    "footer": "Generous spacing (py-24). Darker background if possible, with links to Terms, Refund Policy, Discord.",
+    "buttons": "Primary buttons should use the primary blue (#0055FF), white text, and slightly rounded corners (rounded-md or rounded-lg). Hover state should lighten the blue and add a soft glow."
+  },
+  "layouts": {
+    "spacing": "Use generous spacing. Tailwind p-6 or p-8 inside cards. Section padding should be py-20 or py-32. Avoid cramped elements.",
+    "grid": "Use grid-cols-1 md:grid-cols-2 lg:grid-cols-4 for the coin packages to utilize screen real estate efficiently."
+  },
+  "motion": {
+    "interactions": "All interactive elements (buttons, cards, links) MUST have hover states (e.g., hover:-translate-y-1 hover:border-primary/50 transition-all duration-300).",
+    "cart": "Smooth slide-in from the right for the cart drawer.",
+    "accessibility": "Respect prefers-reduced-motion for animations."
+  },
+  "media": {
+    "images": [
+      {
+        "url": "https://images.pexels.com/photos/5226087/pexels-photo-5226087.jpeg",
+        "category": "hero_background",
+        "description": "Mesmerizing full moon in a dark night sky. Use as the hero section background with a heavy dark overlay."
+      },
+      {
+        "url": "https://images.pexels.com/photos/8442324/pexels-photo-8442324.jpeg",
+        "category": "coin_package",
+        "description": "Gold coins isolated on a black background. Perfect for the product images in the coin grid."
+      },
+      {
+        "url": "https://images.pexels.com/photos/26732100/pexels-photo-26732100.jpeg",
+        "category": "trust_section_bg",
+        "description": "Dark empty city alley with neon lights, creating a GTA RP urban atmosphere. Can be used as a subtle background for the trust/features section."
+      }
+    ]
+  },
+  "general_ui_ux_guidelines": "All visible text MUST be in German. Ensure contrast ratios meet APCA/WCAG standards (do not place dark text on dark backgrounds). Do NOT use transparent backgrounds under text. ALWAYS use data-testid attributes for interactive elements (e.g., data-testid='checkout-button', data-testid='cart-trigger').",
+  "instructions_to_main_agent": [
+    "Install and use 'Outfit' and 'Manrope' fonts from Google Fonts.",
+    "Build the storefront with a dark theme. Modify tailwind.config.js to enforce the dark colors defined.",
+    "Use Shadcn UI components for Sheet (Cart), Dialog (Account linking), and Inputs.",
+    "All copy must be in German (e.g., 'In den Warenkorb', 'Zur Kasse', 'Verknüpfe deinen FiveM Account').",
+    "Ensure the FiveM account linking UI is prominently featured in the checkout flow.",
+    "Implement micro-animations on the coin cards to make them feel premium and interactive."
+  ],
+  "UNIVERSAL GUIDELINES FOR MAIN AGENT": [
+    "Do not converge toward generic outputs. Use the defined typography and spacing rules to create a distinct, premium gaming aesthetic.",
+    "Create depth through layered design elements with z-index hierarchy and glassmorphism.",
+    "Do not apply universal transitions (`transition: all`); add transitions specifically to interactive elements.",
+    "Do not center align the app container globally.",
+    "Never use AI assistant emoji characters (🤖, 💡, etc.) as icons. Use Lucide or Phosphor icons."
+  ]
+}
