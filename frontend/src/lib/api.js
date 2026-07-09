@@ -8,6 +8,11 @@ export const fetchStore = async () => {
   return data;
 };
 
+export const fetchSidebar = async () => {
+  const { data } = await axios.get(`${API}/sidebar`);
+  return data;
+};
+
 export const createBasket = async (completeUrl, cancelUrl) => {
   const { data } = await axios.post(`${API}/basket/create`, {
     complete_url: completeUrl,

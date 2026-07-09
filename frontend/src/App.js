@@ -10,6 +10,8 @@ import { Trust } from "@/components/store/Trust";
 import { FAQ } from "@/components/store/FAQ";
 import { Footer } from "@/components/store/Footer";
 import { CartDrawer } from "@/components/store/CartDrawer";
+import { DiscordBanner } from "@/components/store/DiscordBanner";
+import { CommunityWidget } from "@/components/store/CommunityWidget";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
 
@@ -74,6 +76,8 @@ const StoreApp = () => {
         <Hero />
         <CoinGrid packages={store.packages} loading={loading} />
         <Trust />
+        <CommunityWidget />
+        <DiscordBanner />
         <FAQ />
       </main>
       <Footer />

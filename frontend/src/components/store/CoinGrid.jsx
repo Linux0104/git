@@ -1,7 +1,30 @@
 import { CoinCard } from "./CoinCard";
 import { Skeleton } from "@/components/ui/skeleton";
 
+// Auto-assign "Beliebt" / "Bester Wert" badges when Tebex doesn't provide them
+const withBadges = (packages) => {
+  if (!packages.length) return packages;
+  const hasBadge = packages.some((p) => p.best_value || p.popular);
+  if (hasBadge) return packages;
+  let bestId = null;
+  let bestRatio = -1;
+  packages.forEach((p) => {
+    const ratio = p.coins && p.price ? p.coins / p.price : 0;
+    if (ratio > bestRatio) {
+      bestRatio = ratio;
+      bestId = p.id;
+    }
+  });
+  const popularId = packages[1]?.id;
+  return packages.map((p) => ({
+    ...p,
+    best_value: p.id === bestId,
+    popular: p.id === popularId && p.id !== bestId,
+  }));
+};
+
 export const CoinGrid = ({ packages, loading }) => {
+  const items = withBadges(packages);
   return (
     <section id="shop" className="relative mx-auto max-w-7xl px-5 sm:px-8 py-24 scroll-mt-24">
       <div className="max-w-2xl">
@@ -19,7 +42,7 @@ export const CoinGrid = ({ packages, loading }) => {
           ? Array.from({ length: 6 }).map((_, i) => (
               <Skeleton key={i} className="h-[26rem] rounded-2xl bg-white/5" />
             ))
-          : packages.map((pkg, i) => <CoinCard key={pkg.id} pkg={pkg} index={i} />)}
+          : items.map((pkg, i) => <CoinCard key={pkg.id} pkg={pkg} index={i} />)}
       </div>
     </section>
   );

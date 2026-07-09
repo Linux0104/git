@@ -27,17 +27,19 @@ logger = logging.getLogger(__name__)
 COIN_IMG = "https://raw.githubusercontent.com/Linux0104/banner-assets/main/coins3.png"
 
 DEMO_PACKAGES = [
-    {"id": "demo-1", "name": "1.000 Lunar Coins", "coins": 1000, "price": 4.99,
+    {"id": "demo-1", "name": "475 Coins", "coins": 475, "price": 4.99,
      "description": "Perfekt zum Einstieg – schnell aufladen und sofort durchstarten."},
-    {"id": "demo-2", "name": "2.500 Lunar Coins", "coins": 2500, "price": 9.99,
+    {"id": "demo-2", "name": "1000 Coins", "coins": 1000, "price": 9.99,
      "description": "Der beliebte Einsteiger-Boost mit extra Coins obendrauf.", "popular": True},
-    {"id": "demo-3", "name": "5.000 Lunar Coins", "coins": 5000, "price": 18.99,
+    {"id": "demo-3", "name": "2050 Coins", "coins": 2050, "price": 19.99,
+     "description": "Mehr Coins fürs RP-Leben – bereit für den nächsten Schritt."},
+    {"id": "demo-4", "name": "3650 Coins", "coins": 3650, "price": 34.99,
      "description": "Bestes Preis-Leistungs-Verhältnis für aktive Spieler.", "best_value": True},
-    {"id": "demo-4", "name": "10.000 Lunar Coins", "coins": 10000, "price": 34.99,
+    {"id": "demo-5", "name": "5350 Coins", "coins": 5350, "price": 49.99,
      "description": "Für alle, die im RP-Leben richtig aufsteigen wollen."},
-    {"id": "demo-5", "name": "25.000 Lunar Coins", "coins": 25000, "price": 79.99,
+    {"id": "demo-6", "name": "11000 Coins", "coins": 11000, "price": 99.99,
      "description": "Das Paket für echte High-Roller auf dem Server."},
-    {"id": "demo-6", "name": "50.000 Lunar Coins", "coins": 50000, "price": 149.99,
+    {"id": "demo-7", "name": "27500 Coins", "coins": 27500, "price": 249.99,
      "description": "Maximale Power – die ultimative Coin-Reserve."},
 ]
 
@@ -150,6 +152,19 @@ async def get_store():
     except Exception as e:
         logger.warning(f"Tebex store fetch failed ({e}); serving demo store")
         return demo_store()
+
+
+@api_router.get("/sidebar")
+async def get_sidebar():
+    """Returns Tebex sidebar modules (top_customer, recent_payments, textbox)."""
+    if not TEBEX_TOKEN:
+        return {"modules": []}
+    try:
+        data = await tebex_get("/sidebar")
+        return {"modules": data.get("data", [])}
+    except Exception as e:
+        logger.warning(f"sidebar fetch failed: {e}")
+        return {"modules": []}
 
 
 class BasketCreate(BaseModel):
