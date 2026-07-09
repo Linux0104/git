@@ -1,55 +1,93 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import "@/App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import axios from "axios";
-import { HOME } from "@/constants/testIds";
+import { Loader2 } from "lucide-react";
+import { CartProvider, useCart } from "@/store/CartContext";
+import { fetchStore, addItemsToBasket } from "@/lib/api";
+import { Header } from "@/components/store/Header";
+import { Hero } from "@/components/store/Hero";
+import { CoinGrid } from "@/components/store/CoinGrid";
+import { Trust } from "@/components/store/Trust";
+import { FAQ } from "@/components/store/FAQ";
+import { Footer } from "@/components/store/Footer";
+import { CartDrawer } from "@/components/store/CartDrawer";
+import { Toaster } from "@/components/ui/sonner";
+import { toast } from "sonner";
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const API = `${BACKEND_URL}/api`;
+const PENDING_KEY = "lunar_pending";
 
-const Home = () => {
-  const helloWorldApi = async () => {
-    try {
-      const response = await axios.get(`${API}/`);
-      console.log(response.data.message);
-    } catch (e) {
-      console.error(e, `errored out requesting / api`);
-    }
-  };
+const ReturnOverlay = () => (
+  <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center gap-4 bg-[#08080c]/95 backdrop-blur-sm" data-testid="checkout-processing">
+    <Loader2 className="h-10 w-10 animate-spin text-primary" />
+    <p className="font-heading text-lg font-bold">Weiterleitung zur Bezahlung…</p>
+    <p className="text-sm text-muted-foreground">Einen Moment, wir bereiten deinen Warenkorb vor.</p>
+  </div>
+);
+
+const StoreApp = () => {
+  const [store, setStore] = useState({ packages: [], demo: false });
+  const [loading, setLoading] = useState(true);
+  const [processing, setProcessing] = useState(false);
+  const { clear } = useCart();
 
   useEffect(() => {
-    helloWorldApi();
+    fetchStore()
+      .then(setStore)
+      .catch(() => toast.error("Store konnte nicht geladen werden."))
+      .finally(() => setLoading(false));
   }, []);
 
+  // Handle return from Tebex FiveM auth -> add items & redirect to checkout
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("tebex_return") !== "1") return;
+    const raw = localStorage.getItem(PENDING_KEY);
+    if (!raw) {
+      window.history.replaceState({}, "", window.location.pathname);
+      return;
+    }
+    setProcessing(true);
+    const pending = JSON.parse(raw);
+    addItemsToBasket(pending.ident, pending.items)
+      .then((res) => {
+        localStorage.removeItem(PENDING_KEY);
+        clear();
+        if (res.checkout_url) {
+          window.location.href = res.checkout_url;
+        } else {
+          setProcessing(false);
+          toast.error("Checkout-Link nicht verfügbar.");
+        }
+      })
+      .catch(() => {
+        localStorage.removeItem(PENDING_KEY);
+        setProcessing(false);
+        window.history.replaceState({}, "", window.location.pathname);
+        toast.error("Warenkorb konnte nicht abgeschlossen werden.");
+      });
+  }, [clear]);
+
   return (
-    <div>
-      <header className="App-header">
-        <a
-          data-testid={HOME.emergentLink}
-          className="App-link"
-          href="https://emergent.sh"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <img src="https://avatars.githubusercontent.com/in/1201222?s=120&u=2686cf91179bbafbc7a71bfbc43004cf9ae1acea&v=4" />
-        </a>
-        <p className="mt-5">Building something incredible ~!</p>
-      </header>
+    <div className="App relative min-h-screen bg-background text-foreground antialiased">
+      {processing && <ReturnOverlay />}
+      <Header />
+      <main>
+        <Hero />
+        <CoinGrid packages={store.packages} loading={loading} />
+        <Trust />
+        <FAQ />
+      </main>
+      <Footer />
+      <CartDrawer />
+      <Toaster position="top-center" theme="dark" richColors />
     </div>
   );
 };
 
 function App() {
   return (
-    <div className="App">
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />}>
-            <Route index element={<Home />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </div>
+    <CartProvider>
+      <StoreApp />
+    </CartProvider>
   );
 }
 
