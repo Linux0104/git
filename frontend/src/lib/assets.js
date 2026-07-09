@@ -6,4 +6,4 @@ export const ASSETS = {
   coin: "https://raw.githubusercontent.com/Linux0104/banner-assets/main/coins3.png",
 };
 
-export const DISCORD_URL = "https://discord.gg/lunar";
+export const DISCORD_URL = "https://discord.gg/lunar-rp";
