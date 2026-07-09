@@ -6,6 +6,7 @@ import {
   SheetContent,
   SheetHeader,
   SheetTitle,
+  SheetDescription,
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/store/CartContext";
@@ -70,6 +71,9 @@ export const CartDrawer = () => {
             )}
             {step === "link" ? "FiveM verknüpfen" : "Dein Warenkorb"}
           </SheetTitle>
+          <SheetDescription className="sr-only">
+            Verwalte deine ausgewählten Lunar Coin-Pakete und schließe den Kauf über Tebex ab.
+          </SheetDescription>
         </SheetHeader>
 
         <AnimatePresence mode="wait">
