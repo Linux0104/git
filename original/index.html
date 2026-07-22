@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lunar PD Jail</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      font-family: Arial, sans-serif;
+      --bg: rgba(7, 11, 17, 0.94);
+      --panel: rgba(15, 22, 31, 0.96);
+      --line: rgba(255, 255, 255, 0.08);
+      --text: #f4f8fb;
+      --muted: #94a3b8;
+      --accent: #3ccfff;
+      --danger: #ff647f;
+      --success: #74e2a4;
+    }
+
+    * {
+      box-sizing: border-box;
+      user-select: none;
+    }
+
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: transparent;
+      color: var(--text);
+    }
+
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .overlay,
+    .shell {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.12s ease;
+    }
+
+    body.visible .overlay,
+    body.visible .shell {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.55);
+    }
+
+    .shell {
+      position: relative;
+      width: min(980px, 94vw);
+      min-height: 640px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: var(--bg);
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.45);
+      overflow: hidden;
+    }
+
+    .header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 24px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .title {
+      margin: 0;
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    .subtitle,
+    .summary,
+    .list-help,
+    .selected-helper {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .close-btn,
+    .ghost-btn,
+    .action-btn,
+    .player-card {
+      font: inherit;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+    }
+
+    .close-btn,
+    .ghost-btn,
+    .action-btn {
+      cursor: pointer;
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .close-btn {
+      width: 42px;
+      height: 42px;
+      font-size: 20px;
+    }
+
+    .content {
+      display: grid;
+      grid-template-columns: minmax(320px, 0.95fr) minmax(360px, 1.05fr);
+      gap: 18px;
+      padding: 24px;
+      height: calc(100% - 107px);
+    }
+
+    .panel {
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding: 18px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+    }
+
+    .panel-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .panel-title {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .ghost-btn {
+      min-height: 40px;
+      padding: 0 14px;
+    }
+
+    .players-grid {
+      display: grid;
+      gap: 10px;
+      overflow: auto;
+      padding-right: 2px;
+    }
+
+    .player-card {
+      width: 100%;
+      padding: 14px;
+      background: rgba(255, 255, 255, 0.02);
+      color: var(--text);
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .player-card.active {
+      border-color: rgba(60, 207, 255, 0.5);
+      background: rgba(60, 207, 255, 0.08);
+    }
+
+    .player-head,
+    .selected-head,
+    .actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .player-name,
+    .selected-name {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .pill,
+    .status-badge {
+      padding: 5px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      font-size: 11px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .status-badge.active {
+      color: var(--success);
+      border-color: rgba(116, 226, 164, 0.4);
+    }
+
+    .player-meta {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .empty-state {
+      padding: 18px;
+      border: 1px dashed var(--line);
+      border-radius: 12px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .selected-box,
+    .field {
+      display: grid;
+      gap: 8px;
+    }
+
+    .selected-box {
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .field-label {
+      font-size: 12px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .input-field,
+    .textarea-field {
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: rgba(0, 0, 0, 0.18);
+      color: var(--text);
+      outline: none;
+      font: inherit;
+    }
+
+    .textarea-field {
+      resize: none;
+      min-height: 170px;
+      line-height: 1.5;
+    }
+
+    .input-field:focus,
+    .textarea-field:focus {
+      border-color: rgba(60, 207, 255, 0.5);
+    }
+
+    .input-field:disabled,
+    .textarea-field:disabled,
+    .action-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .actions {
+      margin-top: auto;
+    }
+
+    .action-btn {
+      flex: 1;
+      min-height: 46px;
+      padding: 0 16px;
+    }
+
+    .action-btn.primary {
+      background: rgba(60, 207, 255, 0.16);
+      border-color: rgba(60, 207, 255, 0.42);
+    }
+
+    .action-btn.danger {
+      background: rgba(255, 100, 127, 0.16);
+      border-color: rgba(255, 100, 127, 0.42);
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    @media (max-width: 900px) {
+      .content {
+        grid-template-columns: 1fr;
+        height: auto;
+      }
+
+      .shell {
+        max-height: 94vh;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="overlay"></div>
+  <div class="shell">
+    <header class="header">
+      <div>
+        <h1 id="title" class="title">Lunar Booking</h1>
+        <div id="subtitle" class="subtitle">Haftbearbeitung im Revier</div>
+        <div id="summary" class="summary">0 buchbar | 0 inhaftiert | max 240 Min</div>
+      </div>
+      <button id="closeButton" class="close-btn" type="button" aria-label="Schliessen">x</button>
+    </header>
+
+    <main class="content">
+      <section class="panel">
+        <div class="panel-top">
+          <div>
+            <h2 id="playersTitle" class="panel-title">Personen</h2>
+            <div id="playersSubtitle" class="list-help">Buchungen nur am Haftbeamten, Entlassungen jederzeit moeglich.</div>
+          </div>
+          <button id="refreshButton" class="ghost-btn" type="button">Aktualisieren</button>
+        </div>
+        <div id="playersGrid" class="players-grid"></div>
+      </section>
+
+      <section class="panel">
+        <div>
+          <h2 id="formTitle" class="panel-title">Verwaltung</h2>
+          <div id="formSubtitle" class="list-help">Waehle eine Person zum Inhaftieren oder Entlassen.</div>
+        </div>
+
+        <div class="selected-box">
+          <div class="selected-head">
+            <div id="selectedPlayer" class="selected-name">Keine Person ausgewaehlt</div>
+            <span id="selectedBadge" class="status-badge">Keine Auswahl</span>
+          </div>
+          <div id="selectedHelper" class="selected-helper">Waehle links eine Person aus.</div>
+        </div>
+
+        <label class="field">
+          <span id="minutesLabel" class="field-label">Haftdauer</span>
+          <input id="minutesInput" class="input-field" type="number" min="1" max="240" value="15" />
+        </label>
+
+        <label class="field">
+          <span id="reasonLabel" class="field-label">Tatvorwurf</span>
+          <textarea id="reasonInput" class="textarea-field" maxlength="200" placeholder="z. B. Raub, Widerstand, Waffenbesitz"></textarea>
+        </label>
+
+        <div class="actions">
+          <button id="cancelButton" class="action-btn" type="button">Abbrechen</button>
+          <button id="submitButton" class="action-btn primary" type="button">Inhaftierung bestaetigen</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const resourceName = typeof GetParentResourceName === 'function' ? GetParentResourceName() : 'lunar_pdjail';
+    // #region debug-point D:nui-report
+    const debugReport = (hypothesisId, msg, data = {}) => fetch('http://127.0.0.1:7777/event', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json; charset=UTF-8' },
+      body: JSON.stringify({ sessionId: 'lunar-jail-gray-screen', runId: 'pre-fix', hypothesisId, location: 'ui/index.html', msg: `[DEBUG] ${msg}`, data, ts: Date.now() })
+    }).catch(() => {});
+    // #endregion
+
+    const state = {
+      visible: false,
+      bookablePlayers: [],
+      jailedPlayers: [],
+      entries: [],
+      selectedKey: null,
+      maxSentenceMinutes: 240,
+      texts: {}
+    };
+
+    const body = document.body;
+    const playersGrid = document.getElementById('playersGrid');
+    const selectedPlayer = document.getElementById('selectedPlayer');
+    const selectedHelper = document.getElementById('selectedHelper');
+    const selectedBadge = document.getElementById('selectedBadge');
+    const reasonInput = document.getElementById('reasonInput');
+    const minutesInput = document.getElementById('minutesInput');
+    const submitButton = document.getElementById('submitButton');
+    const refreshButton = document.getElementById('refreshButton');
+    const summary = document.getElementById('summary');
+
+    function post(action, data = {}) {
+      return fetch(`https://${resourceName}/${action}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json; charset=UTF-8' },
+        body: JSON.stringify(data)
+      }).catch(() => {});
+    }
+
+    function esc(value) {
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function getText(key, fallback) {
+      return state.texts[key] || fallback;
+    }
+
+    function formatText(template, values = []) {
+      let output = String(template ?? '');
+      values.forEach((value) => {
+        output = output.replace('%s', String(value ?? ''));
+      });
+      return output;
+    }
+
+    function rebuildEntries() {
+      state.entries = [
+        ...state.bookablePlayers.map((player) => ({
+          ...player,
+          entryType: 'booking',
+          entryKey: `booking-${player.id}`
+        })),
+        ...state.jailedPlayers.map((player) => ({
+          ...player,
+          entryType: 'jailed',
+          entryKey: `jailed-${player.identifier}`
+        }))
+      ];
+    }
+
+    function setVisible(show) {
+      state.visible = !!show;
+      body.classList.toggle('visible', state.visible);
+      // #region debug-point D:set-visible
+      debugReport('D', 'setVisible called', { show: !!show });
+      // #endregion
+    }
+
+    function getSelectedEntry() {
+      return state.entries.find((entry) => entry.entryKey === state.selectedKey) || null;
+    }
+
+    function setFormDisabled(disabled) {
+      reasonInput.disabled = disabled;
+      minutesInput.disabled = disabled;
+    }
+
+    function renderSummary() {
+      summary.textContent = `${state.bookablePlayers.length} buchbar | ${state.jailedPlayers.length} inhaftiert | max ${state.maxSentenceMinutes} Min`;
+    }
+
+    function applyTexts() {
+      document.getElementById('title').textContent = getText('uiTitle', 'Lunar Booking');
+      document.getElementById('subtitle').textContent = getText('uiSubtitle', 'Haftbearbeitung im Revier');
+      document.getElementById('playersTitle').textContent = getText('uiPlayersTitle', 'Personenverwaltung');
+      document.getElementById('playersSubtitle').textContent = getText('uiPlayersSubtitle', 'Buchungen nur am Haftbeamten, Entlassungen jederzeit moeglich.');
+      document.getElementById('formTitle').textContent = getText('uiFormTitle', 'Haftdatensatz');
+      document.getElementById('formSubtitle').textContent = getText('uiFormSubtitle', 'Waehle eine Person zum Inhaftieren oder Entlassen.');
+      document.getElementById('reasonLabel').textContent = getText('uiReasonLabel', 'Tatvorwurf');
+      document.getElementById('minutesLabel').textContent = getText('uiMinutesLabel', 'Haftdauer');
+      document.getElementById('cancelButton').textContent = getText('uiCancel', 'Abbrechen');
+      refreshButton.textContent = getText('uiRefresh', 'Aktualisieren');
+      reasonInput.placeholder = getText('sentencePlaceholder', 'z. B. Raub, Widerstand, Waffenbesitz');
+      renderSummary();
+    }
+
+    function renderSelection() {
+      const selected = getSelectedEntry();
+
+      if (!selected) {
+        selectedPlayer.textContent = getText('uiNoSelection', 'Keine Person ausgewaehlt');
+        selectedHelper.textContent = getText('uiFormSubtitle', 'Waehle eine Person zum Inhaftieren oder Entlassen.');
+        selectedBadge.textContent = getText('uiNoSelection', 'Keine Auswahl');
+        selectedBadge.classList.remove('active');
+        reasonInput.value = '';
+        minutesInput.value = String(Math.min(15, state.maxSentenceMinutes));
+        setFormDisabled(true);
+        submitButton.disabled = true;
+        submitButton.classList.remove('danger');
+        submitButton.classList.add('primary');
+        submitButton.textContent = getText('uiSubmit', 'Inhaftierung bestaetigen');
+        return;
+      }
+
+      selectedPlayer.textContent = selected.label;
+      selectedBadge.classList.add('active');
+      submitButton.disabled = false;
+
+      if (selected.entryType === 'jailed') {
+        selectedBadge.textContent = selected.online
+          ? getText('uiStatusJailed', 'Inhaftiert')
+          : `${getText('uiStatusJailed', 'Inhaftiert')} / ${getText('uiStatusOffline', 'Offline')}`;
+        selectedHelper.textContent = formatText(
+          getText('uiSelectedJailedHelper', 'Grund: %s | Resthaft: %s Min. | Officer: %s'),
+          [
+            selected.reason || getText('uiJailedReasonFallback', 'Kein Grund angegeben'),
+            Math.max(0, Number(selected.minutesRemaining || 0)),
+            selected.officerName || '-'
+          ]
+        );
+        reasonInput.value = selected.reason || getText('uiJailedReasonFallback', 'Kein Grund angegeben');
+        minutesInput.value = String(Math.max(0, Number(selected.minutesRemaining || 0)));
+        setFormDisabled(true);
+        submitButton.classList.remove('primary');
+        submitButton.classList.add('danger');
+        submitButton.textContent = getText('uiRelease', 'Person entlassen');
+        return;
+      }
+
+      selectedBadge.textContent = getText('uiStatusBooking', 'Buchbar');
+      selectedHelper.textContent = formatText(
+        getText('uiSelectedBookingHelper', 'Spieler-ID %s wird fuer die Buchung vorbereitet.'),
+        [selected.id]
+      );
+
+      if (reasonInput.disabled) {
+        reasonInput.value = '';
+        minutesInput.value = String(Math.min(15, state.maxSentenceMinutes));
+      }
+
+      setFormDisabled(false);
+      submitButton.classList.remove('danger');
+      submitButton.classList.add('primary');
+      submitButton.textContent = getText('uiSubmit', 'Inhaftierung bestaetigen');
+    }
+
+    function renderPlayers() {
+      rebuildEntries();
+      renderSummary();
+
+      if (!state.entries.length) {
+        state.selectedKey = null;
+        playersGrid.innerHTML = `<div class="empty-state">${esc(getText('uiNoPlayers', 'Aktuell ist niemand fuer eine Buchung oder Entlassung verfuegbar.'))}</div>`;
+        renderSelection();
+        return;
+      }
+
+      if (!getSelectedEntry()) {
+        state.selectedKey = state.entries[0].entryKey;
+      }
+
+      playersGrid.innerHTML = state.entries.map((entry) => {
+        const active = entry.entryKey === state.selectedKey;
+        const statusLabel = entry.entryType === 'jailed'
+          ? (entry.online ? getText('uiStatusJailed', 'Inhaftiert') : getText('uiStatusOffline', 'Offline'))
+          : getText('uiStatusBooking', 'Buchbar');
+        const detailLine = entry.entryType === 'jailed'
+          ? `Resthaft ${Math.max(0, Number(entry.minutesRemaining || 0))} Min | Officer ${esc(entry.officerName || '-')}`
+          : `Spieler-ID ${entry.id}`;
+
+        return `
+          <button class="player-card ${active ? 'active' : ''}" type="button" data-entry-key="${esc(entry.entryKey)}">
+            <div class="player-head">
+              <div class="player-name">${esc(entry.label)}</div>
+              <span class="pill">${esc(statusLabel)}</span>
+            </div>
+            <div class="player-meta">${detailLine}</div>
+          </button>
+        `;
+      }).join('');
+
+      renderSelection();
+    }
+
+    function updateOverview(payload = {}) {
+      state.bookablePlayers = Array.isArray(payload.players) ? payload.players : [];
+      state.jailedPlayers = Array.isArray(payload.jailedPlayers) ? payload.jailedPlayers : [];
+
+      rebuildEntries();
+      if (!getSelectedEntry()) {
+        state.selectedKey = state.entries[0] ? state.entries[0].entryKey : null;
+      }
+
+      renderPlayers();
+    }
+
+    function openMenu(payload) {
+      // #region debug-point D:open-menu
+      debugReport('D', 'openMenu called', {
+        players: Array.isArray(payload.players) ? payload.players.length : -1,
+        jailedPlayers: Array.isArray(payload.jailedPlayers) ? payload.jailedPlayers.length : -1
+      });
+      // #endregion
+      state.maxSentenceMinutes = Number(payload.maxSentenceMinutes || 240);
+      state.texts = payload.texts || {};
+      minutesInput.max = String(state.maxSentenceMinutes);
+      applyTexts();
+      setVisible(true);
+      updateOverview(payload);
+
+      setTimeout(() => {
+        const selected = getSelectedEntry();
+        if (selected && selected.entryType === 'booking') {
+          reasonInput.focus();
+        }
+      }, 50);
+    }
+
+    function closeMenu() {
+      // #region debug-point D:close-menu
+      debugReport('D', 'closeMenu called', {});
+      // #endregion
+      setVisible(false);
+      post('closeBookingMenu');
+    }
+
+    function submitBooking() {
+      const selected = getSelectedEntry();
+      if (!selected) {
+        return;
+      }
+
+      if (selected.entryType === 'jailed') {
+        post('releaseBookingPlayer', {
+          identifier: selected.identifier
+        });
+        return;
+      }
+
+      post('submitBookingMenu', {
+        targetId: selected.id,
+        minutes: Math.floor(Number(minutesInput.value || 0)),
+        reason: String(reasonInput.value || '').trim()
+      });
+    }
+
+    document.addEventListener('click', (event) => {
+      const playerCard = event.target.closest('[data-entry-key]');
+      if (!playerCard) {
+        return;
+      }
+
+      state.selectedKey = String(playerCard.dataset.entryKey || '');
+      renderPlayers();
+    });
+
+    document.getElementById('closeButton').addEventListener('click', closeMenu);
+    document.getElementById('cancelButton').addEventListener('click', closeMenu);
+    submitButton.addEventListener('click', submitBooking);
+    refreshButton.addEventListener('click', () => post('refreshBookingPlayers'));
+
+    window.addEventListener('keydown', (event) => {
+      if (!state.visible) {
+        return;
+      }
+
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        closeMenu();
+        return;
+      }
+
+      if (event.key === 'Enter' && !event.shiftKey) {
+        const tagName = document.activeElement ? document.activeElement.tagName : '';
+        if (tagName !== 'TEXTAREA' || reasonInput.disabled) {
+          event.preventDefault();
+          submitBooking();
+        }
+      }
+    });
+
+    window.addEventListener('message', (event) => {
+      const data = event.data || {};
+      // #region debug-point D:message
+      debugReport('D', 'window message received', { action: data.action || null });
+      // #endregion
+
+      if (data.action === 'openBookingMenu') {
+        openMenu(data.payload || {});
+      }
+
+      if (data.action === 'updateBookingOverview') {
+        updateOverview(data.payload || {});
+      }
+
+      if (data.action === 'closeBookingMenu') {
+        setVisible(false);
+      }
+
+      if (data.action === 'debugClient') {
+        const payload = data.payload || {};
+        debugReport(
+          payload.hypothesisId || 'A',
+          `client relay: ${payload.msg || 'no-msg'}`,
+          payload.data || {}
+        );
+      }
+    });
+
+    // #region debug-point D:script-init
+    debugReport('D', 'script initialized', {});
+    // #endregion
+    setVisible(false);
+  </script>
+</body>
+</html>
