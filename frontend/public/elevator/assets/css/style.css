@@ -44,18 +44,19 @@ body {
 .shell {
     position: fixed;
     top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: min(1040px, 95vw);
+    right: 34px;
+    transform: translateY(-50%);
+    width: 340px;
+    max-width: calc(100vw - 40px);
     max-height: 92vh;
     display: none;
     flex-direction: column;
-    gap: 22px;
-    padding: 30px 32px 28px;
+    gap: 16px;
+    padding: 22px 22px 20px;
     border: 1px solid var(--border);
     border-radius: var(--radius);
     background:
-        radial-gradient(120% 80% at 12% 0%, var(--cyan-soft), transparent 42%),
+        radial-gradient(120% 60% at 12% 0%, var(--cyan-soft), transparent 45%),
         var(--panel);
     box-shadow: 0 40px 120px -40px rgba(0, 0, 0, 0.9);
     overflow: hidden;
@@ -77,19 +78,19 @@ body.preview-mode {
 @keyframes shellIn {
     from {
         opacity: 0;
-        transform: translate(-50%, calc(-50% + 14px));
+        transform: translateY(calc(-50% + 14px));
     }
     to {
         opacity: 1;
-        transform: translate(-50%, -50%);
+        transform: translateY(-50%);
     }
 }
 
 .shell-glow {
     position: absolute;
     top: 0;
-    left: 8%;
-    right: 8%;
+    left: 12%;
+    right: 12%;
     height: 1px;
     background: linear-gradient(90deg, transparent, var(--cyan), transparent);
     box-shadow: 0 0 14px 1px rgba(60, 207, 255, 0.5);
@@ -102,24 +103,25 @@ body.preview-mode {
 
 /* ------------------------------------------------------------------ header */
 .shell-header {
+    position: relative;
     display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 24px;
-    padding-bottom: 22px;
+    flex-direction: column;
+    gap: 14px;
+    padding-bottom: 14px;
     border-bottom: 1px solid var(--border);
 }
 
 .brand {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 13px;
     min-width: 0;
+    padding-right: 40px;
 }
 
 .brand-badge {
-    width: 46px;
-    height: 54px;
+    width: 38px;
+    height: 44px;
     flex: none;
     filter: drop-shadow(0 0 10px rgba(60, 207, 255, 0.35));
 }
@@ -139,7 +141,7 @@ body.preview-mode {
 .section-label {
     display: block;
     font-family: var(--font-display);
-    font-size: 10px;
+    font-size: 9.5px;
     font-weight: 600;
     letter-spacing: 0.2em;
     text-transform: uppercase;
@@ -149,15 +151,21 @@ body.preview-mode {
 .brand-title {
     display: flex;
     align-items: baseline;
-    gap: 8px;
-    margin-top: 4px;
+    gap: 6px;
+    margin-top: 3px;
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: 30px;
+    font-size: 22px;
     line-height: 1;
     letter-spacing: 0.04em;
     text-transform: uppercase;
     color: var(--text);
+}
+
+.brand-title #buildingLabel {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .brand-title .chevron {
@@ -166,24 +174,28 @@ body.preview-mode {
 }
 
 .brand-sub {
-    margin-top: 6px;
-    font-size: 12px;
+    margin-top: 5px;
+    font-size: 11px;
     color: var(--muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .header-side {
     display: flex;
     align-items: stretch;
-    gap: 12px;
+    gap: 8px;
 }
 
 .stat-box {
+    flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 6px;
-    min-width: 92px;
-    padding: 10px 14px;
+    gap: 5px;
+    min-width: 0;
+    padding: 8px 11px;
     border: 1px solid var(--border);
     border-radius: var(--radius);
     background: var(--input);
@@ -192,17 +204,24 @@ body.preview-mode {
 .stat-value {
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: 20px;
+    font-size: 17px;
     line-height: 1;
     letter-spacing: 0.03em;
     text-transform: uppercase;
     color: var(--text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .close-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
     display: grid;
     place-items: center;
-    width: 42px;
+    width: 32px;
+    height: 32px;
     flex: none;
     border: 1px solid var(--border);
     border-radius: var(--radius);
@@ -213,8 +232,8 @@ body.preview-mode {
 }
 
 .close-btn svg {
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
 }
 
 .close-btn:hover {
@@ -227,7 +246,7 @@ body.preview-mode {
 .list-head {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 12px;
 }
 
 .section-line {
@@ -238,22 +257,30 @@ body.preview-mode {
 
 /* ------------------------------------------------------------------ floors */
 .floor-grid {
-    display: grid;
-    grid-auto-flow: column;
-    grid-auto-columns: minmax(0, 1fr);
-    gap: 14px;
-    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow-y: auto;
+    padding-right: 3px;
+}
+
+.floor-grid::-webkit-scrollbar {
+    width: 5px;
+}
+
+.floor-grid::-webkit-scrollbar-thumb {
+    background: rgba(60, 207, 255, 0.3);
+    border-radius: 999px;
 }
 
 .floor-card {
     position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 14px;
-    min-width: 0;
+    display: grid;
+    grid-template-columns: 42px 1fr auto;
+    align-items: center;
+    gap: 12px;
     width: 100%;
-    padding: 18px 16px 16px 20px;
+    padding: 11px 13px 11px 15px;
     border: 1px solid var(--border);
     border-radius: var(--radius);
     background: var(--card);
@@ -319,22 +346,21 @@ body.preview-mode {
 .floor-code {
     display: grid;
     place-items: center;
-    width: 48px;
-    height: 48px;
+    width: 42px;
+    height: 42px;
     flex: none;
     border: 1px solid var(--border);
     border-radius: var(--radius);
     background: var(--input);
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: 20px;
+    font-size: 17px;
     letter-spacing: 0.03em;
     text-transform: uppercase;
     color: var(--cyan);
 }
 
 .floor-copy {
-    width: 100%;
     min-width: 0;
 }
 
@@ -345,7 +371,7 @@ body.preview-mode {
     white-space: nowrap;
     font-family: var(--font-display);
     font-weight: 600;
-    font-size: 16px;
+    font-size: 14px;
     letter-spacing: 0.05em;
     text-transform: uppercase;
     color: var(--text);
@@ -353,16 +379,16 @@ body.preview-mode {
 
 .floor-desc {
     display: block;
-    margin-top: 4px;
+    margin-top: 3px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    font-size: 11px;
+    font-size: 10.5px;
     color: var(--muted);
 }
 
 .status-pill {
-    align-self: flex-start;
+    justify-self: end;
     display: inline-flex;
     align-items: center;
     padding: 5px 11px;
