@@ -1,0 +1,23 @@
+/* Preview-only stage. In FiveM the NUI is a transparent overlay on top of the game;
+   here we paint a dark stage so the redesign is visible in a plain browser.
+   This file is NOT shipped with the resource. */
+html, body {
+  background:
+    radial-gradient(1200px 600px at 20% -10%, rgba(110, 235, 255, 0.06), transparent 60%),
+    radial-gradient(900px 500px at 90% 110%, rgba(110, 235, 255, 0.05), transparent 60%),
+    #05080c !important;
+}
+
+/* the entrance animation binds opacity via JS; force visible for static capture */
+.tablet .content,
+.fullscreen .content,
+.window .content,
+.content,
+.menu,
+.prizes-grid,
+.prize,
+.component-root,
+.compare-table,
+[style*="opacity: 0"] {
+  opacity: 1 !important;
+}
