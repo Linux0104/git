@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="de">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Fahrschule – Preview</title>
+		<link rel="stylesheet" href="style.css" />
+		<style>
+			body {
+				background: radial-gradient(1200px 800px at 50% -10%, #10202a, #05080b 70%) !important;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="app"></div>
+		<script>
+			window.GetParentResourceName = function () {
+				return 'preview'
+			}
+			window.fetch = function () {
+				return Promise.resolve({ json: () => Promise.resolve({ ok: true, passed: true, theoryPassed: true }) })
+			}
+		</script>
+		<script src="app.js"></script>
+		<script>
+			const MOCK = {
+				title: 'Los Santos Fahrschule',
+				theoryPassed: false,
+				hasAnyLicense: false,
+				totalQuestions: 3,
+				practice: { maxDurationSec: 300, maxErrors: 3 },
+				licenses: [
+					{ id: 'car', label: 'Klasse B (PKW)', hasLicense: false },
+					{ id: 'bike', label: 'Klasse A (Motorrad)', hasLicense: false },
+					{ id: 'truck', label: 'Klasse C (LKW)', hasLicense: false }
+				],
+				questions: [
+					{
+						question: 'Was bedeutet ein durchgezogener weißer Mittelstreifen?',
+						answers: ['Überholen erlaubt', 'Überholen verboten, nicht überfahren', 'Nur Busse dürfen überholen', 'Freie Fahrt']
+					},
+					{
+						question: 'Wie verhältst du dich an einer Ampel, die auf Gelb schaltet?',
+						answers: ['Beschleunigen', 'Anhalten, wenn gefahrlos möglich', 'Hupen', 'Rückwärts fahren']
+					},
+					{
+						question: 'Innerorts gilt in der Regel welche Höchstgeschwindigkeit?',
+						answers: ['30 km/h', '50 km/h', '70 km/h', '100 km/h']
+					}
+				],
+				stvo: [
+					{ title: 'Geschwindigkeit', paragraphs: ['Innerorts 50 km/h, außerorts 100 km/h – sofern keine Schilder etwas anderes vorgeben.'] },
+					{ title: 'Vorfahrt', paragraphs: ['Rechts vor links, sofern keine Schilder oder Ampeln die Vorfahrt regeln.'] },
+					{ title: 'Abstand', paragraphs: ['Halte ausreichend Sicherheitsabstand – mindestens den halben Tacho in Metern.'] },
+					{ title: 'Alkohol', paragraphs: ['Fahren unter Alkohol- oder Drogeneinfluss ist verboten und wird streng geahndet.'] }
+				]
+			}
+			window.postMessage({ action: 'open', data: MOCK }, '*')
+
+			// simple view switcher for preview via URL hash: #home #quiz #practice #stvo #result
+			function applyHash() {
+				const h = (location.hash || '').replace('#', '')
+				if (h === 'quiz') window.postMessage({ action: 'open', data: { ...MOCK, theoryPassed: false } }, '*')
+			}
+		</script>
+	</body>
+</html>
