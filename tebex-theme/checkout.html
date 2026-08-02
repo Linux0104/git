@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<section class="container">
+  {% if basket.packages|length > 0 %}
+    <div class="checkout-loading">
+      <div class="spinner"></div>
+      <h2>Weiterleitung zur sicheren Bezahlung…</h2>
+      <p style="color:var(--muted)">Falls sich das Zahlungsfenster nicht automatisch öffnet, klicke unten.</p>
+      <button class="btn btn-primary" onclick="launchLunarCheckout()">Zur Kasse ({{ basket.price|money }} {{ store.currency }})</button>
+    </div>
+  {% else %}
+    <div class="checkout-loading">
+      <h2>Dein Warenkorb ist leer</h2>
+      <p style="color:var(--muted)">Füge Coin-Pakete hinzu, um loszulegen.</p>
+      <a href="/" class="btn btn-primary">Zum Shop</a>
+    </div>
+  {% endif %}
+</section>
+
+<script>
+  function launchLunarCheckout(){
+    {% if basket.ident %}
+      Tebex.checkout.init({
+        ident: "{{ basket.ident }}",
+        theme: "dark",
+        colors: [
+          { name: "primary",   color: "#0055ff" },
+          { name: "secondary", color: "#00e5ff" }
+        ]
+      });
+      Tebex.checkout.on("payment:complete", function(){ window.location = "/"; });
+      Tebex.checkout.launch();
+    {% else %}
+      window.location = "/login";
+    {% endif %}
+  }
+
+  addEventListener("load", function(){
+    {% if basket.packages|length > 0 %}
+      launchLunarCheckout();
+    {% endif %}
+  });
+</script>
+{% endblock %}

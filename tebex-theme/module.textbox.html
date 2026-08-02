@@ -1,0 +1,6 @@
+{% if module.text %}
+<div class="module">
+  {% if module.header %}<div class="module-title">{{ module.header }}</div>{% endif %}
+  <div class="module-text" style="color:var(--muted);font-size:14px">{{ module.text|raw }}</div>
+</div>
+{% endif %}

@@ -1,0 +1,34 @@
+{# ============================================================
+   coin-card.twig  —  reusable Lunar coin package card
+   include: {% include "coin-card.twig" with {package: package, badge: '...'} %}
+   ============================================================ #}
+<div class="coin-card {% if badge == 'Bester Wert' %}feat{% endif %}">
+  {% if badge %}
+    <span class="coin-badge {% if badge == 'Bester Wert' %}best{% else %}pop{% endif %}">{{ badge }}</span>
+  {% endif %}
+
+  <div class="coin-thumb">
+    <img src="{% if package.image.uploaded %}{{ package.image.url }}{% else %}https://raw.githubusercontent.com/Linux0104/banner-assets/main/coins3.png{% endif %}" alt="{{ package.name }}">
+  </div>
+
+  <div class="coin-name">{{ package.name }}</div>
+
+  <div class="coin-foot">
+    <div>
+      <div class="coin-price-label">Preis</div>
+      <div class="coin-price">
+        {% if package.discount.applied %}<span class="old">{{ package.discount.original|money }} {{ store.currency }}</span>{% endif %}
+        {{ package.price|money }} {{ store.currency }}
+      </div>
+    </div>
+  </div>
+
+  <div class="coin-actions">
+    {% if package.basket %}
+      <a href="/checkout/packages/remove/{{ package.id }}" class="btn btn-danger btn-sm btn-block">Entfernen</a>
+    {% else %}
+      <a href="/checkout/packages/add/{{ package.id }}/1" class="btn btn-primary btn-sm">Kaufen</a>
+      <a href="/package/{{ package.identifier|default(package.id) }}" class="btn btn-ghost btn-sm">Details</a>
+    {% endif %}
+  </div>
+</div>

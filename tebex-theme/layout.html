@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ store.name }} | {{ __(page.title) }}</title>
+  <link rel="shortcut icon" href="{{ store.favicon }}">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  {# Lunar theme stylesheet — upload lunar.css as an Asset #}
+  <link rel="stylesheet" href="{{ asset('lunar.css') }}">
+  {# Extra CSS from the control panel (optional) #}
+  <style>{{ store.css|raw }}</style>
+
+  {# Tebex.js — seamless in-site checkout #}
+  <script src="https://js.tebex.io/v/1.js"></script>
+</head>
+<body>
+
+  <header class="lunar-header">
+    <div class="container lunar-nav">
+      <a href="/" class="brand">
+        {% if store.logo %}
+          <img src="{{ store.logo }}" alt="{{ store.name }}">
+        {% else %}
+          <img src="https://raw.githubusercontent.com/Linux0104/banner-assets/main/Logo.png" alt="Lunar">
+        {% endif %}
+        <span>LUNAR</span>
+      </a>
+
+      <ul class="nav-links" id="navLinks">
+        <li><a href="/" class="{% if page.category == 'index' %}active{% endif %}">Home</a></li>
+        {% for category in store.categories %}
+          <li><a href="/category/{{ category.id }}" class="{% if category.active %}active{% endif %}">{{ category.name }}</a></li>
+        {% endfor %}
+        <li><a href="https://discord.gg/lunar-rp" target="_blank" rel="noreferrer">Discord</a></li>
+      </ul>
+
+      <div class="nav-right">
+        {% if basket.username %}
+          <a href="/checkout/logout" class="btn btn-ghost btn-sm">Logout</a>
+        {% else %}
+          <a href="/login" class="btn btn-ghost btn-sm">Login</a>
+        {% endif %}
+        <a href="/checkout" class="btn btn-primary btn-sm cart-btn">
+          Warenkorb
+          {% if basket.packages|length > 0 %}<span class="cart-count">{{ basket.packages|length }}</span>{% endif %}
+        </a>
+        <button class="nav-toggle" onclick="document.getElementById('navLinks').classList.toggle('open')" aria-label="Menu">&#9776;</button>
+      </div>
+    </div>
+  </header>
+
+  {% if page.message.display %}
+    <div class="container">
+      <div class="lunar-alert {{ page.message.type }}">{{ page.message.text }}</div>
+    </div>
+  {% endif %}
+
+  {% block content %}{% endblock %}
+
+  <footer class="lunar-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <a href="/" class="brand" style="margin-bottom:16px">
+            <img src="https://raw.githubusercontent.com/Linux0104/banner-assets/main/Logo.png" alt="Lunar" style="height:38px">
+            <span>LUNAR</span>
+          </a>
+          <p style="color:var(--muted);font-size:14px;max-width:340px">Der offizielle Coin-Store des Lunar FiveM RP-Servers. Sichere dir Coins und erlebe das RP-Leben in vollen Zügen.</p>
+        </div>
+        <div>
+          <h4>Store</h4>
+          <ul>
+            <li><a href="/">Home</a></li>
+            {% for category in store.categories %}<li><a href="/category/{{ category.id }}">{{ category.name }}</a></li>{% endfor %}
+            <li><a href="/checkout">Warenkorb</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Community & Recht</h4>
+          <ul>
+            <li><a href="https://discord.gg/lunar-rp" target="_blank" rel="noreferrer">Discord</a></li>
+            <li><a href="/terms">AGB</a></li>
+            <li><a href="/refunds">Rückgabe</a></li>
+            <li><a href="/privacy">Datenschutz</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; {{ "now"|date("Y") }} {{ store.name }}. Alle Rechte vorbehalten.</span>
+        <span>Zahlungsabwicklung sicher über Tebex.</span>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

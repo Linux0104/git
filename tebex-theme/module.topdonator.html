@@ -1,0 +1,17 @@
+{% if module.donor %}
+<div class="module gold">
+  <div class="module-title">&#9819; {{ module.header|default('Top-Kunde des Monats') }}</div>
+  <div class="top-customer">
+    {% if module.skin %}<img src="{{ module.skin }}" alt="{{ module.ign }}">{% endif %}
+    <div>
+      <div class="tc-name">{{ module.ign }}</div>
+      {% if module.displayAmount %}<div class="tc-sub">Top-Ausgabe: {{ module.total }}</div>{% endif %}
+    </div>
+  </div>
+</div>
+{% else %}
+<div class="module gold">
+  <div class="module-title">&#9819; {{ module.header|default('Top-Kunde des Monats') }}</div>
+  <div class="tc-sub" style="color:var(--muted)">Noch kein Top-Kunde diesen Monat.<br><strong style="color:var(--fg)">Werde du der Nächste!</strong></div>
+</div>
+{% endif %}

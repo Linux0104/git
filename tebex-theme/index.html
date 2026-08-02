@@ -1,0 +1,103 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <div class="hero-bg">
+    <img src="https://raw.githubusercontent.com/Linux0104/banner-assets/main/lunarbanner.png" alt="">
+  </div>
+  <div class="container hero-inner">
+    <div>
+      <span class="hero-badge"><span class="dot"></span> Offizieller FiveM Coin Store</span>
+      <h1>Lade deine <span class="accent">{{ store.name }} Coins</span> in Sekunden auf.</h1>
+      <p>Sichere dir Coins für den {{ store.name }} RP-Server – sofortige Lieferung direkt auf deinen Charakter, sichere Bezahlung über Tebex und 24/7 Support.</p>
+      <div class="hero-actions">
+        <a href="#shop" class="btn btn-primary">Coins kaufen &rarr;</a>
+        <div class="hero-meta">
+          <span>&#9889; Sofort</span>
+          <span>&#128274; Sicher</span>
+        </div>
+      </div>
+    </div>
+    <div class="hero-coin">
+      <img src="https://raw.githubusercontent.com/Linux0104/banner-assets/main/coins3.png" alt="Lunar Coin">
+    </div>
+  </div>
+</section>
+
+<!-- ===== SHOP GRID ===== -->
+<section class="section" id="shop">
+  <div class="container">
+    <div class="section-kicker">Coin-Pakete</div>
+    <h2 class="section-title">Wähle dein Coin-Paket</h2>
+    <p class="section-sub">Alle Pakete werden nach der Zahlung automatisch und sofort auf deinen FiveM-Charakter gutgeschrieben.</p>
+
+    {% for category in store.categories %}
+      {% if category.packages|length > 0 %}
+        <div class="coin-grid">
+          {% for package in category.packages %}
+            {% include "coin-card.twig" with {
+              package: package,
+              badge: (loop.index == 2 ? 'Beliebt' : (loop.last and category.packages|length > 3 ? 'Bester Wert' : ''))
+            } %}
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+</section>
+
+<!-- ===== FEATURES ===== -->
+<section class="section" id="vorteile" style="background:var(--bg-2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+  <div class="container">
+    <div class="section-kicker">Warum Lunar</div>
+    <h2 class="section-title">Der schnellste Weg zu mehr Coins</h2>
+    <div class="features">
+      <div class="feature">
+        <div class="ic">&#9889;</div>
+        <h3>Sofortige Lieferung</h3>
+        <p>Coins landen automatisch innerhalb von Sekunden auf deinem Charakter.</p>
+      </div>
+      <div class="feature">
+        <div class="ic">&#128274;</div>
+        <h3>Sichere Bezahlung</h3>
+        <p>Abwicklung über Tebex – PayPal, Kreditkarte, Klarna &amp; mehr.</p>
+      </div>
+      <div class="feature">
+        <div class="ic">&#127911;</div>
+        <h3>24/7 Support</h3>
+        <p>Unser Team hilft dir jederzeit über unseren Discord weiter.</p>
+      </div>
+      <div class="feature">
+        <div class="ic">&#128260;</div>
+        <h3>Faire Rückgabe</h3>
+        <p>Transparente Bedingungen und schnelle Bearbeitung bei Problemen.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== COMMUNITY (Sidebar-Module) ===== -->
+<section class="section" id="community">
+  <div class="container">
+    <div class="section-kicker">Community</div>
+    <h2 class="section-title">Live aus dem Store</h2>
+    <div class="sidebar-stack" style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:34px">
+      {{ modules|raw }}
+    </div>
+  </div>
+</section>
+
+<!-- ===== DISCORD ===== -->
+<section class="container">
+  <div class="discord-banner">
+    <div>
+      <h2>Tritt der Lunar Community bei</h2>
+      <p>Verbinde dich mit tausenden Spielern, erhalte Support, exklusive Aktionen und bleibe immer auf dem Laufenden – direkt auf unserem Discord.</p>
+    </div>
+    <a href="https://discord.gg/lunar-rp" target="_blank" rel="noreferrer" class="btn btn-discord">Discord beitreten &rarr;</a>
+  </div>
+</section>
+
+{% endblock %}

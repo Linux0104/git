@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lunar Theme — Vorschau</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/lunar.css">
+</head>
+<body>
+<header class="lunar-header"><div class="container lunar-nav">
+  <a href="#" class="brand"><img src="https://raw.githubusercontent.com/Linux0104/banner-assets/main/Logo.png" alt="Lunar"><span>LUNAR</span></a>
+  <ul class="nav-links"><li><a class="active">Home</a></li><li><a>Coins</a></li><li><a>Discord</a></li></ul>
+  <div class="nav-right"><a class="btn btn-ghost btn-sm">Login</a><a class="btn btn-primary btn-sm cart-btn">Warenkorb<span class="cart-count">2</span></a></div>
+</div></header>
+
+<section class="hero">
+  <div class="hero-bg"><img src="https://raw.githubusercontent.com/Linux0104/banner-assets/main/lunarbanner.png" alt=""></div>
+  <div class="container hero-inner">
+    <div>
+      <span class="hero-badge"><span class="dot"></span> Offizieller FiveM Coin Store</span>
+      <h1>Lade deine <span class="accent">Lunar Coins</span> in Sekunden auf.</h1>
+      <p>Sichere dir Coins für den Lunar RP-Server – sofortige Lieferung direkt auf deinen Charakter, sichere Bezahlung über Tebex und 24/7 Support.</p>
+      <div class="hero-actions"><a class="btn btn-primary">Coins kaufen &rarr;</a><div class="hero-meta"><span>&#9889; Sofort</span><span>&#128274; Sicher</span></div></div>
+    </div>
+    <div class="hero-coin"><img src="https://raw.githubusercontent.com/Linux0104/banner-assets/main/coins3.png" alt="Coin"></div>
+  </div>
+</section>
+
+<section class="section" id="shop"><div class="container">
+  <div class="section-kicker">Coin-Pakete</div>
+  <h2 class="section-title">Wähle dein Coin-Paket</h2>
+  <p class="section-sub">Alle Pakete werden nach der Zahlung automatisch und sofort auf deinen FiveM-Charakter gutgeschrieben.</p>
+  <div class="coin-grid" id="grid"></div>
+</div></section>
+
+<section class="section" id="vorteile" style="background:var(--bg-2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)"><div class="container">
+  <div class="section-kicker">Warum Lunar</div><h2 class="section-title">Der schnellste Weg zu mehr Coins</h2>
+  <div class="features">
+    <div class="feature"><div class="ic">&#9889;</div><h3>Sofortige Lieferung</h3><p>Coins landen automatisch in Sekunden auf deinem Charakter.</p></div>
+    <div class="feature"><div class="ic">&#128274;</div><h3>Sichere Bezahlung</h3><p>Abwicklung über Tebex – PayPal, Kreditkarte, Klarna &amp; mehr.</p></div>
+    <div class="feature"><div class="ic">&#127911;</div><h3>24/7 Support</h3><p>Unser Team hilft dir jederzeit über Discord.</p></div>
+    <div class="feature"><div class="ic">&#128260;</div><h3>Faire Rückgabe</h3><p>Transparente Bedingungen und schnelle Bearbeitung.</p></div>
+  </div>
+</div></section>
+
+<section class="section" id="community"><div class="container">
+  <div class="section-kicker">Community</div><h2 class="section-title">Live aus dem Store</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:34px">
+    <div class="module gold"><div class="module-title">&#9819; Top-Kunde des Monats</div>
+      <div class="tc-sub" style="color:var(--muted)">Noch kein Top-Kunde diesen Monat.<br><strong style="color:var(--fg)">Werde du der Nächste!</strong></div></div>
+    <div class="module"><div class="module-title"><span class="live-dot"></span> Neueste Käufe</div>
+      <div class="pay-row"><div class="pay-av">BI</div><div><div class="pay-name">BigMacBoy</div><div class="pay-meta">hat gerade eingekauft</div></div></div>
+      <div class="pay-row"><div class="pay-av">TO</div><div><div class="pay-name">TOYO3</div><div class="pay-meta">hat gerade eingekauft</div></div></div>
+    </div>
+  </div>
+</div></section>
+
+<section class="container"><div class="discord-banner">
+  <div><h2>Tritt der Lunar Community bei</h2><p>Verbinde dich mit tausenden Spielern, erhalte Support, exklusive Aktionen und bleibe immer auf dem Laufenden.</p></div>
+  <a class="btn btn-discord">Discord beitreten &rarr;</a>
+</div></section>
+
+<footer class="lunar-footer"><div class="container">
+  <div class="footer-grid">
+    <div><a class="brand" style="margin-bottom:16px"><img src="https://raw.githubusercontent.com/Linux0104/banner-assets/main/Logo.png" style="height:38px"><span>LUNAR</span></a>
+      <p style="color:var(--muted);font-size:14px;max-width:340px">Der offizielle Coin-Store des Lunar FiveM RP-Servers.</p></div>
+    <div><h4>Store</h4><ul><li><a>Home</a></li><li><a>Coins</a></li><li><a>Warenkorb</a></li></ul></div>
+    <div><h4>Community & Recht</h4><ul><li><a>Discord</a></li><li><a>AGB</a></li><li><a>Rückgabe</a></li><li><a>Datenschutz</a></li></ul></div>
+  </div>
+  <div class="footer-bottom"><span>&copy; 2026 Lunar. Alle Rechte vorbehalten.</span><span>Zahlungsabwicklung sicher über Tebex.</span></div>
+</div></footer>
+
+<script>
+var img="https://raw.githubusercontent.com/Linux0104/banner-assets/main/coins3.png";
+var pkgs=[["475 Coins","4.99"],["1000 Coins","9.99","Beliebt"],["2050 Coins","19.99"],["3650 Coins","34.99"],["5350 Coins","49.99"],["11000 Coins","99.99"],["27500 Coins","249.99","Bester Wert"]];
+document.getElementById("grid").innerHTML=pkgs.map(function(p){
+ var badge=p[2]?('<span class="coin-badge '+(p[2]=="Bester Wert"?"best":"pop")+'">'+p[2]+'</span>'):"";
+ return '<div class="coin-card '+(p[2]=="Bester Wert"?"feat":"")+'">'+badge+
+ '<div class="coin-thumb"><img src="'+img+'"></div>'+
+ '<div class="coin-name">'+p[0]+'</div>'+
+ '<div class="coin-foot"><div><div class="coin-price-label">Preis</div><div class="coin-price">'+p[1]+' EUR</div></div></div>'+
+ '<div class="coin-actions"><a class="btn btn-primary btn-sm">Kaufen</a><a class="btn btn-ghost btn-sm">Details</a></div></div>';
+}).join("");
+</script>
+</body>
+</html>

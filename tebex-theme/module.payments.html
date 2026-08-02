@@ -1,0 +1,17 @@
+{% if module.payments|length > 0 %}
+<div class="module">
+  <div class="module-title"><span class="live-dot"></span> {{ module.header|default('Neueste Käufe') }}</div>
+  {% for p in module.payments %}
+    <div class="pay-row">
+      <div class="pay-av">{{ p.ign|slice(0,2)|upper }}</div>
+      <div>
+        <div class="pay-name">{{ p.ign }}</div>
+        <div class="pay-meta">
+          {% if module.displayPackage %}{{ p.name }}{% else %}hat gerade eingekauft{% endif %}
+          {% if module.displayPrice %} &bull; {{ p.price|money }} {{ p.currency }}{% endif %}
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+{% endif %}

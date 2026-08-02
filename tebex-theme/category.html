@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    <div class="section-kicker">Kategorie</div>
+    <h2 class="section-title">{{ category.name }}</h2>
+    {% if category.description %}<div class="section-sub">{{ category.description|raw }}</div>{% endif %}
+
+    <div class="with-sidebar" style="margin-top:40px">
+      <div>
+        {% if category.packages|length > 0 %}
+          <div class="coin-grid" style="margin-top:0">
+            {% for package in category.packages %}
+              {% include "coin-card.twig" with {
+                package: package,
+                badge: (loop.index == 2 ? 'Beliebt' : (loop.last and category.packages|length > 3 ? 'Bester Wert' : ''))
+              } %}
+            {% endfor %}
+          </div>
+        {% else %}
+          <p style="color:var(--muted)">In dieser Kategorie sind aktuell keine Pakete verfügbar.</p>
+        {% endif %}
+      </div>
+
+      <aside class="sidebar-stack">
+        {{ modules|raw }}
+      </aside>
+    </div>
+  </div>
+</section>
+{% endblock %}

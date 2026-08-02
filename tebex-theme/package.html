@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<section class="container">
+  <div class="pkg-detail">
+    <div class="pkg-img">
+      <img src="{% if image.uploaded %}{{ image.url }}{% else %}https://raw.githubusercontent.com/Linux0104/banner-assets/main/coins3.png{% endif %}" alt="{{ name }}">
+    </div>
+    <div>
+      <div class="section-kicker">Coin-Paket</div>
+      <h1>{{ name }}</h1>
+
+      <div class="pkg-price">
+        {% if discount.applied %}
+          <span style="text-decoration:line-through;color:var(--muted);font-size:22px;font-weight:600">{{ discount.original|money }} {{ store.currency }}</span>
+        {% endif %}
+        {{ price|money }} {{ store.currency }}
+      </div>
+
+      <div class="pkg-desc">{{ description|raw }}</div>
+
+      <div style="margin-top:28px;display:flex;align-items:center;flex-wrap:wrap;gap:12px">
+        {% if has_options %}
+          <a href="/checkout/packages/add/{{ id }}/1" class="btn btn-primary">In den Warenkorb</a>
+        {% else %}
+          <div class="qty">
+            <button type="button" onclick="chQty(-1)">&minus;</button>
+            <input id="qty" value="1" readonly>
+            <button type="button" onclick="chQty(1)">&plus;</button>
+          </div>
+          <button class="btn btn-primary" onclick="addToBasket()">In den Warenkorb</button>
+        {% endif %}
+        <a href="/checkout" class="btn btn-ghost">Zur Kasse</a>
+      </div>
+
+      <p style="margin-top:22px;color:var(--muted);font-size:13px">&#128274; Sichere Zahlung über Tebex &bull; Sofortige Lieferung auf deinen FiveM-Charakter</p>
+    </div>
+  </div>
+</section>
+
+<script>
+  var q = 1;
+  function chQty(d){ q = Math.max(1, q + d); document.getElementById('qty').value = q; }
+  function addToBasket(){ window.location = '/checkout/packages/add/{{ id }}/' + q; }
+</script>
+{% endblock %}

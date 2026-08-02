@@ -1,0 +1,223 @@
+/* =========================================================
+   LUNAR — Tebex Theme  (Asset: lunar.css)
+   FiveM Coin Store • Dark "Lunar" Design
+   ========================================================= */
+
+:root{
+  --bg:#08080c; --bg-2:#0a0a10; --card:#101016; --card-2:#0b0b12;
+  --border:rgba(255,255,255,.07);
+  --fg:#fafafa; --muted:#8a8a9e;
+  --primary:#0055ff; --primary-2:#2f74ff; --accent:#00e5ff;
+  --discord:#5865f2; --gold:#f5b301;
+  --radius:16px;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--bg); color:var(--fg);
+  font-family:"Manrope",system-ui,sans-serif; line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{font-family:"Outfit",sans-serif;letter-spacing:-.02em;margin:0}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+::selection{background:var(--primary);color:#fff}
+::-webkit-scrollbar{width:10px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:#1c1c28;border-radius:99px}
+::-webkit-scrollbar-thumb:hover{background:var(--primary)}
+
+.container{max-width:1200px;margin:0 auto;padding:0 20px}
+
+/* ---------- Buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  font-family:"Outfit",sans-serif;font-weight:700;font-size:15px;
+  padding:12px 22px;border-radius:999px;border:1px solid transparent;
+  cursor:pointer;transition:transform .25s,background-color .25s,box-shadow .25s,border-color .25s}
+.btn:hover{transform:translateY(-2px)}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:hover{background:var(--primary-2);box-shadow:0 0 34px -6px rgba(0,85,255,.9)}
+.btn-ghost{background:rgba(255,255,255,.04);color:var(--fg);border-color:var(--border)}
+.btn-ghost:hover{border-color:rgba(0,85,255,.5);background:rgba(255,255,255,.07)}
+.btn-danger{background:#ff3366;color:#fff}
+.btn-danger:hover{background:#e02a58}
+.btn-discord{background:var(--discord);color:#fff}
+.btn-discord:hover{background:#4752c4;box-shadow:0 0 34px -6px rgba(88,101,242,.9)}
+.btn-block{width:100%}
+.btn-sm{padding:9px 16px;font-size:13px}
+
+/* ---------- Header ---------- */
+.lunar-header{position:sticky;top:0;z-index:50;
+  background:rgba(8,8,12,.8);backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--border)}
+.lunar-nav{display:flex;align-items:center;justify-content:space-between;height:74px;gap:18px}
+.brand{display:flex;align-items:center;gap:12px}
+.brand img{height:42px;width:auto;filter:drop-shadow(0 0 16px rgba(0,85,255,.55))}
+.brand span{font-family:"Outfit",sans-serif;font-weight:800;font-size:24px;color:var(--primary);
+  text-shadow:0 0 26px rgba(0,85,255,.45)}
+.nav-links{display:flex;align-items:center;gap:26px;list-style:none;margin:0;padding:0}
+.nav-links a{font-weight:600;font-size:14px;color:var(--muted);position:relative;transition:color .2s}
+.nav-links a:hover,.nav-links a.active{color:var(--fg)}
+.nav-links a::after{content:"";position:absolute;left:0;bottom:-6px;height:2px;width:0;background:var(--primary);transition:width .3s}
+.nav-links a:hover::after,.nav-links a.active::after{width:100%}
+.nav-right{display:flex;align-items:center;gap:10px}
+.cart-btn{position:relative}
+.cart-count{position:absolute;top:-6px;right:-6px;min-width:20px;height:20px;padding:0 5px;
+  display:flex;align-items:center;justify-content:center;border-radius:99px;
+  background:var(--accent);color:#04121a;font-size:11px;font-weight:800;font-family:"Outfit",sans-serif}
+.nav-toggle{display:none;background:none;border:0;color:var(--fg);font-size:26px;cursor:pointer}
+
+/* ---------- Toast / messages ---------- */
+.lunar-alert{max-width:1200px;margin:16px auto 0;padding:14px 18px;border-radius:12px;
+  border:1px solid var(--border);background:var(--card);font-weight:600}
+.lunar-alert.success{border-color:rgba(0,229,255,.4)}
+.lunar-alert.danger,.lunar-alert.error{border-color:rgba(255,51,102,.5)}
+
+/* ---------- Hero ---------- */
+.hero{position:relative;min-height:86vh;display:flex;align-items:center;overflow:hidden}
+.hero-bg{position:absolute;inset:0}
+.hero-bg img{width:100%;height:100%;object-fit:cover;opacity:.55}
+.hero-bg::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(8,8,12,.72),rgba(8,8,12,.9) 60%,var(--bg)),
+  radial-gradient(circle at 72% 30%,rgba(0,85,255,.28),transparent 55%)}
+.hero-inner{position:relative;z-index:2;display:grid;grid-template-columns:1.1fr .9fr;
+  align-items:center;gap:40px;padding:120px 0 70px}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:7px 15px;border-radius:99px;
+  border:1px solid rgba(0,85,255,.35);background:rgba(0,85,255,.12);
+  font-size:12px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#7fa8ff}
+.hero-badge .dot{width:7px;height:7px;border-radius:99px;background:var(--accent)}
+.hero h1{font-size:clamp(40px,6vw,76px);font-weight:900;line-height:.95;margin-top:22px}
+.hero h1 .accent{display:block;color:var(--primary);text-shadow:0 0 34px rgba(0,85,255,.5)}
+.hero p{max-width:520px;margin-top:22px;color:var(--muted);font-size:18px}
+.hero-actions{display:flex;align-items:center;gap:20px;margin-top:34px;flex-wrap:wrap}
+.hero-meta{display:flex;gap:20px;color:var(--muted);font-size:14px;font-weight:600}
+.hero-meta span{display:inline-flex;align-items:center;gap:7px}
+.hero-coin{display:flex;justify-content:center}
+.hero-coin img{width:400px;max-width:100%;border-radius:22px;
+  filter:drop-shadow(0 0 60px rgba(0,85,255,.5));animation:float 6s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+@media(prefers-reduced-motion:reduce){.hero-coin img{animation:none}}
+
+/* ---------- Sections ---------- */
+.section{padding:80px 0}
+.section-kicker{font-size:13px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--primary)}
+.section-title{font-size:clamp(30px,4vw,48px);font-weight:900;margin-top:12px}
+.section-sub{color:var(--muted);margin-top:14px;max-width:620px}
+
+/* ---------- Coin grid ---------- */
+.coin-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;margin-top:44px}
+.coin-card{position:relative;display:flex;flex-direction:column;background:var(--card);
+  border:1px solid var(--border);border-radius:var(--radius);padding:22px;
+  transition:transform .3s,border-color .3s,box-shadow .3s}
+.coin-card:hover{transform:translateY(-6px);border-color:rgba(0,85,255,.45);
+  box-shadow:0 20px 50px -20px rgba(0,85,255,.5)}
+.coin-card.feat{border-color:rgba(0,85,255,.6);box-shadow:0 0 50px -14px rgba(0,85,255,.6)}
+.coin-badge{position:absolute;top:-12px;left:22px;padding:5px 12px;border-radius:99px;
+  font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;
+  font-family:"Outfit",sans-serif;display:inline-flex;align-items:center;gap:5px}
+.coin-badge.best{background:var(--primary);color:#fff}
+.coin-badge.pop{background:var(--accent);color:#04121a}
+.coin-thumb{aspect-ratio:1/1;border-radius:12px;background:var(--card-2);overflow:hidden;
+  display:flex;align-items:center;justify-content:center;position:relative}
+.coin-thumb img{width:100%;height:100%;object-fit:contain;padding:8px;transition:transform .5s}
+.coin-card:hover .coin-thumb img{transform:scale(1.08)}
+.coin-name{font-size:19px;font-weight:800;margin-top:16px}
+.coin-amount{display:inline-flex;align-items:center;gap:6px;color:var(--accent);font-weight:700;font-size:14px;margin-top:4px}
+.coin-desc{color:var(--muted);font-size:14px;margin-top:10px;min-height:20px}
+.coin-foot{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;
+  margin-top:18px;padding-top:16px;border-top:1px solid rgba(255,255,255,.05)}
+.coin-price-label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.coin-price{font-family:"Outfit",sans-serif;font-size:24px;font-weight:800}
+.coin-price .old{display:block;font-size:13px;color:var(--muted);text-decoration:line-through;font-weight:600}
+.coin-actions{display:flex;gap:8px;margin-top:16px}
+
+/* ---------- Features / trust ---------- */
+.features{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;margin-top:44px}
+.feature{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:26px;
+  transition:transform .3s,border-color .3s}
+.feature:hover{transform:translateY(-4px);border-color:rgba(0,85,255,.4)}
+.feature .ic{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+  background:rgba(0,85,255,.12);color:var(--primary);font-size:22px}
+.feature h3{font-size:18px;margin-top:18px}
+.feature p{color:var(--muted);font-size:14px;margin-top:8px}
+
+/* ---------- Discord banner ---------- */
+.discord-banner{position:relative;overflow:hidden;border:1px solid rgba(88,101,242,.4);
+  background:#0b0d1c;border-radius:26px;padding:44px;margin:30px 0;
+  display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap}
+.discord-banner::before{content:"";position:absolute;inset:0;
+  background:radial-gradient(circle at 15% 20%,rgba(88,101,242,.35),transparent 55%)}
+.discord-banner>*{position:relative;z-index:2}
+.discord-banner h2{font-size:clamp(26px,3.4vw,38px);font-weight:900}
+.discord-banner p{color:var(--muted);margin-top:12px;max-width:520px}
+
+/* ---------- Layout with sidebar (category) ---------- */
+.with-sidebar{display:grid;grid-template-columns:1fr 320px;gap:30px;align-items:start}
+
+/* ---------- Sidebar modules ---------- */
+.sidebar-stack{display:flex;flex-direction:column;gap:18px}
+.module{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px}
+.module-title{font-family:"Outfit",sans-serif;font-size:15px;font-weight:800;
+  display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.top-customer{display:flex;align-items:center;gap:14px}
+.top-customer img{width:56px;height:56px;border-radius:14px;object-fit:cover;
+  border:2px solid rgba(245,179,1,.5)}
+.top-customer .tc-name{font-family:"Outfit",sans-serif;font-size:20px;font-weight:800}
+.top-customer .tc-sub{color:var(--muted);font-size:13px}
+.module.gold{border-color:rgba(245,179,1,.25);
+  background:linear-gradient(160deg,#12100a,var(--card-2))}
+.module.gold .module-title{color:var(--gold)}
+.pay-row{display:flex;align-items:center;gap:12px;padding:9px 0;border-top:1px solid rgba(255,255,255,.05)}
+.pay-row:first-of-type{border-top:0}
+.pay-av{width:38px;height:38px;border-radius:99px;background:rgba(0,85,255,.15);color:#7fa8ff;
+  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0}
+.pay-name{font-family:"Outfit",sans-serif;font-weight:700;font-size:14px}
+.pay-meta{color:var(--accent);font-size:12px}
+.live-dot{width:8px;height:8px;border-radius:99px;background:#37d67a;display:inline-block;
+  animation:pulse 1.6s infinite}
+@keyframes pulse{0%,100%{opacity:.3}50%{opacity:1}}
+
+/* ---------- Package detail ---------- */
+.pkg-detail{display:grid;grid-template-columns:.9fr 1.1fr;gap:40px;align-items:center;padding:60px 0}
+.pkg-detail .pkg-img{background:var(--card);border:1px solid var(--border);border-radius:22px;padding:24px}
+.pkg-detail h1{font-size:clamp(30px,4vw,46px);font-weight:900}
+.pkg-detail .pkg-price{font-family:"Outfit",sans-serif;font-size:38px;font-weight:900;margin:18px 0}
+.pkg-detail .pkg-desc{color:var(--muted)}
+.qty{display:inline-flex;align-items:center;border:1px solid var(--border);border-radius:99px;overflow:hidden;margin-right:12px}
+.qty button{background:none;border:0;color:var(--fg);width:40px;height:44px;font-size:18px;cursor:pointer}
+.qty input{width:46px;text-align:center;background:none;border:0;color:var(--fg);font-weight:800;font-size:16px}
+
+/* ---------- Checkout ---------- */
+.checkout-loading{min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center}
+.spinner{width:44px;height:44px;border-radius:99px;border:4px solid rgba(255,255,255,.1);border-top-color:var(--primary);animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ---------- Footer ---------- */
+.lunar-footer{border-top:1px solid var(--border);background:#070709;margin-top:40px}
+.footer-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr;gap:40px;padding:60px 0 30px}
+.footer-grid h4{font-size:14px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:16px}
+.footer-grid ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:11px}
+.footer-grid a{color:var(--muted);font-size:14px;transition:color .2s}
+.footer-grid a:hover{color:var(--primary)}
+.footer-bottom{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  border-top:1px solid var(--border);padding:22px 0;color:var(--muted);font-size:12px}
+
+/* ---------- Responsive ---------- */
+@media(max-width:1024px){
+  .coin-grid{grid-template-columns:repeat(3,1fr)}
+  .features{grid-template-columns:repeat(2,1fr)}
+  .hero-inner{grid-template-columns:1fr}
+  .hero-coin{display:none}
+  .with-sidebar{grid-template-columns:1fr}
+  .pkg-detail{grid-template-columns:1fr}
+}
+@media(max-width:640px){
+  .coin-grid{grid-template-columns:repeat(2,1fr)}
+  .nav-links{display:none}
+  .nav-toggle{display:block}
+  .footer-grid{grid-template-columns:1fr}
+}
+@media(max-width:420px){
+  .coin-grid{grid-template-columns:1fr}
+}
